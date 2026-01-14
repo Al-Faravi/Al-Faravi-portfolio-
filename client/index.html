@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Md. Shakawat Hossain Faravi | Portfolio</title>
+    
+    <link rel="stylesheet" href="css/style.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    
+    <div class="bg-texture"></div> 
+
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo">Al-Faravi<span class="accent-dot">.</span></a>
+            
+            <ul class="nav-links" id="nav-menu">
+                <li><a href="#experience" onclick="closeMenu()">Experience</a></li>
+                <li><a href="#work" onclick="closeMenu()">Work</a></li>
+                <li><a href="#certifications" onclick="closeMenu()">Certifications</a></li>
+                <li><a href="#contact" class="btn-contact" onclick="closeMenu()">Contact</a></li>
+            </ul>
+
+            <div class="hamburger" id="hamburger-btn">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="container hero-container">
+            <div class="hero-text">
+                <div class="status-badge">
+                    <span class="status-dot"></span>
+                    <span id="status-text">Available for work</span>
+                </div>
+                <h1 class="headline">
+                    Transforming <span class="italic-text">Data</span> into Stories <br> 
+                    & Code into <span class="italic-text">Solutions</span>.
+                </h1>
+                <p class="sub-headline">
+                    Hi, I am <strong>Shakawat Faravi</strong>. A Full Stack Developer & AI Enthusiast specialized in Medical Imaging, BI Tools & MERN Stack.
+                </p>
+                <div class="hero-btns">
+                    <a href="#work" class="primary-link">View Selected Works ↓</a>
+                    <a href="#contact" class="secondary-link">Let's Talk</a>
+                </div>
+            </div>
+
+            <div class="hero-img-box">
+                <img src="assets/profile.jpg" alt="Md. Shakawat Hossain Faravi" class="hero-img" onerror="this.src='https://via.placeholder.com/400'">
+            </div>
+        </div>
+    </header>
+
+    <section id="experience" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Experience</h2>
+            </div>
+            <div id="experience-list" class="experience-list">
+                </div>
+        </div>
+    </section>
+
+    <section id="work" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Selected Works</h2>
+            </div>
+            <div id="project-grid" class="project-grid">
+                </div>
+        </div>
+    </section>
+
+    <section id="certifications" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Licenses & Certifications</h2>
+            </div>
+            <div id="cert-grid" class="cert-grid">
+                <p class="loading-text">Loading certifications...</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Get in Touch</h2>
+            </div>
+
+            <div class="contact-wrapper">
+                <div class="contact-left">
+                    <h3>Let's talk</h3>
+                    <p class="contact-desc">
+                        If you need help with a project, have any inquiries, or just want to chat about tech, don’t hesitate to send me a message.
+                    </p>
+                    
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <div class="icon-box"><i class="fa-solid fa-envelope"></i></div>
+                            <p>alfaravi17@gmail.com</p>
+                        </div>
+                        <div class="contact-item">
+                            <div class="icon-box"><i class="fa-solid fa-phone"></i></div>
+                            <p>01719-269328</p>
+                        </div>
+                        <div class="contact-item">
+                            <div class="icon-box"><i class="fa-solid fa-location-dot"></i></div>
+                            <p>Dhaka, Bangladesh</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="contact-form" class="contact-right">
+                    <input type="hidden" name="access_key" value="fe6348e1-d356-4537-a346-75732d424439">
+                    
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="text" name="name" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Your Email</label>
+                        <input type="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea name="message" rows="4" placeholder="Enter your message" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit-form">Submit Now →</button>
+                    <p id="form-result" class="form-result"></p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container footer-container">
+            <div class="footer-col">
+                <a href="#" class="logo">Faravi<span class="accent-dot">.</span></a>
+                <p class="footer-quote">
+                    "Success is not final, failure is not fatal: It is the courage to continue that counts."
+                </p>
+            </div>
+
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul class="footer-shortcuts">
+                    <li><a href="#work">Projects</a></li>
+                    <li><a href="#experience">Experience</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="admin.html" class="admin-link">Admin Login</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Connect</h4>
+                <div class="social-icons">
+                    <a href="https://web.facebook.com/faravi.hossain/" target="_blank" class="s-icon fb"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/al__faravi/" target="_blank" class="s-icon ig"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://x.com/ShakawatFa6848" target="_blank" class="s-icon tw"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="https://github.com/Al-Faravi" target="_blank" class="s-icon gh"><i class="fa-brands fa-github"></i></a>
+                    <a href="https://t.me/Al_Faravi" target="_blank" class="s-icon tg"><i class="fa-brands fa-telegram"></i></a>
+                    <a href="https://wa.me/8801719269328" target="_blank" class="s-icon wa"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright-bar">
+            © 2026 Md. Shakawat Hossain Faravi. All Rights Reserved.
+        </div>
+    </footer>
+
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-modal" class="close-btn">&times;</button>
+            <div class="modal-header">
+                <span id="m-category" class="modal-tag">Category</span>
+                <h2 id="m-title" class="modal-title">Project Title</h2>
+                <div id="m-tech" class="modal-tech">Tech</div>
+            </div>
+            <div class="modal-body">
+                <p id="m-desc" class="modal-desc">Description...</p>
+                <div class="modal-links">
+                    <a id="m-live" href="#" target="_blank" class="btn-primary">Live Site ↗</a>
+                    <a id="m-github" href="#" target="_blank" class="btn-secondary">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Smooth Hamburger Logic (Inline for reliability)
+        const hamburger = document.getElementById('hamburger-btn');
+        const navMenu = document.getElementById('nav-menu');
+        
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            hamburger.classList.toggle('active'); // Triggers X animation
+        });
+
+        function closeMenu() {
+            navMenu.classList.remove('active');
+            hamburger.classList.remove('active');
+        }
+    </script>
+</body>
+</html>

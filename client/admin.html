@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Faravi</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand">Admin Panel.</div>
+        <ul class="menu">
+            <li class="active" onclick="showTab('projects')">📂 Projects</li>
+            <li onclick="showTab('experience')">💼 Experience</li>
+            <li onclick="showTab('certs')">🎓 Certifications</li>
+            <li onclick="showTab('status')">🟢 Live Status</li>
+        </ul>
+        <a href="index.html" class="logout">← Back to Site</a>
+    </aside>
+
+    <main class="content">
+        
+        <header>
+            <h2 id="page-title">Manage Projects</h2>
+            <button class="btn-add" onclick="openForm()">+ Add New</button>
+        </header>
+
+        <div id="data-list" class="data-grid">
+            <p>Loading...</p>
+        </div>
+
+    </main>
+
+    <div id="form-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 id="form-title">Add New Item</h3>
+            <form id="admin-form">
+                <div id="form-fields"></div>
+                
+                <button type="submit" class="btn-submit">Save Data</button>
+                <button type="button" class="btn-cancel" onclick="closeForm()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>
