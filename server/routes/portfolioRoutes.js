@@ -1,73 +1,111 @@
 const express = require('express');
 const router = express.Router();
-const Project = require('../models/Project');
-const Experience = require('../models/Experience');
-const GlobalStatus = require('../models/GlobalStatus');
-const Certification = require('../models/Certification'); // এই লাইনটি জরুরি
+const { Project, Experience, Certification, Blog, Featured, Status } = require('../models/PortfolioItem');
 
-// --- PROJECT ROUTES ---
-router.get('/projects', async (req, res) => {
-    try {
-        const projects = await Project.find().sort({ createdAt: -1 });
-        res.json(projects);
-    } catch (err) { res.status(500).json({ message: err.message }); }
-});
+// ===========================================
+// HELPER FUNCTION FOR CRUD
+// ===========================================
+const createCrudRoutes = (routePath, Model) => {
+    // GET ALL
+    router.get(`/${routePath}`, async (req, res) => {
+        try {
+            const items = await Model.find();
+            res.json(items);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    });
 
-router.post('/projects', async (req, res) => {
-    try {
-        const newProject = new Project(req.body);
-        const savedProject = await newProject.save();
-        res.status(201).json(savedProject);
-    } catch (err) { res.status(400).json({ message: err.message }); }
-});
+    // CREATE
+    router.post(`/${routePath}`, async (req, res) => {
+        try {
+            const newItem = new Model(req.body);
+            await newItem.save();
+            res.json(newItem);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    });
 
-// --- EXPERIENCE ROUTES ---
-router.get('/experience', async (req, res) => {
-    try {
-        const exp = await Experience.find().sort({ createdAt: -1 });
-        res.json(exp);
-    } catch (err) { res.status(500).json({ message: err.message }); }
-});
+    // UPDATE
+    router.put(`/${routePath}/:id`, async (req, res) => {
+        try {
+            const updatedItem = await Model.findByIdAndUpdate(req.params.id, req.body, { new: true });
+            res.json(updatedItem);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    });
 
-router.post('/experience', async (req, res) => {
-    try {
-        const newExp = new Experience(req.body);
-        const savedExp = await newExp.save();
-        res.status(201).json(savedExp);
-    } catch (err) { res.status(400).json({ message: err.message }); }
-});
+    // DELETE
+    router.delete(`/${routePath}/:id`, async (req, res) => {
+        try {
+            await Model.findByIdAndDelete(req.params.id);
+            res.json({ message: 'Deleted successfully' });
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    });
+};
 
-// --- CERTIFICATION ROUTES (এটা মিসিং ছিল) ---
-router.get('/certifications', async (req, res) => {
-    try {
-        const certs = await Certification.find().sort({ createdAt: -1 });
-        res.json(certs);
-    } catch (err) { res.status(500).json({ message: err.message }); }
-});
+// ===========================================
+// INITIALIZE ROUTES
+// ===========================================
 
-router.post('/certifications', async (req, res) => {
-    try {
-        const newCert = new Certification(req.body);
-        const savedCert = await newCert.save();
-        res.status(201).json(savedCert);
-    } catch (err) { res.status(400).json({ message: err.message }); }
-});
+// 1. Projects API ( /api/projects )
+createCrudRoutes('projects', Project);
 
-// --- STATUS ROUTES ---
+// 2. Experience API ( /api/experience )
+createCrudRoutes('experience', Experience);
+
+// 3. Certifications API ( /api/certs )
+createCrudRoutes('certs', Certification);
+
+// 4. Blogs API ( /api/blogs )
+createCrudRoutes('blogs', Blog);
+
+// 5. Featured API ( /api/featured )
+createCrudRoutes('featured', Featured);
+
+
+// ===========================================
+// SPECIAL ROUTE FOR STATUS (SINGLETON)
+// ===========================================
+// Get Status
 router.get('/status', async (req, res) => {
-    try {
-        const status = await GlobalStatus.findOne();
-        res.json(status || { statusText: "Welcome!", statusColor: "gray" });
-    } catch (err) { res.status(500).json({ message: err.message }); }
+    const status = await Status.findOne();
+    // Return default if not found
+    res.json(status || { statusText: "Available", statusColor: "#10B981" });
 });
 
+// Update Status (Create if doesn't exist, Update if does)
 router.post('/status', async (req, res) => {
     try {
-        await GlobalStatus.deleteMany({});
-        const newStatus = new GlobalStatus(req.body);
-        const savedStatus = await newStatus.save();
-        res.json(savedStatus);
-    } catch (err) { res.status(400).json({ message: err.message }); }
+        let status = await Status.findOne();
+        if (status) {
+            // Update existing
+            status.statusText = req.body.statusText;
+            status.statusColor = req.body.statusColor;
+            await status.save();
+        } else {
+            // Create new
+            status = new Status(req.body);
+            await status.save();
+        }
+        res.json(status);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
+// Handle PUT for status as well just in case frontend sends PUT
+router.put('/status/:id', async (req, res) => {
+    try {
+        const updated = await Status.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        res.json(updated);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 
 module.exports = router;

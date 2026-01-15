@@ -1,15 +1,14 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const Project = require('./models/Project');
-const Experience = require('./models/Experience');
-const GlobalStatus = require('./models/GlobalStatus');
-const Certification = require('./models/Certification');
+
+// Import all models
+const { Project, Experience, Certification, Status, Blog, Featured } = require('./models/PortfolioItem');
 
 // Connect to DB
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('✅ MongoDB Connected for Seeding'))
     .catch(err => {
-        console.error(err);
+        console.error('❌ DB Connection Error:', err);
         process.exit(1);
     });
 
@@ -18,9 +17,16 @@ const seedData = async () => {
         // 1. Clear Old Data
         await Project.deleteMany({});
         await Experience.deleteMany({});
-        await GlobalStatus.deleteMany({});
         await Certification.deleteMany({});
+        await Status.deleteMany({});
+        await Blog.deleteMany({});
+        await Featured.deleteMany({});
+        
         console.log('🧹 Old Data Cleared...');
+
+        // =========================================
+        // 2. PREPARE DATA
+        // =========================================
 
         // --- PROJECTS ---
         const projects = [
@@ -82,61 +88,111 @@ const seedData = async () => {
             }
         ];
 
-        // --- CERTIFICATIONS (Corrected Paths) ---
+        // --- CERTIFICATIONS ---
         const certifications = [
             {
                 title: "AWS Services Fundamentals",
                 issuer: "Simplilearn (SkillUp)",
                 date: "Oct 2025",
-                skills: ["AWS", "Cloud Computing"],
-                // "client/" বাদ দিতে হবে 👇
                 image: "assets/aws-cloud.jfif", 
-                credentialLink: "#"
+                credentialLink: "#",
+                description: "Learned AWS core services and Cloud Computing fundamentals.",
+                impact: "Skills gained: AWS, Cloud Computing"
             },
             {
                 title: "AWS Cloud Technical Essentials",
                 issuer: "Grameenphone Academy",
                 date: "Sep 2025",
-                skills: ["AWS", "Serverless"],
                 image: "assets/aws-essentials.jfif",
-                credentialLink: "#"
+                credentialLink: "#",
+                description: "Deep dive into AWS technical essentials and serverless architecture.",
+                impact: "Skills gained: AWS, Serverless"
             },
             {
                 title: "Acing Aptitude Tests",
                 issuer: "Grameenphone Academy",
                 date: "Sep 2025",
-                skills: ["Problem Solving"],
                 image: "assets/aptitude-test.jfif",
-                credentialLink: "#"
+                credentialLink: "#",
+                description: "Mastered problem-solving techniques for technical assessments.",
+                impact: "Skills gained: Problem Solving, Critical Thinking"
             },
             {
                 title: "Employability Skills Program",
                 issuer: "Wadhwani Foundation",
                 date: "Aug 2025",
-                skills: ["Professionalism", "Soft Skills"],
                 image: "assets/employability.jfif",
-                credentialLink: "#"
+                credentialLink: "#",
+                description: "Professional soft skills training for career readiness.",
+                impact: "Skills gained: Professionalism, Communication"
+            }
+        ];
+
+        // --- BLOGS (Problem Solving & Thoughts) ---
+        const blogs = [
+            {
+                title: "কেন ডেটা অ্যানালিটিক্স বর্তমান সময়ের সবচেয়ে ডিমান্ডিং ক্যারিয়ার?",
+                date: "Jan 15, 2026",
+                content: `<p>বর্তমান বিশ্বে প্রতিটি সিদ্ধান্ত ডাটার ওপর ভিত্তি করে নেওয়া হয়। ব্যবসা থেকে শুরু করে স্বাস্থ্যখাত—সবখানেই ডাটার ব্যবহার। একজন ডেটা অ্যানালিস্ট হিসেবে আমি দেখেছি কিভাবে Raw Data কে ইনসাইটে রূপান্তর করে একটি ব্যবসার গতিপথ বদলে দেওয়া যায়।</p>
+                <br>
+                <h4>কেন শিখবেন?</h4>
+                <ul>
+                    <li>হাই স্যালারি এবং রিমোট জবের সুযোগ।</li>
+                    <li>সিদ্ধান্ত গ্রহণে সরাসরি ভূমিকা রাখার ক্ষমতা।</li>
+                    <li>Python, SQL এবং Power BI এর মতো টুলস শেখার সুযোগ।</li>
+                </ul>`
+            },
+            {
+                title: "Optimizing React App Performance by 40%",
+                date: "Jan 10, 2026",
+                content: `<p>React re-renders can kill performance. In this post, I discuss how I used <code>useMemo</code> and <code>React.memo</code> to reduce unnecessary renders in a dashboard application.</p>
+                <p>By profiling the app using React DevTools, I identified bottlenecks in the DataGrid component and implemented virtualization to handle 10,000+ rows smoothly.</p>`
+            },
+            {
+                title: "Integrating Python AI with Node.js Backend",
+                date: "Dec 22, 2025",
+                content: `<p>Microservices architecture is key when mixing stacks. I used <b>Flask</b> to serve the TensorFlow model as a REST API.</p>
+                <p>The Node.js backend communicates with this Python service via HTTP requests. This separation allows the heavy ML processing (GPU intensive) to scale independently of the I/O-bound web server.</p>`
+            }
+        ];
+
+        // --- FEATURED PROJECT ---
+        // (ডাটাবেসে থাকলেও আমরা আপাতত হার্ডকোডেড HTML ব্যবহার করছি, 
+        // তবে ফিউচারে ডাইনামিক করার জন্য ডাটাবেসে সেভ রাখা ভালো)
+        const featured = [
+            {
+                title: "Chest X-ray Disease Classification",
+                tag: "Research & AI Development",
+                summary: "Detecting lung diseases manually is slow and error-prone. I built an end-to-end medical AI web application capable of classifying Chest X-rays into 6 categories with 96.92% Accuracy using ResNet101 and Grad-CAM.",
+                accuracy: "96.92%",
+                dataset: "12k+",
+                model: "ResNet101",
+                image: "assets/xray-project.png",
+                githubLink: "https://github.com/Al-Faravi/Chest-X-ray-Classification-with-Deep-Learning"
             }
         ];
 
         // --- GLOBAL STATUS ---
         const status = {
             statusText: "Building AI solutions 🧠",
-            statusColor: "#10B981",
-            isHiring: true
+            statusColor: "#10B981"
         };
 
-        // Insert All Data
+        // =========================================
+        // 3. INSERT DATA
+        // =========================================
         await Project.insertMany(projects);
         await Experience.insertMany(experience);
         await Certification.insertMany(certifications);
-        await GlobalStatus.create(status);
+        await Blog.insertMany(blogs);
+        await Featured.insertMany(featured);
+        await Status.create(status);
 
         console.log('✅ All Data Imported Successfully!');
         process.exit();
 
     } catch (error) {
-        console.error('❌ Error with data import', error);
+        console.error('❌ Error with data import:', error);
         process.exit(1);
     }
 };

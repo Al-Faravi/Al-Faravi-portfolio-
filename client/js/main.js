@@ -3,25 +3,8 @@ const API_URL = 'http://localhost:5000/api';
 // --- GLOBAL VARIABLES (Data Storage) ---
 let allProjects = [];
 let allCerts = [];
-
-// Blog Dummy Data (Since no backend for blogs yet)
-const blogData = {
-    1: { 
-        title: "Optimizing React Performance by 40%", 
-        date: "Jan 10, 2026", 
-        content: "React re-renders can kill performance. In this post, I discuss how I used <code>useMemo</code> and <code>React.memo</code> to reduce unnecessary renders in a dashboard application. By profiling the app using React DevTools, I identified bottlenecks in the DataGrid component and implemented virtualization to handle 10,000+ rows smoothly." 
-    },
-    2: { 
-        title: "Integrating Python AI with Node.js", 
-        date: "Dec 22, 2025", 
-        content: "Microservices architecture is key when mixing stacks. I used <b>Flask</b> to serve the TensorFlow model as a REST API. The Node.js backend communicates with this Python service via HTTP requests. This separation allows the heavy ML processing (GPU intensive) to scale independently of the I/O-bound web server." 
-    },
-    3: { 
-        title: "Why MongoDB for LMS Architecture?", 
-        date: "Nov 15, 2025", 
-        content: "SQL is rigid. For an LMS where course structures vary (videos, quizzes, assignments), MongoDB's flexible schema allowed us to iterate features 2x faster. We utilized <b>Compound Indexes</b> for fast queries and Aggregation Pipelines for generating complex student performance reports." 
-    }
-};
+let allBlogs = [];
+let allFeatured = []; // 🟢 নতুন ভেরিয়েবল
 
 // =========================================
 // 1. DATA FETCHING & RENDERING
@@ -30,77 +13,133 @@ async function fetchData() {
     try {
         // --- 1.1 Fetch Status ---
         const statusRes = await fetch(`${API_URL}/status`);
-        const statusData = await statusRes.json();
-        const statusText = document.getElementById('status-text');
-        const statusDot = document.querySelector('.status-dot');
-        
-        if (statusText && statusData.statusText) {
-            statusText.innerText = statusData.statusText;
-            if (statusDot) {
-                statusDot.style.backgroundColor = statusData.statusColor;
-                statusDot.style.boxShadow = `0 0 8px ${statusData.statusColor}`;
+        if(statusRes.ok) {
+            const statusData = await statusRes.json();
+            const statusText = document.getElementById('status-text');
+            const statusDot = document.querySelector('.status-dot');
+            
+            if (statusText && statusData.statusText) {
+                statusText.innerText = statusData.statusText;
+                if (statusDot) {
+                    statusDot.style.backgroundColor = statusData.statusColor;
+                    statusDot.style.boxShadow = `0 0 8px ${statusData.statusColor}`;
+                }
             }
         }
 
         // --- 1.2 Fetch Projects ---
         const projRes = await fetch(`${API_URL}/projects`);
-        allProjects = await projRes.json();
-        const projContainer = document.getElementById('project-grid');
-        
-        if (allProjects.length > 0 && projContainer) {
-            // Check if we are on the "All Projects" page or "Home" page
-            const isAllProjectsPage = document.body.classList.contains('projects-page');
+        if(projRes.ok) {
+            allProjects = await projRes.json();
+            const projContainer = document.getElementById('project-grid');
             
-            // If Home page, show 6. If Projects page, show all.
-            const displayProjects = isAllProjectsPage ? allProjects : allProjects.slice(0, 6);
-            
-            projContainer.innerHTML = displayProjects.map((p, index) => `
-                <div class="project-card" onclick="openModal(${index})">
-                    <h3 class="project-title">${p.title}</h3>
-                    <p class="project-desc">${p.description.substring(0, 80)}...</p>
-                    <div class="tech-stack">${p.techStack.slice(0, 3).join(' • ')}</div>
-                    <span style="font-size:0.8rem; text-decoration:underline; margin-top:15px; display:block; color:#10B981;">Read Details &rarr;</span>
-                </div>
-            `).join('');
-        } else if (projContainer) {
-            projContainer.innerHTML = "<p>No projects loaded.</p>";
+            if (allProjects.length > 0 && projContainer) {
+                const isAllProjectsPage = document.body.classList.contains('projects-page');
+                const displayProjects = isAllProjectsPage ? allProjects : allProjects.slice(0, 6);
+                
+                projContainer.innerHTML = displayProjects.map((p, index) => `
+                    <div class="project-card" onclick="openModal(${index})">
+                        <h3 class="project-title">${p.title}</h3>
+                        <p class="project-desc">${p.description.substring(0, 80)}...</p>
+                        <div class="tech-stack">${p.techStack.slice(0, 3).join(' • ')}</div>
+                        <span style="font-size:0.8rem; text-decoration:underline; margin-top:15px; display:block; color:#10B981;">Read Details &rarr;</span>
+                    </div>
+                `).join('');
+            } else if (projContainer) {
+                projContainer.innerHTML = "<p>No projects loaded.</p>";
+            }
         }
 
-        // --- 1.3 Fetch Experience ---
+        // --- 1.3 Fetch Featured Spotlight (🟢 NEW ADDITION) ---
+        const featRes = await fetch(`${API_URL}/featured`);
+        if(featRes.ok) {
+            allFeatured = await featRes.json();
+            const sliderContainer = document.getElementById('featured-slider');
+
+            if (allFeatured.length > 0 && sliderContainer) {
+                sliderContainer.innerHTML = allFeatured.map((f, index) => `
+                    <div class="featured-wrapper">
+                        <div class="featured-content">
+                            <span class="featured-tag">${f.tag || 'Showcase'}</span>
+                            <h3>${f.title}</h3>
+                            <p class="featured-summary">${f.summary}</p>
+                            
+                            <div class="featured-stats">
+                                ${f.accuracy ? `<div class="stat"><strong>${f.accuracy}</strong> Accuracy</div>` : ''}
+                                ${f.dataset ? `<div class="stat"><strong>${f.dataset}</strong> Dataset</div>` : ''}
+                                ${f.model ? `<div class="stat"><strong>${f.model}</strong> Model</div>` : ''}
+                            </div>
+                            
+                            <button onclick="openFeaturedModal(${index})" class="btn-featured">Read Full Case Study &rarr;</button>
+                        </div>
+                        <div class="featured-image">
+                            <img src="${f.image}" onerror="this.src='https://via.placeholder.com/600x400?text=Featured'" alt="${f.title}">
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // --- 1.4 Fetch Experience ---
         const expRes = await fetch(`${API_URL}/experience`);
-        const experiences = await expRes.json();
-        const expContainer = document.getElementById('experience-list');
+        if(expRes.ok) {
+            const experiences = await expRes.json();
+            const expContainer = document.getElementById('experience-list');
 
-        if (experiences.length > 0 && expContainer) {
-            expContainer.innerHTML = experiences.map(e => `
-                <div class="experience-item">
-                    <div>
-                        <h3>${e.role}</h3>
-                        <span class="role-company">${e.company}</span>
+            if (experiences.length > 0 && expContainer) {
+                expContainer.innerHTML = experiences.map(e => `
+                    <div class="experience-item">
+                        <div>
+                            <h3>${e.role}</h3>
+                            <span class="role-company">${e.company}</span>
+                        </div>
+                        <div class="exp-date">${e.duration}</div>
                     </div>
-                    <div class="exp-date">${e.duration}</div>
-                </div>
-            `).join('');
+                `).join('');
+            }
         }
 
-        // --- 1.4 Fetch Certifications ---
-        const certRes = await fetch(`${API_URL}/certifications`);
-        allCerts = await certRes.json();
-        const certContainer = document.getElementById('cert-grid');
+        // --- 1.5 Fetch Certifications ---
+        const certRes = await fetch(`${API_URL}/certs`);
+        if(certRes.ok) {
+            allCerts = await certRes.json();
+            const certContainer = document.getElementById('cert-grid');
 
-        if (allCerts.length > 0 && certContainer) {
-            certContainer.innerHTML = allCerts.map((c, index) => `
-                <div class="cert-card" onclick="openCertModal(${index})" style="cursor: pointer;">
-                    <div class="cert-img-box">
-                        <img src="${c.image}" alt="${c.issuer}" class="cert-img" onerror="this.src='https://via.placeholder.com/100'">
+            if (allCerts.length > 0 && certContainer) {
+                certContainer.innerHTML = allCerts.map((c, index) => `
+                    <div class="cert-card" onclick="openCertModal(${index})" style="cursor: pointer;">
+                        <div class="cert-img-box">
+                            <img src="${c.image}" alt="${c.issuer}" class="cert-img" onerror="this.src='https://via.placeholder.com/100?text=Cert'">
+                        </div>
+                        <div class="cert-info">
+                            <h3>${c.title}</h3>
+                            <div class="cert-issuer">${c.issuer}</div>
+                            <div class="cert-date">Issued ${c.date}</div>
+                        </div>
                     </div>
-                    <div class="cert-info">
-                        <h3>${c.title}</h3>
-                        <div class="cert-issuer">${c.issuer}</div>
-                        <div class="cert-date">Issued ${c.date}</div>
+                `).join('');
+            } else if (certContainer) {
+                certContainer.innerHTML = "<p>No certifications found.</p>";
+            }
+        }
+
+        // --- 1.6 Fetch Blogs ---
+        const blogRes = await fetch(`${API_URL}/blogs`);
+        if(blogRes.ok) {
+            allBlogs = await blogRes.json();
+            const blogContainer = document.querySelector('.blog-grid');
+
+            if (allBlogs.length > 0 && blogContainer) {
+                blogContainer.innerHTML = allBlogs.map((b, index) => `
+                    <div class="blog-card" onclick="openBlogModal(${index})">
+                        <span class="blog-date">${b.date}</span>
+                        <h3>${b.title}</h3>
+                        <span class="blog-link">Read More &rarr;</span>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            } else if (blogContainer) {
+                blogContainer.innerHTML = "<p>No blogs posted yet.</p>";
+            }
         }
 
     } catch (error) {
@@ -119,7 +158,6 @@ window.openModal = function(index) {
     if (!allProjects[index]) return;
     const project = allProjects[index];
     
-    // Populate Modal
     document.getElementById('m-category').innerText = project.category || "Project";
     document.getElementById('m-title').innerText = project.title;
     document.getElementById('m-desc').innerText = project.description;
@@ -143,14 +181,46 @@ window.openModal = function(index) {
     }
 }
 
-// --- 2.2 Featured Project Modal ---
+// --- 2.2 Featured Project Modal (🟢 DYNAMIC) ---
 const featuredModal = document.getElementById('featured-modal');
 
-window.openFeaturedModal = function() {
-    if (featuredModal) {
-        featuredModal.style.display = 'flex';
-        setTimeout(() => featuredModal.classList.add('active'), 10);
+window.openFeaturedModal = function(index) {
+    // 🟢 এখন ইনডেক্স দিয়ে ডাটা আনছে
+    if (!allFeatured[index] || !featuredModal) return;
+    const feat = allFeatured[index];
+
+    // মডালের টাইটেল আপডেট
+    const modalTitle = featuredModal.querySelector('.modal-title');
+    if(modalTitle) modalTitle.innerText = feat.title;
+
+    // মেটা ডাটা আপডেট (Authors বা Tag)
+    const researchMeta = featuredModal.querySelector('.research-meta');
+    if(researchMeta) researchMeta.innerHTML = `<strong>Tag:</strong> ${feat.tag}`;
+
+    // বডি কনটেন্ট আপডেট (সিম্পল টেক্সট বা সামারি)
+    const researchBody = featuredModal.querySelector('.research-body');
+    if(researchBody) {
+        researchBody.innerHTML = `
+            <div class="research-section">
+                <h4>Summary</h4>
+                <p>${feat.summary}</p>
+            </div>
+            <div class="research-section">
+                <h4>Key Metrics</h4>
+                <ul>
+                    <li><strong>Accuracy/Impact:</strong> ${feat.accuracy || 'N/A'}</li>
+                    <li><strong>Dataset/Size:</strong> ${feat.dataset || 'N/A'}</li>
+                    <li><strong>Model/Tech:</strong> ${feat.model || 'N/A'}</li>
+                </ul>
+            </div>
+            <div class="research-links">
+                <a href="${feat.githubLink || '#'}" target="_blank" class="btn-secondary" ${!feat.githubLink ? 'style="display:none"' : ''}>View on GitHub</a>
+            </div>
+        `;
     }
+
+    featuredModal.style.display = 'flex';
+    setTimeout(() => featuredModal.classList.add('active'), 10);
 };
 
 window.closeFeaturedModal = function() {
@@ -167,17 +237,15 @@ window.openCertModal = function(index) {
     if (!allCerts[index] || !certModal) return;
     const cert = allCerts[index];
 
-    // Populate Data
     document.getElementById('c-title').innerText = cert.title;
     document.getElementById('c-issuer').innerText = cert.issuer;
-    // Using simple fallback description if DB is empty
-    document.getElementById('c-desc').innerText = cert.description || `Successfully completed the ${cert.title} certification, mastering key concepts and tools required for professional development.`;
-    document.getElementById('c-impact').innerText = cert.impact || "This certification validated my skills and improved my efficiency in building scalable solutions.";
+    document.getElementById('c-desc').innerText = cert.description || "Training covering core concepts.";
+    document.getElementById('c-impact').innerText = cert.impact || "Applied knowledge in real-world projects.";
     
     const verifyLink = document.getElementById('c-link');
     if(verifyLink) {
         verifyLink.href = cert.credentialLink || '#';
-        verifyLink.style.display = cert.credentialLink ? 'inline-block' : 'none';
+        verifyLink.style.display = (cert.credentialLink && cert.credentialLink !== "#") ? 'inline-block' : 'none';
     }
 
     certModal.style.display = 'flex';
@@ -194,13 +262,13 @@ window.closeCertModal = function() {
 // --- 2.4 Blog Modal ---
 const blogModal = document.getElementById('blog-modal');
 
-window.openBlogModal = function(id) {
-    if(!blogModal || !blogData[id]) return;
-    const blog = blogData[id];
+window.openBlogModal = function(index) {
+    if(!blogModal || !allBlogs[index]) return;
+    const blog = allBlogs[index];
     
     document.getElementById('b-title').innerText = blog.title;
     document.getElementById('b-date').innerText = blog.date;
-    document.getElementById('b-content').innerHTML = `<p>${blog.content}</p>`;
+    document.getElementById('b-content').innerHTML = blog.content; 
     
     blogModal.style.display = 'flex';
     setTimeout(() => blogModal.classList.add('active'), 10);

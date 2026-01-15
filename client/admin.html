@@ -4,44 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | Faravi</title>
+    
     <link rel="stylesheet" href="css/admin.css">
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
     <aside class="sidebar">
-        <div class="brand">Admin Panel.</div>
+        <div class="brand">
+            <i class="fa-solid fa-user-shield"></i> Admin Panel
+        </div>
+        
         <ul class="menu">
-            <li class="active" onclick="showTab('projects')">📂 Projects</li>
-            <li onclick="showTab('experience')">💼 Experience</li>
-            <li onclick="showTab('certs')">🎓 Certifications</li>
-            <li onclick="showTab('status')">🟢 Live Status</li>
+            <li onclick="showTab('status')" id="nav-status">
+                <i class="fa-solid fa-signal"></i> Live Status
+            </li>
+
+            <div class="menu-label">Content</div>
+            
+            <li class="active" onclick="showTab('projects')" id="nav-projects">
+                <i class="fa-solid fa-layer-group"></i> Projects
+            </li>
+            
+            <li onclick="showTab('blogs')" id="nav-blogs">
+                <i class="fa-solid fa-pen-nib"></i> Blogs / Thoughts
+            </li>
+            
+            <li onclick="showTab('featured')" id="nav-featured">
+                <i class="fa-solid fa-star"></i> Featured Spotlight
+            </li>
+
+            <div class="menu-label">Profile</div>
+
+            <li onclick="showTab('experience')" id="nav-experience">
+                <i class="fa-solid fa-briefcase"></i> Experience
+            </li>
+            
+            <li onclick="showTab('certs')" id="nav-certs">
+                <i class="fa-solid fa-certificate"></i> Certifications
+            </li>
         </ul>
-        <a href="index.html" class="logout">← Back to Site</a>
+
+        <div class="sidebar-footer">
+            <a href="index.html" class="logout">
+                <i class="fa-solid fa-arrow-left"></i> Back to Website
+            </a>
+        </div>
     </aside>
 
     <main class="content">
         
         <header>
-            <h2 id="page-title">Manage Projects</h2>
-            <button class="btn-add" onclick="openForm()">+ Add New</button>
+            <div class="header-text">
+                <h2 id="page-title">Manage Projects</h2>
+                <p id="page-desc">Add, edit, or remove your portfolio items.</p>
+            </div>
+            <button class="btn-add" id="btn-add-new" onclick="openForm()">
+                <i class="fa-solid fa-plus"></i> Add New
+            </button>
         </header>
 
         <div id="data-list" class="data-grid">
-            <p>Loading...</p>
+            <div class="loading-spinner">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Loading Data...
+            </div>
         </div>
 
     </main>
 
     <div id="form-modal" class="modal-overlay">
         <div class="modal-box">
-            <h3 id="form-title">Add New Item</h3>
+            <div class="modal-header">
+                <h3 id="form-title">Add New Item</h3>
+                <button class="close-modal" onclick="closeForm()">&times;</button>
+            </div>
+            
             <form id="admin-form">
                 <div id="form-fields"></div>
                 
-                <button type="submit" class="btn-submit">Save Data</button>
-                <button type="button" class="btn-cancel" onclick="closeForm()">Cancel</button>
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="closeForm()">Cancel</button>
+                    <button type="submit" class="btn-submit">Save Changes</button>
+                </div>
             </form>
+        </div>
+    </div>
+
+    <div id="login-overlay" class="login-screen" style="display: none;">
+        <div class="login-box">
+            <h3>Admin Access</h3>
+            <input type="password" id="admin-pass" placeholder="Enter PIN">
+            <button onclick="checkLogin()">Unlock</button>
         </div>
     </div>
 
