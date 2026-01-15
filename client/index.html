@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/style.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -21,9 +21,10 @@
             <a href="#" class="logo">Al-Faravi<span class="accent-dot">.</span></a>
             
             <ul class="nav-links" id="nav-menu">
+                <li><a href="#services" onclick="closeMenu()">Services</a></li>
+                <li><a href="#featured" onclick="closeMenu()">Spotlight</a></li>
                 <li><a href="#experience" onclick="closeMenu()">Experience</a></li>
-                <li><a href="#work" onclick="closeMenu()">Work</a></li>
-                <li><a href="#certifications" onclick="closeMenu()">Certifications</a></li>
+                <li><a href="#work" onclick="closeMenu()">Projects</a></li>
                 <li><a href="#contact" class="btn-contact" onclick="closeMenu()">Contact</a></li>
             </ul>
 
@@ -50,7 +51,7 @@
                     Hi, I am <strong>Shakawat Faravi</strong>. A Full Stack Developer & AI Enthusiast specialized in Medical Imaging, BI Tools & MERN Stack.
                 </p>
                 <div class="hero-btns">
-                    <a href="#work" class="primary-link">View Selected Works ↓</a>
+                    <a href="#featured" class="primary-link">View Featured Work ↓</a>
                     <a href="#contact" class="secondary-link">Let's Talk</a>
                 </div>
             </div>
@@ -60,6 +61,59 @@
             </div>
         </div>
     </header>
+
+    <section id="services" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>What I Do</h2>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-code"></i></div>
+                    <h3>Full Stack Development</h3>
+                    <p>Building scalable, secure, and dynamic web applications using MERN Stack with modern UI/UX.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-brain"></i></div>
+                    <h3>AI & Machine Learning</h3>
+                    <p>Developing intelligent models for medical imaging, prediction systems, and data automation using Python.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                    <h3>Data Visualization & BI</h3>
+                    <p>Transforming raw data into interactive dashboards and actionable insights using Power BI and SQL.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="featured" class="section featured-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Featured Case Study</h2>
+            </div>
+
+            <div class="featured-wrapper">
+                <div class="featured-content">
+                    <span class="featured-tag">Research & AI Development</span>
+                    <h3>Chest X-ray Disease Classification</h3>
+                    <p class="featured-summary">
+                        Detecting lung diseases manually is slow and error-prone. I built an end-to-end medical AI web application capable of classifying Chest X-rays into 6 categories with <strong>96.92% Accuracy</strong> using ResNet101 and Grad-CAM.
+                    </p>
+                    <div class="featured-stats">
+                        <div class="stat"><strong>96.92%</strong> Accuracy</div>
+                        <div class="stat"><strong>12k+</strong> Dataset</div>
+                        <div class="stat"><strong>ResNet101</strong> Model</div>
+                    </div>
+                    <button onclick="openFeaturedModal()" class="btn-featured">Read Full Case Study &rarr;</button>
+                </div>
+                <div class="featured-image">
+                    <img src="assets/xray-project.png" onerror="this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCak0Q8lA9WlxHtLQ4wGZCTbQvDjfIOy96IA&s'" alt="Chest X-Ray AI">
+                </div>
+            </div>
+        </div>
+    </section>
 
     <section id="experience" class="section">
         <div class="container">
@@ -76,8 +130,64 @@
             <div class="section-header">
                 <h2>Selected Works</h2>
             </div>
+            
             <div id="project-grid" class="project-grid">
                 </div>
+
+            <div style="text-align: center; margin-top: 50px;">
+                <a href="projects.html" class="btn-secondary">View All Projects &rarr;</a>
+            </div>
+        </div>
+    </section>
+
+<section id="github" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Coding Activity</h2>
+            </div>
+            
+            <div class="github-wrapper" style="flex-direction: column; align-items: center; gap: 40px;">
+                
+                <div class="gh-graph-box" style="width: 100%; overflow-x: auto; text-align: center;">
+                    <a href="https://github.com/Al-Faravi" target="_blank">
+                        <img src="https://ghchart.rshah.org/10B981/Al-Faravi" alt="Al-Faravi's Github Chart" style="width: 100%; min-width: 700px; max-width: 900px; display: inline-block;">
+                    </a>
+                </div>
+
+                <div class="github-grid" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+
+                </div>
+
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="https://github.com/Al-Faravi" target="_blank" class="primary-link">Visit GitHub Profile ↗</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="blog" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Problem Solving & Thoughts</h2>
+            </div>
+            <div class="blog-grid">
+                <div class="blog-card" onclick="openBlogModal(1)">
+                    <span class="blog-date">Jan 10, 2026</span>
+                    <h3>How I optimized my React App performance by 40%</h3>
+                    <span class="blog-link">Read More &rarr;</span>
+                </div>
+                <div class="blog-card" onclick="openBlogModal(2)">
+                    <span class="blog-date">Dec 22, 2025</span>
+                    <h3>Integrating Python AI Models with Node.js Backend</h3>
+                    <span class="blog-link">Read More &rarr;</span>
+                </div>
+                <div class="blog-card" onclick="openBlogModal(3)">
+                    <span class="blog-date">Nov 15, 2025</span>
+                    <h3>Why I chose MongoDB for my LMS architecture</h3>
+                    <span class="blog-link">Read More &rarr;</span>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -97,14 +207,12 @@
             <div class="section-header">
                 <h2>Get in Touch</h2>
             </div>
-
             <div class="contact-wrapper">
                 <div class="contact-left">
                     <h3>Let's talk</h3>
                     <p class="contact-desc">
                         If you need help with a project, have any inquiries, or just want to chat about tech, don’t hesitate to send me a message.
                     </p>
-                    
                     <div class="contact-details">
                         <div class="contact-item">
                             <div class="icon-box"><i class="fa-solid fa-envelope"></i></div>
@@ -120,10 +228,8 @@
                         </div>
                     </div>
                 </div>
-
                 <form id="contact-form" class="contact-right">
                     <input type="hidden" name="access_key" value="fe6348e1-d356-4537-a346-75732d424439">
-                    
                     <div class="form-group">
                         <label>Your Name</label>
                         <input type="text" name="name" placeholder="Enter your name" required>
@@ -136,7 +242,6 @@
                         <label>Message</label>
                         <textarea name="message" rows="4" placeholder="Enter your message" required></textarea>
                     </div>
-                    
                     <button type="submit" class="btn-submit-form">Submit Now →</button>
                     <p id="form-result" class="form-result"></p>
                 </form>
@@ -147,22 +252,20 @@
     <footer>
         <div class="container footer-container">
             <div class="footer-col">
-                <a href="#" class="logo">Faravi<span class="accent-dot">.</span></a>
-                <p class="footer-quote">
-                    "Success is not final, failure is not fatal: It is the courage to continue that counts."
-                </p>
+                <a href="#" class="logo">Al-Faravi<span class="accent-dot">.</span></a>
+                <p class="footer-quote">"Success is not final, failure is not fatal: It is the courage to continue that counts."</p>
             </div>
-
             <div class="footer-col">
                 <h4>Quick Links</h4>
                 <ul class="footer-shortcuts">
-                    <li><a href="#work">Projects</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#featured">Spotlight</a></li>
                     <li><a href="#experience">Experience</a></li>
+                    <li><a href="#work">Projects</a></li>
                     <li><a href="#contact">Contact</a></li>
                     <li><a href="admin.html" class="admin-link">Admin Login</a></li>
                 </ul>
             </div>
-
             <div class="footer-col">
                 <h4>Connect</h4>
                 <div class="social-icons">
@@ -175,9 +278,7 @@
                 </div>
             </div>
         </div>
-        <div class="copyright-bar">
-            © 2026 Md. Shakawat Hossain Faravi. All Rights Reserved.
-        </div>
+        <div class="copyright-bar">© 2026 Md. Shakawat Hossain Faravi. All Rights Reserved.</div>
     </footer>
 
     <div id="modal-overlay" class="modal-overlay">
@@ -198,20 +299,135 @@
         </div>
     </div>
 
+    <div id="cert-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button onclick="closeCertModal()" class="close-btn">&times;</button>
+            <div class="modal-header">
+                <span class="modal-tag">Certification</span>
+                <h2 id="c-title" class="modal-title">Cert Title</h2>
+                <div id="c-issuer" class="modal-tech">Issuer Name</div>
+            </div>
+            <div class="modal-body">
+                <div class="research-section">
+                    <h4>What I Learned</h4>
+                    <p id="c-desc">Description of skills gained...</p>
+                </div>
+                <div class="research-section">
+                    <h4>Impact</h4>
+                    <p id="c-impact">How this helps in professional work...</p>
+                </div>
+                <div class="modal-links">
+                    <a id="c-link" href="#" target="_blank" class="btn-primary">Verify Credential ↗</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="blog-modal" class="modal-overlay">
+        <div class="modal-content large-modal">
+            <button onclick="closeBlogModal()" class="close-btn">&times;</button>
+            <div class="research-header">
+                <span class="modal-tag">Problem Solving</span>
+                <h2 id="b-title" class="modal-title">Blog Title</h2>
+                <p id="b-date" class="research-meta">Date</p>
+            </div>
+            <div class="research-body">
+                <div id="b-content" class="research-section">
+                    <p>Full blog content goes here...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="featured-modal" class="modal-overlay">
+        <div class="modal-content large-modal">
+            <button onclick="closeFeaturedModal()" class="close-btn">&times;</button>
+            <div class="research-header">
+                <span class="modal-tag">Research Paper</span>
+                <h2 class="modal-title">A Web-Based Project for Detecting Chest Diseases Using Deep Learning</h2>
+                <p class="research-meta"><strong>Authors:</strong> MD. Shakawat Hossain Faravi, MD. Atik Hasan Emon, MD. Saklain Ahmed</p>
+            </div>
+            <div class="research-body">
+                <div class="research-section">
+                    <h4>Abstract</h4>
+                    <p>Chest X-ray classification serves as crucial for the early detection and handling of thoracic diseases. Convolutional Neural Networks (CNNs) are used in this project's web-based system to categorize chest X-ray images into six groups: Covid-19, Emphysema, Healthy, Pneumonia, Tuberculosis, and Random.</p>
+                </div>
+                <div class="research-section">
+                    <h4>Key Methodology</h4>
+                    <ul>
+                        <li><strong>Dataset:</strong> 12,000 photos obtained from Kaggle.</li>
+                        <li><strong>Model:</strong> ResNet101 (Outperformed DenseNet & EfficientNet).</li>
+                        <li><strong>Accuracy:</strong> Achieved 96.92% total accuracy.</li>
+                    </ul>
+                </div>
+                <div class="research-links">
+                    <a href="https://github.com/Al-Faravi/Chest-X-ray-Classification-with-Deep-Learning" target="_blank" class="btn-secondary">View on GitHub</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="js/main.js"></script>
     <script>
-        // Smooth Hamburger Logic (Inline for reliability)
+        // --- Hamburger Logic ---
         const hamburger = document.getElementById('hamburger-btn');
         const navMenu = document.getElementById('nav-menu');
         
         hamburger.addEventListener('click', () => {
             navMenu.classList.toggle('active');
-            hamburger.classList.toggle('active'); // Triggers X animation
+            hamburger.classList.toggle('active');
         });
 
         function closeMenu() {
             navMenu.classList.remove('active');
             hamburger.classList.remove('active');
+        }
+
+        // --- Featured Modal Logic ---
+        const featuredModal = document.getElementById('featured-modal');
+        function openFeaturedModal() {
+            featuredModal.style.display = 'flex';
+            setTimeout(() => featuredModal.classList.add('active'), 10);
+        }
+        function closeFeaturedModal() {
+            featuredModal.classList.remove('active');
+            setTimeout(() => featuredModal.style.display = 'none', 300);
+        }
+
+        // --- Blog Modal Logic (Dummy Data) ---
+        const blogModal = document.getElementById('blog-modal');
+        const blogs = {
+            1: { title: "Optimizing React Performance", date: "Jan 10, 2026", content: "React re-renders can kill performance. In this post, I discuss how I used useMemo and React.memo to reduce unnecessary renders by 40% in a dashboard application..." },
+            2: { title: "Integrating Python AI with Node.js", date: "Dec 22, 2025", content: "Microservices architecture is key. I used Flask to serve the AI model and communicated with the Node.js backend via REST API endpoints..." },
+            3: { title: "Why MongoDB for LMS?", date: "Nov 15, 2025", content: "SQL is rigid. For an LMS where course structures vary, MongoDB's flexible schema allowed us to iterate features 2x faster..." }
+        };
+
+        function openBlogModal(id) {
+            const blog = blogs[id];
+            document.getElementById('b-title').innerText = blog.title;
+            document.getElementById('b-date').innerText = blog.date;
+            document.getElementById('b-content').innerHTML = `<p>${blog.content}</p>`;
+            
+            blogModal.style.display = 'flex';
+            setTimeout(() => blogModal.classList.add('active'), 10);
+        }
+        function closeBlogModal() {
+            blogModal.classList.remove('active');
+            setTimeout(() => blogModal.style.display = 'none', 300);
+        }
+
+        // --- Cert Modal Logic (Helper) ---
+        const certModal = document.getElementById('cert-modal');
+        function closeCertModal() {
+            certModal.classList.remove('active');
+            setTimeout(() => certModal.style.display = 'none', 300);
+        }
+
+        // Close modals on outside click
+        window.onclick = function(event) {
+            if (event.target == featuredModal) closeFeaturedModal();
+            if (event.target == blogModal) closeBlogModal();
+            if (event.target == certModal) closeCertModal();
         }
     </script>
 </body>

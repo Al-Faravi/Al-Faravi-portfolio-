@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Selected Works | Md. Shakawat Hossain Faravi</title>
+    
+    <link rel="stylesheet" href="css/style.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        .page-header {
+            padding-top: 140px;
+            padding-bottom: 40px;
+            text-align: center;
+        }
+        .back-btn-wrapper {
+            margin-bottom: 20px;
+        }
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: 0.3s;
+        }
+        .btn-back:hover {
+            color: var(--accent);
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+
+<body class="projects-page">
+
+    <div class="bg-texture"></div> 
+
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">Al-Faravi<span class="accent-dot">.</span></a>
+            
+            <ul class="nav-links" id="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#services">Services</a></li>
+                <li><a href="index.html#experience">Experience</a></li>
+                <li><a href="index.html#contact" class="btn-contact">Contact</a></li>
+            </ul>
+
+            <div class="hamburger" id="hamburger-btn">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <header class="section page-header">
+        <div class="container">
+            <div class="back-btn-wrapper">
+                <a href="index.html" class="btn-back">
+                    <i class="fa-solid fa-arrow-left-long"></i> Back to Home
+                </a>
+            </div>
+
+            <div class="section-header" style="justify-content: center; margin-bottom: 20px;">
+                <h2>All Selected Works</h2>
+            </div>
+            <p style="max-width: 600px; margin: 0 auto; color: var(--text-muted);">
+                A complete archive of my web development, data analysis, and AI research projects. Exploring solutions through code and creativity.
+            </p>
+        </div>
+    </header>
+
+    <section class="section" style="padding-top: 0;">
+        <div class="container">
+            <div id="project-grid" class="project-grid">
+                <p class="loading-text" style="text-align:center; width:100%;">Loading projects...</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container footer-container">
+            <div class="footer-col">
+                <a href="index.html" class="logo">Faravi<span class="accent-dot">.</span></a>
+                <p class="footer-quote">
+                    "Success is not final, failure is not fatal: It is the courage to continue that counts."
+                </p>
+            </div>
+
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul class="footer-shortcuts">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#featured">Spotlight</a></li>
+                    <li><a href="index.html#experience">Experience</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                    <li><a href="admin.html" class="admin-link">Admin Login</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Connect</h4>
+                <div class="social-icons">
+                    <a href="https://web.facebook.com/faravi.hossain/" target="_blank" class="s-icon fb"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/al__faravi/" target="_blank" class="s-icon ig"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://x.com/ShakawatFa6848" target="_blank" class="s-icon tw"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="https://github.com/Al-Faravi" target="_blank" class="s-icon gh"><i class="fa-brands fa-github"></i></a>
+                    <a href="https://t.me/Al_Faravi" target="_blank" class="s-icon tg"><i class="fa-brands fa-telegram"></i></a>
+                    <a href="https://wa.me/8801719269328" target="_blank" class="s-icon wa"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright-bar">
+            © 2026 Md. Shakawat Hossain Faravi. All Rights Reserved.
+        </div>
+    </footer>
+
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-modal" class="close-btn">&times;</button>
+            <div class="modal-header">
+                <span id="m-category" class="modal-tag">Category</span>
+                <h2 id="m-title" class="modal-title">Project Title</h2>
+                <div id="m-tech" class="modal-tech">Tech</div>
+            </div>
+            <div class="modal-body">
+                <p id="m-desc" class="modal-desc">Description...</p>
+                <div class="modal-links">
+                    <a id="m-live" href="#" target="_blank" class="btn-primary">Live Site ↗</a>
+                    <a id="m-github" href="#" target="_blank" class="btn-secondary">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    
+    <script>
+        const hamburger = document.getElementById('hamburger-btn');
+        const navMenu = document.getElementById('nav-menu');
+        
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+
+        function closeMenu() {
+            navMenu.classList.remove('active');
+            hamburger.classList.remove('active');
+        }
+
+        // Ensuring Modal Close Logic works here too
+        const pModal = document.getElementById('modal-overlay');
+        const pCloseBtn = document.getElementById('close-modal');
+
+        if(pCloseBtn) {
+            pCloseBtn.addEventListener('click', () => {
+                pModal.classList.remove('active');
+                setTimeout(() => pModal.style.display = 'none', 300);
+            });
+        }
+
+        window.onclick = function(event) {
+            if (event.target == pModal) {
+                pModal.classList.remove('active');
+                setTimeout(() => pModal.style.display = 'none', 300);
+            }
+        }
+    </script>
+</body>
+</html>
