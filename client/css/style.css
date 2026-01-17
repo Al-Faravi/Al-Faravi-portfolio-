@@ -17,7 +17,7 @@
     
     /* Layout */
     --container-width: 1150px;
-    --section-spacing: 90px; /* Reduced from 120px for better flow */
+    --section-spacing: 90px;
     --card-radius: 12px;
     
     /* Animation */
@@ -105,8 +105,8 @@ nav {
    3. HERO SECTION
    ========================================= */
 .hero { 
-    padding: 140px 0 80px; /* Reduced Top/Bottom padding */
-    min-height: auto; /* Remove 90vh to reduce gap */
+    padding: 140px 0 80px;
+    min-height: auto;
     display: flex; align-items: center; 
 }
 .hero-container { display: flex; align-items: center; justify-content: space-between; gap: 50px; }
@@ -179,20 +179,52 @@ nav {
 .service-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
 
 /* =========================================
-   7. FEATURED PROJECT (SPOTLIGHT)
+   7. FEATURED PROJECT SLIDER (NEW & UPDATED)
    ========================================= */
 .featured-section { background: #fff; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-.featured-wrapper {
-    display: grid; grid-template-columns: 1fr 1.2fr; gap: 50px; align-items: center;
+
+/* Slider Container */
+.featured-slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 20px;
+    padding-bottom: 20px; /* Space for shadow */
+    scrollbar-width: none; /* Hide scrollbar Firefox */
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
 }
-.featured-content { order: 1; }
+.featured-slider::-webkit-scrollbar {
+    display: none; /* Hide scrollbar Chrome/Safari */
+}
+
+/* Individual Slide Wrapper */
+.featured-wrapper {
+    min-width: 100%; /* Full width of container for 1 slide */
+    scroll-snap-align: center;
+    display: flex; /* Flex row layout */
+    align-items: center;
+    gap: 50px;
+    background: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.featured-content { flex: 1; order: 1; }
+
 .featured-image {
-    order: 2; border-radius: 12px; overflow: hidden; 
+    flex: 1.2; 
+    order: 2;
+    border-radius: 12px; 
+    overflow: hidden; 
     box-shadow: 0 15px 30px rgba(0,0,0,0.08);
 }
 .featured-image img { width: 100%; height: auto; display: block; transition: transform 0.6s ease; }
 .featured-image:hover img { transform: scale(1.03); }
 
+/* Tags & Typography */
 .featured-tag {
     display: inline-block; background: #ecfdf5; color: var(--accent);
     padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; 
@@ -200,6 +232,8 @@ nav {
 }
 .featured-content h3 { font-family: var(--font-head); font-size: 2.2rem; line-height: 1.2; margin-bottom: 15px; }
 .featured-summary { color: var(--text-muted); margin-bottom: 25px; font-size: 1rem; }
+
+/* Stats */
 .featured-stats {
     display: flex; gap: 30px; margin-bottom: 30px;
     border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 15px 0;
@@ -207,12 +241,38 @@ nav {
 .stat { font-size: 0.9rem; color: var(--text-main); }
 .stat strong { display: block; font-size: 1.1rem; color: var(--accent); margin-bottom: 2px; }
 
+/* Buttons */
 .btn-featured {
     background: var(--text-main); color: var(--white); border: none;
     padding: 12px 28px; border-radius: 6px; cursor: pointer; font-size: 0.95rem; transition: var(--transition);
     font-weight: 500;
 }
 .btn-featured:hover { background: #333; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+
+/* Slider Navigation Arrows */
+.slider-nav {
+    display: flex;
+    gap: 10px;
+}
+.nav-btn {
+    background: white;
+    border: 1px solid var(--border);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--text-main);
+}
+.nav-btn:hover {
+    background: var(--text-main);
+    color: white;
+    border-color: var(--text-main);
+}
 
 /* =========================================
    8. EXPERIENCE (Timeline)
@@ -373,6 +433,21 @@ footer { background: #fff; border-top: 1px solid var(--border); padding-top: 80p
     .hero { padding: 120px 0 60px; }
 }
 
+@media (max-width: 968px) {
+    /* Featured Slider Mobile Layout */
+    .featured-wrapper {
+        flex-direction: column-reverse; /* ছবি উপরে, টেক্সট নিচে */
+        padding: 25px;
+        gap: 20px;
+        text-align: center;
+    }
+    .featured-content { width: 100%; }
+    .featured-image { width: 100%; text-align: center; }
+    .featured-stats { justify-content: center; gap: 15px; }
+    .featured-tag { display: inline-block; }
+    .slider-nav { display: none; } /* Hide arrows on mobile, swipe used instead */
+}
+
 @media (max-width: 768px) {
     /* Adjusted Section Spacing for Mobile */
     :root { --section-spacing: 50px; }
@@ -428,11 +503,7 @@ footer { background: #fff; border-top: 1px solid var(--border); padding-top: 80p
     .blog-card h3 { font-size: 1rem; margin: 10px 0; }
     .blog-date { font-size: 0.7rem; }
 
-    /* Single Column Layouts */
-    .featured-wrapper { grid-template-columns: 1fr; padding: 25px; gap: 20px; }
-    .featured-image { margin-top: 15px; }
-    .featured-content h3 { font-size: 1.6rem; }
-    
+    /* Contact & Footer */
     .contact-wrapper { grid-template-columns: 1fr; gap: 40px; }
     .contact-right { padding: 25px; }
     

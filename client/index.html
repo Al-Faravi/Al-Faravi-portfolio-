@@ -5,11 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Md. Shakawat Hossain Faravi | Portfolio</title>
     
+    <meta name="description" content="Portfolio of Md. Shakawat Hossain Faravi - Full Stack Developer & AI Enthusiast specializing in MERN Stack, Medical Imaging AI, and Data Analysis.">
+    <meta name="keywords" content="Al Faravi, Faravi, Shakawat Hossain Faravi, MD. Shakawat Hossain Faravi, Web Developer Bangladesh, AI Engineer, MERN Stack Developer, Portfolio">
+    <meta name="author" content="Md. Shakawat Hossain Faravi">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://al-faravi-portfolio.vercel.app/">
+    <meta property="og:title" content="Md. Shakawat Hossain Faravi | Full Stack Developer & AI Enthusiast">
+    <meta property="og:description" content="Explore the portfolio of Shakawat Faravi. Projects involve AI, Medical Imaging, and Full Stack Web Development.">
+    <meta property="og:image" content="https://al-faravi-portfolio.vercel.app/assets/profile.jpg">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://al-faravi-portfolio.vercel.app/">
+    <meta property="twitter:title" content="Md. Shakawat Hossain Faravi | Portfolio">
+    <meta property="twitter:description" content="Full Stack Developer & AI Enthusiast. Check out my latest projects.">
+    <meta property="twitter:image" content="https://al-faravi-portfolio.vercel.app/assets/profile.jpg">
+
+    <meta name="google-site-verification" content="ia-mEza2Gsyus9-JeJYIR6elLTiFLdrWwm191stU9cc" />
+
     <link rel="stylesheet" href="css/style.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -22,6 +39,7 @@
             padding-bottom: 20px;
             scrollbar-width: none; /* Hide scrollbar Firefox */
             scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
         }
         .featured-slider::-webkit-scrollbar {
             display: none; /* Hide scrollbar Chrome/Safari */
@@ -29,7 +47,6 @@
         .featured-wrapper {
             min-width: 100%; /* Creates the slide effect */
             scroll-snap-align: center;
-            /* Existing styles inheritance */
             display: flex;
             align-items: center;
             gap: 50px;
@@ -38,7 +55,23 @@
             border-radius: 20px;
             border: 1px solid #e5e5e5;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            /* Mobile adjustment default */
+            flex-direction: row;
         }
+        .featured-content {
+            flex: 1;
+        }
+        .featured-image {
+            flex: 1;
+            text-align: right;
+        }
+        .featured-image img {
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        /* Slider Navigation Buttons */
         .slider-nav {
             display: flex;
             gap: 10px;
@@ -58,16 +91,32 @@
             color: #333;
         }
         .nav-btn:hover {
-            background: #111;
+            background: #10B981;
             color: white;
-            border-color: #111;
+            border-color: #10B981;
         }
+
         /* Mobile Responsive for Slider */
         @media (max-width: 968px) {
             .featured-wrapper {
-                flex-direction: column-reverse;
+                flex-direction: column-reverse; /* Stack Image on top of text */
                 gap: 30px;
-                padding: 20px;
+                padding: 25px;
+                text-align: center;
+            }
+            .featured-image {
+                width: 100%;
+                text-align: center;
+            }
+            .featured-stats {
+                justify-content: center;
+            }
+            .featured-tag {
+                display: inline-block;
+            }
+            /* Hide arrows on mobile, rely on swipe */
+            .slider-nav {
+                display: none;
             }
         }
     </style>
@@ -117,7 +166,7 @@
             </div>
 
             <div class="hero-img-box">
-                <img src="assets/profile.jpg" alt="Md. Shakawat Hossain Faravi" class="hero-img" onerror="this.src='https://via.placeholder.com/400'">
+                <img src="assets/IMG202409121555c50.jpg" alt="Md. Shakawat Hossain Faravi" class="hero-img" onerror="this.src='https://via.placeholder.com/400'">
             </div>
         </div>
     </header>
@@ -159,7 +208,6 @@
             </div>
 
             <div class="featured-slider" id="featured-slider">
-                
                 <div class="featured-wrapper">
                     <div class="featured-content">
                         <span class="featured-tag">Research & AI Development</span>
@@ -175,30 +223,10 @@
                         <button onclick="openFeaturedModal()" class="btn-featured">Read Full Case Study &rarr;</button>
                     </div>
                     <div class="featured-image">
-                        <img src="assets/xray-project.png" onerror="this.src='https://www.level.agency/wp-content/uploads/2025/02/shutterstock_2458633861-scaled.jpg'" alt="Chest X-Ray AI">
+                        <img src="assets/xray-project.png" onerror="this.src='https://via.placeholder.com/600x400?text=AI+Project'" alt="Chest X-Ray AI">
                     </div>
                 </div>
-
-                <div class="featured-wrapper">
-                    <div class="featured-content">
-                        <span class="featured-tag">Full Stack Development</span>
-                        <h3>CareerLift Hybrid LMS Portal</h3>
-                        <p class="featured-summary">
-                            A production-grade LMS designed to bridge offline and online education. Engineered a scalable architecture using Node.js and MongoDB to handle 500+ student records with secure JWT Authentication.
-                        </p>
-                        <div class="featured-stats">
-                            <div class="stat"><strong>500+</strong> Students</div>
-                            <div class="stat"><strong>RBAC</strong> Security</div>
-                            <div class="stat"><strong>MERN</strong> Stack</div>
-                        </div>
-                        <button class="btn-featured">View Project Details &rarr;</button>
-                    </div>
-                    <div class="featured-image">
-                        <img src="https://via.placeholder.com/600x400?text=LMS+Dashboard" alt="LMS Portal">
-                    </div>
                 </div>
-
-            </div>
         </div>
     </section>
 
@@ -236,13 +264,11 @@
             </div>
             
             <div class="github-wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 40px;">
-                
                 <div class="gh-graph-box" style="width: 100%; overflow-x: auto; text-align: center;">
                     <a href="https://github.com/Al-Faravi" target="_blank">
                         <img src="https://ghchart.rshah.org/10B981/Al-Faravi" alt="Al-Faravi's Github Chart" style="min-width: 600px; max-width: 100%; display: inline-block;">
                     </a>
                 </div>
-
             </div>
 
             <div style="text-align: center; margin-top: 40px;">
@@ -256,7 +282,6 @@
             <div class="section-header">
                 <h2>Problem Solving & Thoughts</h2>
             </div>
-            
             <div class="blog-grid">
                 <p class="loading-text" style="text-align:center; color:#888;">Loading articles...</p>
             </div>

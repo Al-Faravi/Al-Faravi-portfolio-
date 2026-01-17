@@ -1,17 +1,35 @@
-//const API_URL = 'http://localhost:5000/api';
-const API_URL = '/api';
+// const API_URL = 'http://localhost:5000/api';
+const API_URL = '/api'; // Vercel Deployment Relative Path
+
 // --- GLOBAL VARIABLES (Data Storage) ---
 let allProjects = [];
 let allCerts = [];
 let allBlogs = [];
-let allFeatured = []; // 🟢 নতুন ভেরিয়েবল
+let allFeatured = []; // 🟢 Featured Data
 
 // =========================================
-// 1. DATA FETCHING & RENDERING
+// 1. SLIDER CONTROLS (NEW ADDITION)
+// =========================================
+window.slideRight = function() {
+    const slider = document.getElementById('featured-slider');
+    if (slider) {
+        slider.scrollBy({ left: slider.clientWidth, behavior: 'smooth' });
+    }
+};
+
+window.slideLeft = function() {
+    const slider = document.getElementById('featured-slider');
+    if (slider) {
+        slider.scrollBy({ left: -slider.clientWidth, behavior: 'smooth' });
+    }
+};
+
+// =========================================
+// 2. DATA FETCHING & RENDERING
 // =========================================
 async function fetchData() {
     try {
-        // --- 1.1 Fetch Status ---
+        // --- 2.1 Fetch Status ---
         const statusRes = await fetch(`${API_URL}/status`);
         if(statusRes.ok) {
             const statusData = await statusRes.json();
@@ -27,7 +45,7 @@ async function fetchData() {
             }
         }
 
-        // --- 1.2 Fetch Projects ---
+        // --- 2.2 Fetch Projects ---
         const projRes = await fetch(`${API_URL}/projects`);
         if(projRes.ok) {
             allProjects = await projRes.json();
@@ -50,7 +68,7 @@ async function fetchData() {
             }
         }
 
-        // --- 1.3 Fetch Featured Spotlight (🟢 NEW ADDITION) ---
+        // --- 2.3 Fetch Featured Spotlight ---
         const featRes = await fetch(`${API_URL}/featured`);
         if(featRes.ok) {
             allFeatured = await featRes.json();
@@ -77,10 +95,12 @@ async function fetchData() {
                         </div>
                     </div>
                 `).join('');
+            } else if (sliderContainer) {
+                sliderContainer.innerHTML = "<p style='text-align:center; width:100%;'>No featured items yet.</p>";
             }
         }
 
-        // --- 1.4 Fetch Experience ---
+        // --- 2.4 Fetch Experience ---
         const expRes = await fetch(`${API_URL}/experience`);
         if(expRes.ok) {
             const experiences = await expRes.json();
@@ -99,7 +119,7 @@ async function fetchData() {
             }
         }
 
-        // --- 1.5 Fetch Certifications ---
+        // --- 2.5 Fetch Certifications ---
         const certRes = await fetch(`${API_URL}/certs`);
         if(certRes.ok) {
             allCerts = await certRes.json();
@@ -123,7 +143,7 @@ async function fetchData() {
             }
         }
 
-        // --- 1.6 Fetch Blogs ---
+        // --- 2.6 Fetch Blogs ---
         const blogRes = await fetch(`${API_URL}/blogs`);
         if(blogRes.ok) {
             allBlogs = await blogRes.json();
@@ -148,10 +168,10 @@ async function fetchData() {
 }
 
 // =========================================
-// 2. MODAL LOGIC HANDLERS
+// 3. MODAL LOGIC HANDLERS
 // =========================================
 
-// --- 2.1 General Project Modal ---
+// --- 3.1 General Project Modal ---
 const projectModal = document.getElementById('modal-overlay');
 
 window.openModal = function(index) {
@@ -181,23 +201,21 @@ window.openModal = function(index) {
     }
 }
 
-// --- 2.2 Featured Project Modal (🟢 DYNAMIC) ---
+// --- 3.2 Featured Project Modal ---
 const featuredModal = document.getElementById('featured-modal');
 
 window.openFeaturedModal = function(index) {
-    // 🟢 এখন ইনডেক্স দিয়ে ডাটা আনছে
     if (!allFeatured[index] || !featuredModal) return;
     const feat = allFeatured[index];
 
-    // মডালের টাইটেল আপডেট
+    // মডালের টাইটেল এবং ট্যাগ আপডেট
     const modalTitle = featuredModal.querySelector('.modal-title');
     if(modalTitle) modalTitle.innerText = feat.title;
 
-    // মেটা ডাটা আপডেট (Authors বা Tag)
     const researchMeta = featuredModal.querySelector('.research-meta');
     if(researchMeta) researchMeta.innerHTML = `<strong>Tag:</strong> ${feat.tag}`;
 
-    // বডি কনটেন্ট আপডেট (সিম্পল টেক্সট বা সামারি)
+    // বডি কনটেন্ট আপডেট
     const researchBody = featuredModal.querySelector('.research-body');
     if(researchBody) {
         researchBody.innerHTML = `
@@ -230,7 +248,7 @@ window.closeFeaturedModal = function() {
     }
 };
 
-// --- 2.3 Certification Modal ---
+// --- 3.3 Certification Modal ---
 const certModal = document.getElementById('cert-modal');
 
 window.openCertModal = function(index) {
@@ -259,7 +277,7 @@ window.closeCertModal = function() {
     }
 }
 
-// --- 2.4 Blog Modal ---
+// --- 3.4 Blog Modal ---
 const blogModal = document.getElementById('blog-modal');
 
 window.openBlogModal = function(index) {
@@ -281,7 +299,7 @@ window.closeBlogModal = function() {
     }
 }
 
-// --- 2.5 General Close Handler ---
+// --- 3.5 General Close Handler (Close X buttons) ---
 const closeBtn = document.getElementById('close-modal');
 if(closeBtn) {
     closeBtn.addEventListener('click', () => {
@@ -302,7 +320,7 @@ window.onclick = function(event) {
 }
 
 // =========================================
-// 3. CONTACT FORM LOGIC
+// 4. CONTACT FORM LOGIC
 // =========================================
 const contactForm = document.getElementById('contact-form');
 const formResult = document.getElementById('form-result');
@@ -350,7 +368,7 @@ if (contactForm) {
 }
 
 // =========================================
-// 4. HAMBURGER & ADMIN SHORTCUT
+// 5. HAMBURGER & ADMIN SHORTCUT
 // =========================================
 document.addEventListener('DOMContentLoaded', () => {
     const hamburger = document.getElementById('hamburger-btn');
