@@ -5,10 +5,10 @@ const API_URL = '/api'; // Vercel Deployment Relative Path
 let allProjects = [];
 let allCerts = [];
 let allBlogs = [];
-let allFeatured = []; // 🟢 Featured Data
+let allFeatured = []; 
 
 // =========================================
-// 1. SLIDER CONTROLS (NEW ADDITION)
+// 1. SLIDER CONTROLS
 // =========================================
 window.slideRight = function() {
     const slider = document.getElementById('featured-slider');
@@ -25,145 +25,165 @@ window.slideLeft = function() {
 };
 
 // =========================================
-// 2. DATA FETCHING & RENDERING
+// 2. DATA FETCHING & RENDERING (Robust Error Handling)
 // =========================================
 async function fetchData() {
     try {
+        console.log("Fetching data...");
+
         // --- 2.1 Fetch Status ---
-        const statusRes = await fetch(`${API_URL}/status`);
-        if(statusRes.ok) {
-            const statusData = await statusRes.json();
-            const statusText = document.getElementById('status-text');
-            const statusDot = document.querySelector('.status-dot');
-            
-            if (statusText && statusData.statusText) {
-                statusText.innerText = statusData.statusText;
-                if (statusDot) {
-                    statusDot.style.backgroundColor = statusData.statusColor;
-                    statusDot.style.boxShadow = `0 0 8px ${statusData.statusColor}`;
+        try {
+            const statusRes = await fetch(`${API_URL}/status`);
+            if(statusRes.ok) {
+                const statusData = await statusRes.json();
+                const statusText = document.getElementById('status-text');
+                const statusDot = document.querySelector('.status-dot');
+                
+                if (statusText && statusData.statusText) {
+                    statusText.innerText = statusData.statusText;
+                    if (statusDot) {
+                        statusDot.style.backgroundColor = statusData.statusColor;
+                        statusDot.style.boxShadow = `0 0 8px ${statusData.statusColor}`;
+                    }
                 }
             }
-        }
+        } catch (err) { console.warn("Status fetch failed", err); }
 
         // --- 2.2 Fetch Projects ---
-        const projRes = await fetch(`${API_URL}/projects`);
-        if(projRes.ok) {
-            allProjects = await projRes.json();
-            const projContainer = document.getElementById('project-grid');
-            
-            if (allProjects.length > 0 && projContainer) {
-                const isAllProjectsPage = document.body.classList.contains('projects-page');
-                const displayProjects = isAllProjectsPage ? allProjects : allProjects.slice(0, 6);
-                
-                projContainer.innerHTML = displayProjects.map((p, index) => `
-                    <div class="project-card" onclick="openModal(${index})">
-                        <h3 class="project-title">${p.title}</h3>
-                        <p class="project-desc">${p.description.substring(0, 80)}...</p>
-                        <div class="tech-stack">${p.techStack.slice(0, 3).join(' • ')}</div>
-                        <span style="font-size:0.8rem; text-decoration:underline; margin-top:15px; display:block; color:#10B981;">Read Details &rarr;</span>
-                    </div>
-                `).join('');
-            } else if (projContainer) {
-                projContainer.innerHTML = "<p>No projects loaded.</p>";
-            }
+        const projContainer = document.getElementById('project-grid');
+        try {
+            const projRes = await fetch(`${API_URL}/projects`);
+            if(projRes.ok) {
+                allProjects = await projRes.json();
+                if (allProjects.length > 0 && projContainer) {
+                    const isAllProjectsPage = document.body.classList.contains('projects-page');
+                    const displayProjects = isAllProjectsPage ? allProjects : allProjects.slice(0, 6);
+                    
+                    projContainer.innerHTML = displayProjects.map((p, index) => `
+                        <div class="project-card" onclick="openModal(${index})">
+                            <h3 class="project-title">${p.title}</h3>
+                            <p class="project-desc">${p.description.substring(0, 80)}...</p>
+                            <div class="tech-stack">${p.techStack.slice(0, 3).join(' • ')}</div>
+                            <span style="font-size:0.8rem; text-decoration:underline; margin-top:15px; display:block; color:#10B981;">Read Details &rarr;</span>
+                        </div>
+                    `).join('');
+                } else if (projContainer) {
+                    projContainer.innerHTML = "<p>No projects found.</p>";
+                }
+            } else { throw new Error("Failed to fetch projects"); }
+        } catch (err) {
+            if(projContainer) projContainer.innerHTML = "<p style='color:red;'>Could not load projects. Server might be sleeping.</p>";
+            console.error(err);
         }
 
         // --- 2.3 Fetch Featured Spotlight ---
-        const featRes = await fetch(`${API_URL}/featured`);
-        if(featRes.ok) {
-            allFeatured = await featRes.json();
-            const sliderContainer = document.getElementById('featured-slider');
-
-            if (allFeatured.length > 0 && sliderContainer) {
-                sliderContainer.innerHTML = allFeatured.map((f, index) => `
-                    <div class="featured-wrapper">
-                        <div class="featured-content">
-                            <span class="featured-tag">${f.tag || 'Showcase'}</span>
-                            <h3>${f.title}</h3>
-                            <p class="featured-summary">${f.summary}</p>
-                            
-                            <div class="featured-stats">
-                                ${f.accuracy ? `<div class="stat"><strong>${f.accuracy}</strong> Accuracy</div>` : ''}
-                                ${f.dataset ? `<div class="stat"><strong>${f.dataset}</strong> Dataset</div>` : ''}
-                                ${f.model ? `<div class="stat"><strong>${f.model}</strong> Model</div>` : ''}
+        const sliderContainer = document.getElementById('featured-slider');
+        try {
+            const featRes = await fetch(`${API_URL}/featured`);
+            if(featRes.ok) {
+                allFeatured = await featRes.json();
+                if (allFeatured.length > 0 && sliderContainer) {
+                    sliderContainer.innerHTML = allFeatured.map((f, index) => `
+                        <div class="featured-wrapper">
+                            <div class="featured-content">
+                                <span class="featured-tag">${f.tag || 'Showcase'}</span>
+                                <h3>${f.title}</h3>
+                                <p class="featured-summary">${f.summary}</p>
+                                
+                                <div class="featured-stats">
+                                    ${f.accuracy ? `<div class="stat"><strong>${f.accuracy}</strong> Accuracy</div>` : ''}
+                                    ${f.dataset ? `<div class="stat"><strong>${f.dataset}</strong> Dataset</div>` : ''}
+                                    ${f.model ? `<div class="stat"><strong>${f.model}</strong> Model</div>` : ''}
+                                </div>
+                                
+                                <button onclick="openFeaturedModal(${index})" class="btn-featured">Read Full Case Study &rarr;</button>
                             </div>
-                            
-                            <button onclick="openFeaturedModal(${index})" class="btn-featured">Read Full Case Study &rarr;</button>
+                            <div class="featured-image">
+                                <img src="${f.image}" onerror="this.src='https://placehold.co/600x400?text=Featured'" alt="${f.title}">
+                            </div>
                         </div>
-                        <div class="featured-image">
-                            <img src="${f.image}" onerror="this.src='https://via.placeholder.com/600x400?text=Featured'" alt="${f.title}">
-                        </div>
-                    </div>
-                `).join('');
-            } else if (sliderContainer) {
-                sliderContainer.innerHTML = "<p style='text-align:center; width:100%;'>No featured items yet.</p>";
-            }
+                    `).join('');
+                } else if (sliderContainer) {
+                    sliderContainer.innerHTML = "<p style='text-align:center; width:100%;'>No featured items yet.</p>";
+                }
+            } else { throw new Error("Failed to fetch featured"); }
+        } catch (err) {
+            if(sliderContainer) sliderContainer.innerHTML = "<p style='text-align:center;'>Could not load featured section.</p>";
         }
 
         // --- 2.4 Fetch Experience ---
-        const expRes = await fetch(`${API_URL}/experience`);
-        if(expRes.ok) {
-            const experiences = await expRes.json();
-            const expContainer = document.getElementById('experience-list');
-
-            if (experiences.length > 0 && expContainer) {
-                expContainer.innerHTML = experiences.map(e => `
-                    <div class="experience-item">
-                        <div>
-                            <h3>${e.role}</h3>
-                            <span class="role-company">${e.company}</span>
+        const expContainer = document.getElementById('experience-list');
+        try {
+            const expRes = await fetch(`${API_URL}/experience`);
+            if(expRes.ok) {
+                const experiences = await expRes.json();
+                if (experiences.length > 0 && expContainer) {
+                    expContainer.innerHTML = experiences.map(e => `
+                        <div class="experience-item">
+                            <div>
+                                <h3>${e.role}</h3>
+                                <span class="role-company">${e.company}</span>
+                            </div>
+                            <div class="exp-date">${e.duration}</div>
                         </div>
-                        <div class="exp-date">${e.duration}</div>
-                    </div>
-                `).join('');
+                    `).join('');
+                }
             }
+        } catch (err) {
+            if(expContainer) expContainer.innerHTML = "<p>Experience data unavailable.</p>";
         }
 
         // --- 2.5 Fetch Certifications ---
-        const certRes = await fetch(`${API_URL}/certs`);
-        if(certRes.ok) {
-            allCerts = await certRes.json();
-            const certContainer = document.getElementById('cert-grid');
-
-            if (allCerts.length > 0 && certContainer) {
-                certContainer.innerHTML = allCerts.map((c, index) => `
-                    <div class="cert-card" onclick="openCertModal(${index})" style="cursor: pointer;">
-                        <div class="cert-img-box">
-                            <img src="${c.image}" alt="${c.issuer}" class="cert-img" onerror="this.src='https://via.placeholder.com/100?text=Cert'">
+        const certContainer = document.getElementById('cert-grid');
+        try {
+            const certRes = await fetch(`${API_URL}/certs`);
+            if(certRes.ok) {
+                allCerts = await certRes.json();
+                if (allCerts.length > 0 && certContainer) {
+                    certContainer.innerHTML = allCerts.map((c, index) => `
+                        <div class="cert-card" onclick="openCertModal(${index})" style="cursor: pointer;">
+                            <div class="cert-img-box">
+                                <img src="${c.image}" alt="${c.issuer}" class="cert-img" onerror="this.src='https://placehold.co/100?text=Cert'">
+                            </div>
+                            <div class="cert-info">
+                                <h3>${c.title}</h3>
+                                <div class="cert-issuer">${c.issuer}</div>
+                                <div class="cert-date">Issued ${c.date}</div>
+                            </div>
                         </div>
-                        <div class="cert-info">
-                            <h3>${c.title}</h3>
-                            <div class="cert-issuer">${c.issuer}</div>
-                            <div class="cert-date">Issued ${c.date}</div>
-                        </div>
-                    </div>
-                `).join('');
-            } else if (certContainer) {
-                certContainer.innerHTML = "<p>No certifications found.</p>";
+                    `).join('');
+                } else if (certContainer) {
+                    certContainer.innerHTML = "<p>No certifications found.</p>";
+                }
             }
+        } catch (err) {
+            if(certContainer) certContainer.innerHTML = "<p>Could not load certifications.</p>";
         }
 
         // --- 2.6 Fetch Blogs ---
-        const blogRes = await fetch(`${API_URL}/blogs`);
-        if(blogRes.ok) {
-            allBlogs = await blogRes.json();
-            const blogContainer = document.querySelector('.blog-grid');
-
-            if (allBlogs.length > 0 && blogContainer) {
-                blogContainer.innerHTML = allBlogs.map((b, index) => `
-                    <div class="blog-card" onclick="openBlogModal(${index})">
-                        <span class="blog-date">${b.date}</span>
-                        <h3>${b.title}</h3>
-                        <span class="blog-link">Read More &rarr;</span>
-                    </div>
-                `).join('');
-            } else if (blogContainer) {
-                blogContainer.innerHTML = "<p>No blogs posted yet.</p>";
+        const blogContainer = document.querySelector('.blog-grid');
+        try {
+            const blogRes = await fetch(`${API_URL}/blogs`);
+            if(blogRes.ok) {
+                allBlogs = await blogRes.json();
+                if (allBlogs.length > 0 && blogContainer) {
+                    blogContainer.innerHTML = allBlogs.map((b, index) => `
+                        <div class="blog-card" onclick="openBlogModal(${index})">
+                            <span class="blog-date">${b.date}</span>
+                            <h3>${b.title}</h3>
+                            <span class="blog-link">Read More &rarr;</span>
+                        </div>
+                    `).join('');
+                } else if (blogContainer) {
+                    blogContainer.innerHTML = "<p>No blogs posted yet.</p>";
+                }
             }
+        } catch (err) {
+            if(blogContainer) blogContainer.innerHTML = "<p>Blog section unavailable.</p>";
         }
 
     } catch (error) {
-        console.error("API Error:", error);
+        console.error("Global API Error:", error);
     }
 }
 

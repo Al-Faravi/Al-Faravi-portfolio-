@@ -7,68 +7,94 @@
     
     <link rel="stylesheet" href="css/admin.css">
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <aside class="sidebar">
-        <div class="brand">
-            <i class="fa-solid fa-user-shield"></i> Admin Panel
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand">
+                <div class="brand-icon"><i class="fa-solid fa-user-shield"></i></div>
+                <span>Admin Panel</span>
+            </div>
+            <button class="close-sidebar-btn" onclick="toggleSidebar()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
         
         <ul class="menu">
             <li onclick="showTab('status')" id="nav-status">
-                <i class="fa-solid fa-signal"></i> Live Status
+                <i class="fa-solid fa-signal"></i> 
+                <span>Live Status</span>
             </li>
 
-            <div class="menu-label">Content</div>
+            <div class="menu-label">Content Management</div>
             
             <li class="active" onclick="showTab('projects')" id="nav-projects">
-                <i class="fa-solid fa-layer-group"></i> Projects
+                <i class="fa-solid fa-layer-group"></i> 
+                <span>Projects</span>
             </li>
             
             <li onclick="showTab('blogs')" id="nav-blogs">
-                <i class="fa-solid fa-pen-nib"></i> Blogs / Thoughts
+                <i class="fa-solid fa-pen-nib"></i> 
+                <span>Blogs / Thoughts</span>
             </li>
             
             <li onclick="showTab('featured')" id="nav-featured">
-                <i class="fa-solid fa-star"></i> Featured Spotlight
+                <i class="fa-solid fa-star"></i> 
+                <span>Featured Spotlight</span>
             </li>
 
-            <div class="menu-label">Profile</div>
+            <div class="menu-label">Profile Settings</div>
 
             <li onclick="showTab('experience')" id="nav-experience">
-                <i class="fa-solid fa-briefcase"></i> Experience
+                <i class="fa-solid fa-briefcase"></i> 
+                <span>Experience</span>
             </li>
             
             <li onclick="showTab('certs')" id="nav-certs">
-                <i class="fa-solid fa-certificate"></i> Certifications
+                <i class="fa-solid fa-certificate"></i> 
+                <span>Certifications</span>
             </li>
         </ul>
 
         <div class="sidebar-footer">
             <a href="index.html" class="logout">
-                <i class="fa-solid fa-arrow-left"></i> Back to Website
+                <i class="fa-solid fa-arrow-left"></i> 
+                <span>Back to Website</span>
             </a>
         </div>
     </aside>
 
     <main class="content">
         
-        <header>
-            <div class="header-text">
-                <h2 id="page-title">Manage Projects</h2>
-                <p id="page-desc">Add, edit, or remove your portfolio items.</p>
+        <header class="top-bar">
+            <div class="header-left">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                
+                <div class="header-text">
+                    <h2 id="page-title">Manage Projects</h2>
+                    <p id="page-desc">Add, edit, or remove your portfolio items.</p>
+                </div>
             </div>
-            <button class="btn-add" id="btn-add-new" onclick="openForm()">
-                <i class="fa-solid fa-plus"></i> Add New
-            </button>
+
+            <div class="header-right">
+                <button class="btn-add" id="btn-add-new" onclick="openForm()">
+                    <i class="fa-solid fa-plus"></i> 
+                    <span class="btn-text">Add New</span>
+                </button>
+            </div>
         </header>
 
         <div id="data-list" class="data-grid">
-            <div class="loading-spinner">
-                <i class="fa-solid fa-circle-notch fa-spin"></i> Loading Data...
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Loading Data...</p>
             </div>
         </div>
 
@@ -78,28 +104,50 @@
         <div class="modal-box">
             <div class="modal-header">
                 <h3 id="form-title">Add New Item</h3>
-                <button class="close-modal" onclick="closeForm()">&times;</button>
+                <button class="close-modal" onclick="closeForm()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
             
-            <form id="admin-form">
-                <div id="form-fields"></div>
-                
-                <div class="form-actions">
-                    <button type="button" class="btn-cancel" onclick="closeForm()">Cancel</button>
-                    <button type="submit" class="btn-submit">Save Changes</button>
-                </div>
-            </form>
+            <div class="modal-body">
+                <form id="admin-form">
+                    <div id="form-fields" class="form-grid"></div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel" onclick="closeForm()">Cancel</button>
+                        <button type="submit" class="btn-submit">
+                            <i class="fa-solid fa-check"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
     <div id="login-overlay" class="login-screen" style="display: none;">
-        <div class="login-box">
+        <div class="login-card">
+            <div class="login-icon">
+                <i class="fa-solid fa-lock"></i>
+            </div>
             <h3>Admin Access</h3>
-            <input type="password" id="admin-pass" placeholder="Enter PIN">
-            <button onclick="checkLogin()">Unlock</button>
+            <p>Enter your secure PIN to continue</p>
+            
+            <div class="input-group">
+                <input type="password" id="admin-pass" placeholder="Enter PIN code">
+                <button onclick="checkLogin()" class="btn-login">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
         </div>
     </div>
 
     <script src="js/admin.js"></script>
+    
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.querySelector('.sidebar-overlay').classList.toggle('active');
+        }
+    </script>
 </body>
 </html>

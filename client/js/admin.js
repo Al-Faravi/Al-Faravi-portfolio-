@@ -1,34 +1,36 @@
-//const API_URL = 'http://localhost:5000/api';
-const API_URL = '/api';
-// State Variables
+// const API_URL = 'http://localhost:5000/api';
+const API_URL = '/api'; // Production Relative Path
+
+// --- State Variables ---
 let currentTab = 'projects';
 let isEditing = false;
 let editId = null;
 
 // =========================================
-// 1. AUTHENTICATION (Server-Side Secure Check)
+// 1. AUTHENTICATION & INITIALIZATION
 // =========================================
 
 // Check session on load
-if (!sessionStorage.getItem('admin_token')) {
-    document.getElementById('login-overlay').style.display = 'flex';
-} else {
-    document.getElementById('login-overlay').style.display = 'none';
-    showTab('projects');
-}
+document.addEventListener('DOMContentLoaded', () => {
+    if (!sessionStorage.getItem('admin_token')) {
+        document.getElementById('login-overlay').style.display = 'flex';
+    } else {
+        document.getElementById('login-overlay').style.display = 'none';
+        showTab('projects');
+    }
+});
 
 async function checkLogin() {
     const pinInput = document.getElementById('admin-pass');
     const pin = pinInput.value;
-    const btn = document.querySelector('#login-overlay button');
-    const originalText = btn.innerText;
+    const btn = document.querySelector('.btn-login');
+    const originalContent = btn.innerHTML;
 
     // UI Loading State
-    btn.innerText = "Checking...";
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
     btn.disabled = true;
 
     try {
-        // Call Server API to verify PIN
         const res = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -38,12 +40,10 @@ async function checkLogin() {
         const result = await res.json();
 
         if (result.success) {
-            // Success: Save token & Enter
             sessionStorage.setItem('admin_token', 'secure_session');
             document.getElementById('login-overlay').style.display = 'none';
             showTab('projects');
         } else {
-            // Error: Wrong PIN
             alert('❌ Wrong PIN! Access Denied.');
             pinInput.value = '';
         }
@@ -51,11 +51,15 @@ async function checkLogin() {
         console.error("Auth Error:", error);
         alert('⚠️ Server Error. Ensure backend is running.');
     } finally {
-        // Reset Button
-        btn.innerText = originalText;
+        btn.innerHTML = originalContent;
         btn.disabled = false;
     }
 }
+
+// Allow 'Enter' key for login
+document.getElementById('admin-pass')?.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') checkLogin();
+});
 
 // =========================================
 // 2. TAB NAVIGATION
@@ -77,14 +81,22 @@ function showTab(tab) {
         'certs': 'Certifications',
         'status': 'Live Status'
     };
-    document.getElementById('page-title').innerText = titles[tab] || 'Manage Content';
+    
+    const pageTitle = document.getElementById('page-title');
+    if (pageTitle) pageTitle.innerText = titles[tab] || 'Manage Content';
 
-    // Toggle Add Button (Status tab doesn't need "Add New")
+    // Toggle Add Button
     const addBtn = document.getElementById('btn-add-new');
-    if (tab === 'status') addBtn.style.display = 'none';
-    else addBtn.style.display = 'flex';
+    if (addBtn) {
+        addBtn.style.display = (tab === 'status') ? 'none' : 'flex';
+    }
 
-    // Fetch Data for the selected tab
+    // Mobile: Close sidebar after selection
+    if (window.innerWidth <= 768) {
+        document.getElementById('sidebar').classList.remove('active');
+        document.querySelector('.sidebar-overlay').classList.remove('active');
+    }
+
     fetchData();
 }
 
@@ -93,7 +105,11 @@ function showTab(tab) {
 // =========================================
 async function fetchData() {
     const list = document.getElementById('data-list');
-    list.innerHTML = `<div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading...</div>`;
+    list.innerHTML = `
+        <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Loading Data...</p>
+        </div>`;
 
     try {
         const res = await fetch(`${API_URL}/${currentTab}`);
@@ -101,7 +117,7 @@ async function fetchData() {
         renderData(data);
     } catch (error) {
         console.error('Error fetching data:', error);
-        list.innerHTML = `<p style="color:red; text-align:center;">Failed to load data. Is server running?</p>`;
+        list.innerHTML = `<p style="color:var(--danger); text-align:center; margin-top:20px;">Failed to load data. Is server running?</p>`;
     }
 }
 
@@ -109,7 +125,7 @@ function renderData(data) {
     const list = document.getElementById('data-list');
     list.innerHTML = '';
 
-    // Handle Status Tab (Single Object)
+    // Handle Status Tab
     if (currentTab === 'status') {
         renderStatus(data);
         return;
@@ -117,26 +133,29 @@ function renderData(data) {
 
     // Handle Empty Lists
     if (!Array.isArray(data) || data.length === 0) {
-        list.innerHTML = '<p style="text-align:center; color:#888;">No items found. Add new.</p>';
+        list.innerHTML = `
+            <div style="text-align:center; padding:40px; color:var(--secondary);">
+                <i class="fa-solid fa-folder-open" style="font-size:2rem; margin-bottom:10px; opacity:0.5;"></i>
+                <p>No items found. Add new.</p>
+            </div>`;
         return;
     }
 
     // Render Cards
     data.forEach(item => {
-        // Dynamic Title/Subtitle based on tab
         let title = item.title || item.role || 'Untitled';
-        let subtitle = item.company || item.issuer || item.date || '';
+        let subtitle = item.company || item.issuer || item.date || item.summary || '';
         
         const card = document.createElement('div');
         card.className = 'data-item';
         card.innerHTML = `
             <div class="item-info">
-                <h4>${title}</h4>
                 <div class="tag">${currentTab.toUpperCase()}</div>
-                <p>${subtitle.substring(0, 50)}</p>
+                <h4>${title}</h4>
+                <p>${subtitle.substring(0, 60)}${subtitle.length > 60 ? '...' : ''}</p>
             </div>
             <div class="actions">
-                <button class="btn-icon btn-edit" onclick='openForm(${JSON.stringify(item)})'>
+                <button class="btn-icon btn-edit" onclick='openForm(${JSON.stringify(item).replace(/'/g, "&apos;")})'>
                     <i class="fa-solid fa-pen"></i>
                 </button>
                 <button class="btn-icon btn-delete" onclick="deleteItem('${item._id}')">
@@ -150,34 +169,20 @@ function renderData(data) {
 
 function renderStatus(data) {
     const list = document.getElementById('data-list');
-    // Default values if data is empty
     const statusText = data.statusText || 'No Status Set';
     const statusColor = data.statusColor || '#ccc';
 
     list.innerHTML = `
-        <div class="data-item" style="display:block; text-align:center; padding: 40px;">
-            <h3 style="margin-bottom:20px;">Current Status on Website</h3>
-            <div style="margin-bottom:20px;">
-                <span style="
-                    display:inline-block; 
-                    padding:10px 25px; 
-                    border-radius:50px; 
-                    background:#fff; 
-                    border:1px solid #ddd; 
-                    font-weight:bold;
-                    font-size: 1rem;
-                ">
-                    <span style="
-                        display:inline-block; 
-                        width:12px; height:12px; 
-                        background:${statusColor}; 
-                        border-radius:50%; margin-right:8px;
-                    "></span>
-                    ${statusText}
-                </span>
+        <div class="data-item" style="display:flex; flex-direction:column; align-items:center; text-align:center; padding: 40px; gap:20px;">
+            <h3>Current Website Status</h3>
+            
+            <div style="display:flex; align-items:center; gap:10px; padding:10px 20px; border:1px solid var(--border); border-radius:50px; background:#FFF;">
+                <span style="width:12px; height:12px; background:${statusColor}; border-radius:50%; box-shadow: 0 0 5px ${statusColor};"></span>
+                <span style="font-weight:600; color:var(--primary);">${statusText}</span>
             </div>
-            <button class="btn-add" style="margin:0 auto;" onclick='openForm(${JSON.stringify(data)})'>
-                Update Status
+
+            <button class="btn-add" onclick='openForm(${JSON.stringify(data)})'>
+                <i class="fa-solid fa-pen"></i> Update Status
             </button>
         </div>
     `;
@@ -195,7 +200,6 @@ function openForm(item = null) {
     
     document.getElementById('form-title').innerText = isEditing ? 'Edit Item' : 'Add New Item';
     
-    // Generate Fields based on currentTab
     let html = '';
     
     if (currentTab === 'projects') {
@@ -232,11 +236,11 @@ function openForm(item = null) {
         html += createInput('Date Issued', 'date', item?.date);
         html += createInput('Image URL', 'image', item?.image);
         html += createInput('Credential Link', 'credentialLink', item?.credentialLink);
-        html += createTextarea('Description (What learned)', 'description', item?.description);
+        html += createTextarea('Description', 'description', item?.description);
         html += createTextarea('Impact', 'impact', item?.impact);
     } 
     else if (currentTab === 'status') {
-        html += createInput('Status Text (e.g. Available for work)', 'statusText', item?.statusText);
+        html += createInput('Status Text', 'statusText', item?.statusText);
         html += `
             <div class="input-group">
                 <label>Status Color</label>
@@ -250,12 +254,19 @@ function openForm(item = null) {
     }
 
     formFields.innerHTML = html;
+    modal.classList.add('active'); // Changed display:flex to class active for CSS animation
     modal.style.display = 'flex';
 }
 
 function closeForm() {
-    modal.style.display = 'none';
+    modal.classList.remove('active');
+    setTimeout(() => { modal.style.display = 'none'; }, 200);
 }
+
+// Close modal on outside click
+modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeForm();
+});
 
 // Helpers
 function createInput(label, name, value = '') {
@@ -282,6 +293,11 @@ function createTextarea(label, name, value = '') {
 document.getElementById('admin-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     
+    const submitBtn = e.target.querySelector('.btn-submit');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+    submitBtn.disabled = true;
+
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
 
@@ -309,6 +325,9 @@ document.getElementById('admin-form').addEventListener('submit', async (e) => {
     } catch (error) {
         console.error(error);
         alert('Server Error');
+    } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
     }
 });
 
@@ -333,7 +352,3 @@ async function deleteItem(id) {
         alert('Error deleting');
     }
 }
-
-// Initial Load
-// No need to call fetchData here directly, 
-// because checkLogin() or the initial session check will call showTab('projects')
