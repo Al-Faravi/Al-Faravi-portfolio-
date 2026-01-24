@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* Featured Section Slider Styles */
+        /* --- 1. Featured Section Slider Styles --- */
         .featured-slider {
             display: flex;
             overflow-x: auto;
@@ -55,69 +55,87 @@
             border-radius: 20px;
             border: 1px solid #e5e5e5;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            /* Mobile adjustment default */
             flex-direction: row;
         }
-        .featured-content {
-            flex: 1;
-        }
-        .featured-image {
-            flex: 1;
-            text-align: right;
-        }
+        .featured-content { flex: 1; }
+        .featured-image { flex: 1; text-align: right; }
         .featured-image img {
             max-width: 100%;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
-        /* Slider Navigation Buttons */
-        .slider-nav {
-            display: flex;
-            gap: 10px;
-        }
+        .slider-nav { display: flex; gap: 10px; }
         .nav-btn {
-            background: white;
-            border: 1px solid #e5e5e5;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            color: #333;
+            background: white; border: 1px solid #e5e5e5;
+            width: 40px; height: 40px; border-radius: 50%;
+            cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; color: #333;
         }
         .nav-btn:hover {
-            background: #10B981;
-            color: white;
-            border-color: #10B981;
+            background: #10B981; color: white; border-color: #10B981;
         }
 
-        /* Mobile Responsive for Slider */
+        /* --- 2. Tech Stack Marquee (Infinite Scroll) --- */
+        .marquee-wrapper {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+            padding: 20px 0;
+        }
+        .marquee-track {
+            display: flex;
+            gap: 40px; /* Space between items */
+            width: max-content;
+            animation: scroll 30s linear infinite;
+        }
+        .tech-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #4B5563;
+            background: #fff;
+            padding: 12px 25px;
+            border-radius: 50px;
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            white-space: nowrap;
+            transition: transform 0.3s ease;
+        }
+        .tech-item:hover { transform: translateY(-3px); border-color: #10B981; color: #10B981; }
+        .tech-item i { color: #10B981; font-size: 1.4rem; }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); } /* Moves exactly half the width (since we duplicated items) */
+        }
+        
+        /* Pause animation on hover for accessibility */
+        .marquee-wrapper:hover .marquee-track {
+            animation-play-state: paused;
+        }
+
+        /* --- 3. Responsive Adjustments --- */
         @media (max-width: 968px) {
             .featured-wrapper {
-                flex-direction: column-reverse; /* Stack Image on top of text */
-                gap: 30px;
-                padding: 25px;
-                text-align: center;
+                flex-direction: column-reverse;
+                gap: 30px; padding: 25px; text-align: center;
             }
-            .featured-image {
-                width: 100%;
-                text-align: center;
-            }
-            .featured-stats {
-                justify-content: center;
-            }
-            .featured-tag {
-                display: inline-block;
-            }
-            /* Hide arrows on mobile, rely on swipe */
-            .slider-nav {
-                display: none;
-            }
+            .featured-image { width: 100%; text-align: center; }
+            .featured-stats { justify-content: center; }
+            .featured-tag { display: inline-block; }
+            .slider-nav { display: none; }
+        }
+
+        @media (max-width: 768px) {
+            .marquee-track { gap: 20px; animation-duration: 20s; } /* Faster on mobile */
+            .tech-item { padding: 10px 20px; font-size: 0.95rem; }
+            .tech-item i { font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -166,7 +184,7 @@
             </div>
 
             <div class="hero-img-box">
-                <img src="assets/IMG202409121555c50.jpg" alt="Md. Shakawat Hossain Faravi" class="hero-img" onerror="this.src='https://via.placeholder.com/400'">
+                <img src="assets/IMG202409121555c50.jpg" alt="Md. Shakawat Hossain Faravi" class="hero-img" onerror="this.src='https://placehold.co/400?text=Profile'">
             </div>
         </div>
     </header>
@@ -197,6 +215,37 @@
         </div>
     </section>
 
+    <section class="section" style="padding-top: 0; padding-bottom: 60px;">
+        <div class="container">
+            <div class="marquee-wrapper">
+                <div class="marquee-track">
+                    <div class="tech-item"><i class="fa-brands fa-react"></i> React</div>
+                    <div class="tech-item"><i class="fa-brands fa-node-js"></i> Node.js</div>
+                    <div class="tech-item"><i class="fa-brands fa-python"></i> Python</div>
+                    <div class="tech-item"><i class="fa-solid fa-database"></i> MongoDB</div>
+                    <div class="tech-item"><i class="fa-brands fa-js"></i> JavaScript</div>
+                    <div class="tech-item"><i class="fa-solid fa-brain"></i> TensorFlow</div>
+                    <div class="tech-item"><i class="fa-solid fa-chart-simple"></i> Power BI</div>
+                    <div class="tech-item"><i class="fa-brands fa-docker"></i> Docker</div>
+                    <div class="tech-item"><i class="fa-brands fa-git-alt"></i> Git</div>
+                    <div class="tech-item"><i class="fa-brands fa-html5"></i> HTML5</div>
+                    <div class="tech-item"><i class="fa-brands fa-css3-alt"></i> Tailwind</div>
+
+                    <div class="tech-item"><i class="fa-brands fa-react"></i> React</div>
+                    <div class="tech-item"><i class="fa-brands fa-node-js"></i> Node.js</div>
+                    <div class="tech-item"><i class="fa-brands fa-python"></i> Python</div>
+                    <div class="tech-item"><i class="fa-solid fa-database"></i> MongoDB</div>
+                    <div class="tech-item"><i class="fa-brands fa-js"></i> JavaScript</div>
+                    <div class="tech-item"><i class="fa-solid fa-brain"></i> TensorFlow</div>
+                    <div class="tech-item"><i class="fa-solid fa-chart-simple"></i> Power BI</div>
+                    <div class="tech-item"><i class="fa-brands fa-docker"></i> Docker</div>
+                    <div class="tech-item"><i class="fa-brands fa-git-alt"></i> Git</div>
+                    <div class="tech-item"><i class="fa-brands fa-html5"></i> HTML5</div>
+                    <div class="tech-item"><i class="fa-brands fa-css3-alt"></i> Tailwind</div>
+                </div>
+            </div>
+        </div>
+    </section>
     <section id="featured" class="section featured-section">
         <div class="container">
             <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
@@ -210,23 +259,12 @@
             <div class="featured-slider" id="featured-slider">
                 <div class="featured-wrapper">
                     <div class="featured-content">
-                        <span class="featured-tag">Research & AI Development</span>
-                        <h3>Chest X-ray Disease Classification</h3>
-                        <p class="featured-summary">
-                            Detecting lung diseases manually is slow and error-prone. I built an end-to-end medical AI web application capable of classifying Chest X-rays into 6 categories with <strong>96.92% Accuracy</strong> using ResNet101 and Grad-CAM.
-                        </p>
-                        <div class="featured-stats">
-                            <div class="stat"><strong>96.92%</strong> Accuracy</div>
-                            <div class="stat"><strong>12k+</strong> Dataset</div>
-                            <div class="stat"><strong>ResNet101</strong> Model</div>
-                        </div>
-                        <button onclick="openFeaturedModal()" class="btn-featured">Read Full Case Study &rarr;</button>
-                    </div>
-                    <div class="featured-image">
-                        <img src="assets/xray-project.png" onerror="this.src='https://placehold.co/600x400?text=AI+Project'" alt="Chest X-Ray AI">
+                        <span class="featured-tag">Loading...</span>
+                        <h3>Please wait</h3>
+                        <p class="featured-summary">Connecting to server...</p>
                     </div>
                 </div>
-                </div>
+            </div>
         </div>
     </section>
 
@@ -441,40 +479,15 @@
             <button onclick="closeFeaturedModal()" class="close-btn">&times;</button>
             <div class="research-header">
                 <span class="modal-tag">Research Paper</span>
-                <h2 class="modal-title">A Web-Based Project for Detecting Chest Diseases Using Deep Learning</h2>
-                <p class="research-meta"><strong>Authors:</strong> MD. Shakawat Hossain Faravi, MD. Atik Hasan Emon, MD. Saklain Ahmed</p>
+                <h2 class="modal-title">Project Title</h2>
+                <p class="research-meta"><strong>Tag:</strong> Research</p>
             </div>
             <div class="research-body">
-                <div class="research-section">
-                    <h4>Abstract</h4>
-                    <p>Chest X-ray classification serves as crucial for the early detection and handling of thoracic diseases. Convolutional Neural Networks (CNNs) are used in this project's web-based system to categorize chest X-ray images into six groups: Covid-19, Emphysema, Healthy, Pneumonia, Tuberculosis, and Random.</p>
                 </div>
-                <div class="research-section">
-                    <h4>Key Methodology</h4>
-                    <ul>
-                        <li><strong>Dataset:</strong> 12,000 photos obtained from Kaggle.</li>
-                        <li><strong>Model:</strong> ResNet101 (Outperformed DenseNet & EfficientNet).</li>
-                        <li><strong>Accuracy:</strong> Achieved 96.92% total accuracy.</li>
-                    </ul>
-                </div>
-                <div class="research-links">
-                    <a href="https://github.com/Al-Faravi/Chest-X-ray-Classification-with-Deep-Learning" target="_blank" class="btn-secondary">View on GitHub</a>
-                </div>
-            </div>
         </div>
     </div>
 
     <script src="js/main.js"></script>
     
-    <script>
-        function slideRight() {
-            const slider = document.getElementById('featured-slider');
-            slider.scrollBy({ left: slider.clientWidth, behavior: 'smooth' });
-        }
-        function slideLeft() {
-            const slider = document.getElementById('featured-slider');
-            slider.scrollBy({ left: -slider.clientWidth, behavior: 'smooth' });
-        }
-    </script>
 </body>
 </html>
