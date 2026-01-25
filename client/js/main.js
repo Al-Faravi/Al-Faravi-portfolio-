@@ -228,14 +228,12 @@ window.openFeaturedModal = function(index) {
     if (!allFeatured[index] || !featuredModal) return;
     const feat = allFeatured[index];
 
-    // মডালের টাইটেল এবং ট্যাগ আপডেট
     const modalTitle = featuredModal.querySelector('.modal-title');
     if(modalTitle) modalTitle.innerText = feat.title;
 
     const researchMeta = featuredModal.querySelector('.research-meta');
     if(researchMeta) researchMeta.innerHTML = `<strong>Tag:</strong> ${feat.tag}`;
 
-    // বডি কনটেন্ট আপডেট
     const researchBody = featuredModal.querySelector('.research-body');
     if(researchBody) {
         researchBody.innerHTML = `
@@ -432,5 +430,107 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+// =========================================
+// 6. SMART LIVE CLOCK, DATE & GEOLOCATION WEATHER (NEW)
+// =========================================
+
+// --- A. Time & Date (Browser's Local Time) ---
+function updateLiveWidget() {
+    const liveTime = document.getElementById('live-time');
+    const liveDate = document.getElementById('live-date');
+    if (!liveTime) return; // Guard clause if widget not present
+
+    const now = new Date();
+    
+    // Time Setup
+    let hours = now.getHours();
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; 
+    
+    liveTime.innerText = `${hours}:${minutes} ${ampm}`;
+
+    // Date Setup
+    const options = { month: 'short', day: 'numeric', weekday: 'short' };
+    if (liveDate) liveDate.innerText = now.toLocaleDateString('en-US', options);
+}
+setInterval(updateLiveWidget, 1000);
+updateLiveWidget();
+
+// --- B. Weather (Geolocation Based) ---
+const WEATHER_API_KEY = 'b140d4764e7e30ec785c37515da8ea5d';
+
+async function getWeatherData(lat, lon) {
+    try {
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${WEATHER_API_KEY}`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.main) {
+            updateWeatherUI(data);
+        }
+    } catch (error) {
+        console.error("Weather API Error:", error);
+        const locEl = document.getElementById('live-location');
+        if(locEl) locEl.innerText = "Offline";
+    }
+}
+
+// Fallback to Dhaka
+async function getDefaultWeather() {
+    try {
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=Dhaka&units=metric&appid=${WEATHER_API_KEY}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        updateWeatherUI(data);
+    } catch (err) { console.error(err); }
+}
+
+function updateWeatherUI(data) {
+    // 1. Temp
+    const tempEl = document.getElementById('live-temp');
+    if(tempEl) tempEl.innerText = `${Math.round(data.main.temp)}°C`;
+
+    // 2. Location Name
+    const locEl = document.getElementById('live-location');
+    if(locEl) locEl.innerText = data.name;
+
+    // 3. Icon Logic
+    const weatherIcon = document.getElementById('weather-icon');
+    if (weatherIcon && data.weather && data.weather.length > 0) {
+        const main = data.weather[0].main.toLowerCase();
+        weatherIcon.className = ''; // Reset
+        
+        if(main.includes('cloud')) weatherIcon.className = "fa-solid fa-cloud";
+        else if(main.includes('rain')) weatherIcon.className = "fa-solid fa-cloud-showers-heavy";
+        else if(main.includes('clear')) weatherIcon.className = "fa-solid fa-sun";
+        else if(main.includes('snow')) weatherIcon.className = "fa-regular fa-snowflake";
+        else if(main.includes('mist') || main.includes('haze')) weatherIcon.className = "fa-solid fa-smog";
+        else weatherIcon.className = "fa-solid fa-cloud-sun";
+    }
+}
+
+// --- C. Initialize Location ---
+function initWeather() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                getWeatherData(latitude, longitude);
+            },
+            (error) => {
+                console.warn("Location denied. Showing Default.");
+                getDefaultWeather();
+            }
+        );
+    } else {
+        getDefaultWeather();
+    }
+}
+
 // INITIALIZE
-document.addEventListener('DOMContentLoaded', fetchData);
+document.addEventListener('DOMContentLoaded', () => {
+    fetchData();
+    initWeather();
+});

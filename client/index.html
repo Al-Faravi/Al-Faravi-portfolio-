@@ -28,116 +28,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-        /* --- 1. Featured Section Slider Styles --- */
-        .featured-slider {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            gap: 20px;
-            padding-bottom: 20px;
-            scrollbar-width: none; /* Hide scrollbar Firefox */
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
-        }
-        .featured-slider::-webkit-scrollbar {
-            display: none; /* Hide scrollbar Chrome/Safari */
-        }
-        .featured-wrapper {
-            min-width: 100%; /* Creates the slide effect */
-            scroll-snap-align: center;
-            display: flex;
-            align-items: center;
-            gap: 50px;
-            background: #fff;
-            padding: 40px;
-            border-radius: 20px;
-            border: 1px solid #e5e5e5;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            flex-direction: row;
-        }
-        .featured-content { flex: 1; }
-        .featured-image { flex: 1; text-align: right; }
-        .featured-image img {
-            max-width: 100%;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .slider-nav { display: flex; gap: 10px; }
-        .nav-btn {
-            background: white; border: 1px solid #e5e5e5;
-            width: 40px; height: 40px; border-radius: 50%;
-            cursor: pointer; transition: 0.3s;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem; color: #333;
-        }
-        .nav-btn:hover {
-            background: #10B981; color: white; border-color: #10B981;
-        }
-
-        /* --- 2. Tech Stack Marquee (Infinite Scroll) --- */
-        .marquee-wrapper {
-            position: relative;
-            width: 100%;
-            overflow: hidden;
-            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-            padding: 20px 0;
-        }
-        .marquee-track {
-            display: flex;
-            gap: 40px; /* Space between items */
-            width: max-content;
-            animation: scroll 30s linear infinite;
-        }
-        .tech-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #4B5563;
-            background: #fff;
-            padding: 12px 25px;
-            border-radius: 50px;
-            border: 1px solid #E5E7EB;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            white-space: nowrap;
-            transition: transform 0.3s ease;
-        }
-        .tech-item:hover { transform: translateY(-3px); border-color: #10B981; color: #10B981; }
-        .tech-item i { color: #10B981; font-size: 1.4rem; }
-
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); } /* Moves exactly half the width (since we duplicated items) */
-        }
-        
-        /* Pause animation on hover for accessibility */
-        .marquee-wrapper:hover .marquee-track {
-            animation-play-state: paused;
-        }
-
-        /* --- 3. Responsive Adjustments --- */
-        @media (max-width: 968px) {
-            .featured-wrapper {
-                flex-direction: column-reverse;
-                gap: 30px; padding: 25px; text-align: center;
-            }
-            .featured-image { width: 100%; text-align: center; }
-            .featured-stats { justify-content: center; }
-            .featured-tag { display: inline-block; }
-            .slider-nav { display: none; }
-        }
-
-        @media (max-width: 768px) {
-            .marquee-track { gap: 20px; animation-duration: 20s; } /* Faster on mobile */
-            .tech-item { padding: 10px 20px; font-size: 0.95rem; }
-            .tech-item i { font-size: 1.2rem; }
-        }
-    </style>
 </head>
 <body>
     
@@ -169,6 +59,40 @@
                 <div class="status-badge">
                     <span class="status-dot"></span>
                     <span id="status-text">Available for work</span>
+                </div>
+
+                <div class="live-widget">
+                    <div class="widget-item">
+                        <div class="widget-icon"><i class="fa-regular fa-clock"></i></div>
+                        <div class="widget-info">
+                            <span class="w-label">Time</span>
+                            <span id="live-time">--:--</span>
+                        </div>
+                    </div>
+
+                    <div class="widget-item">
+                        <div class="widget-icon"><i class="fa-regular fa-calendar"></i></div>
+                        <div class="widget-info">
+                            <span class="w-label">Date</span>
+                            <span id="live-date">...</span>
+                        </div>
+                    </div>
+
+                    <div class="widget-item">
+                        <div class="widget-icon"><i class="fa-solid fa-cloud" id="weather-icon"></i></div>
+                        <div class="widget-info">
+                            <span class="w-label">Weather</span>
+                            <span id="live-temp">--°C</span>
+                        </div>
+                    </div>
+
+                    <div class="widget-item">
+                        <div class="widget-icon"><i class="fa-solid fa-location-dot"></i></div>
+                        <div class="widget-info">
+                            <span class="w-label">Location</span>
+                            <span id="live-location">Locating...</span>
+                        </div>
+                    </div>
                 </div>
                 <h1 class="headline">
                     Transforming <span class="italic-text">Data</span> into Stories <br> 
@@ -246,6 +170,7 @@
             </div>
         </div>
     </section>
+
     <section id="featured" class="section featured-section">
         <div class="container">
             <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">

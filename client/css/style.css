@@ -5,7 +5,7 @@
     /* Colors */
     --bg-color: #F8F9FA; /* Premium Off-White */
     --text-main: #1F2937;
-    --text-muted: #4B5563;
+    --text-muted: #6B7280;
     --border: #E5E7EB;
     --accent: #10B981; 
     --accent-hover: #059669;
@@ -120,6 +120,77 @@ nav {
 }
 .status-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
 @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+/* --- PREMIUM GLASS WIDGET (NEW DESIGN) --- */
+.live-widget {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.75); /* Glass Background */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 10px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+    width: fit-content;
+    transition: transform 0.3s ease;
+}
+
+.live-widget:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+.widget-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    border-right: 1px solid rgba(0,0,0,0.05); /* Separator */
+}
+
+.widget-item:last-child {
+    border-right: none;
+}
+
+.widget-icon {
+    width: 36px;
+    height: 36px;
+    background: #ecfdf5; /* Light Green */
+    color: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.widget-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.w-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: #9CA3AF; /* Muted Text */
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.widget-info span:last-child {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-main);
+    white-space: nowrap;
+}
+/* ----------------------------------------- */
 
 .headline { 
     font-family: var(--font-head); 
@@ -430,25 +501,37 @@ footer { background: #fff; border-top: 1px solid var(--border); padding-top: 80p
     /* FEATURED SECTION (SMART FIX) */
     .featured-wrapper {
         flex-direction: column-reverse; /* Image on Top, Content Bottom */
-        padding: 25px 20px; /* Reduced Padding */
+        padding: 20px; /* Comfortable padding */
         gap: 20px;
         text-align: left; /* Keep text aligned left for readability */
+        align-items: flex-start;
     }
     .featured-image { 
         width: 100%; 
-        margin-bottom: 10px;
+        text-align: center;
+        margin-bottom: 0;
+    }
+    .featured-image img { 
+        width: 100%; 
+        height: auto; 
+        max-height: 300px; /* Prevent huge images on mobile */
+        object-fit: cover; 
     }
     .featured-content { 
         width: 100%; 
         text-align: left;
     }
     .featured-stats { 
-        justify-content: flex-start; /* Stats aligned start */
+        justify-content: flex-start; 
         gap: 15px; 
-        flex-wrap: wrap; /* Wrap stats if too many */
+        flex-wrap: wrap; 
+        padding: 15px 0;
     }
     .featured-tag { display: inline-block; }
     .slider-nav { display: none; } 
+    
+    /* Better Button for Mobile */
+    .btn-featured { width: 100%; text-align: center; }
     
     /* Font Adjustments */
     .featured-content h3 { font-size: 1.8rem; }
@@ -481,6 +564,38 @@ footer { background: #fff; border-top: 1px solid var(--border); padding-top: 80p
     .status-badge { margin: 0 auto 15px; }
     .headline { font-size: 2.2rem; margin-bottom: 15px; }
     .sub-headline { font-size: 1rem; margin-bottom: 25px; }
+
+    /* --- PREMIUM WIDGET MOBILE (2x2 Grid) --- */
+    .live-widget {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* 2 Column Grid */
+        width: 100%;
+        gap: 10px;
+        padding: 12px;
+        margin: 0 0 25px 0;
+    }
+
+    .widget-item {
+        background: rgba(255,255,255,0.6);
+        border: 1px solid rgba(255,255,255,0.8);
+        border-radius: 12px;
+        padding: 10px;
+        justify-content: flex-start;
+        /* বর্ডার রাইট মুছে ফেলা হলো মোবাইলের জন্য */
+        border-right: 1px solid rgba(255,255,255,0.8); 
+    }
+
+    .widget-icon {
+        width: 32px; height: 32px; font-size: 0.9rem;
+    }
+
+    .widget-info span:last-child {
+        font-size: 0.85rem;
+        max-width: 90px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    /* ------------------------------------- */
 
     /* MARQUEE */
     .marquee-track { gap: 20px; animation-duration: 20s; }
