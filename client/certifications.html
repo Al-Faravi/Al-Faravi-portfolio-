@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Certifications | Md. Shakawat Hossain Faravi</title>
+    
+    <link rel="stylesheet" href="css/style.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="certs-page">
+    
+    <div class="bg-texture"></div> 
+
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">Al-Faravi<span class="accent-dot">.</span></a>
+            
+            <ul class="nav-links" id="nav-menu">
+                <li><a href="index.html#services">Services</a></li>
+                <li><a href="index.html#featured">Spotlight</a></li>
+                <li><a href="index.html#experience">Experience</a></li>
+                <li><a href="index.html#work">Projects</a></li>
+                <li><a href="index.html#contact" class="btn-contact">Contact</a></li>
+            </ul>
+
+            <div class="hamburger" id="hamburger-btn">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE HEADER -->
+    <header class="page-header">
+        <div class="container">
+            <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+            <h1 class="headline" style="font-size: 2.5rem;">Licenses & Certifications</h1>
+            <p class="sub-headline" style="margin: 0 auto;">A complete list of my professional licenses, courses, and technical certifications.</p>
+        </div>
+    </header>
+
+    <!-- ALL CERTIFICATIONS GRID -->
+    <section class="section" style="padding-top: 20px;">
+        <div class="container">
+            <div id="cert-grid" class="cert-grid">
+                <!-- Data will be loaded here by JS -->
+                <p class="loading-text" style="text-align:center;">Loading certifications...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="copyright-bar">© 2026 Md. Shakawat Hossain Faravi. All Rights Reserved.</div>
+    </footer>
+
+    <!-- CERTIFICATION MODAL -->
+    <div id="cert-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button onclick="closeCertModal()" class="close-btn">&times;</button>
+            <div class="modal-header">
+                <span class="modal-tag">Certification</span>
+                <h2 id="c-title" class="modal-title">Cert Title</h2>
+                <div id="c-issuer" class="modal-tech">Issuer Name</div>
+            </div>
+            <div class="modal-body">
+                <div class="research-section">
+                    <h4>What I Learned</h4>
+                    <p id="c-desc">Description of skills gained...</p>
+                </div>
+                <div class="research-section">
+                    <h4>Impact</h4>
+                    <p id="c-impact">How this helps in professional work...</p>
+                </div>
+                <div class="modal-links">
+                    <a id="c-link" href="#" target="_blank" class="btn-primary">Verify Credential ↗</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN SCRIPT -->
+    <script src="js/main.js"></script>
+    
+</body>
+</html>

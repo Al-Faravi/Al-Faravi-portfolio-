@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Articles | Md. Shakawat Hossain Faravi</title>
+    
+    <link rel="stylesheet" href="css/style.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="blogs-page">
+    
+    <div class="bg-texture"></div> 
+
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">Al-Faravi<span class="accent-dot">.</span></a>
+            
+            <ul class="nav-links" id="nav-menu">
+                <li><a href="index.html#services">Services</a></li>
+                <li><a href="index.html#featured">Spotlight</a></li>
+                <li><a href="index.html#experience">Experience</a></li>
+                <li><a href="index.html#work">Projects</a></li>
+                <li><a href="index.html#contact" class="btn-contact">Contact</a></li>
+            </ul>
+
+            <div class="hamburger" id="hamburger-btn">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE HEADER -->
+    <header class="page-header">
+        <div class="container">
+            <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+            <h1 class="headline" style="font-size: 2.5rem;">Problem Solving & Thoughts</h1>
+            <p class="sub-headline" style="margin: 0 auto;">Read my latest problem-solving approaches, technical articles, and thoughts.</p>
+        </div>
+    </header>
+
+    <!-- ALL BLOGS GRID -->
+    <section class="section" style="padding-top: 20px;">
+        <div class="container">
+            <div class="blog-grid">
+                <!-- Data will be loaded here by JS -->
+                <p class="loading-text" style="text-align:center; color:#888;">Loading articles...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="copyright-bar">© 2026 Md. Shakawat Hossain Faravi. All Rights Reserved.</div>
+    </footer>
+
+    <!-- BLOG MODAL -->
+    <div id="blog-modal" class="modal-overlay">
+        <div class="modal-content large-modal">
+            <button onclick="closeBlogModal()" class="close-btn">&times;</button>
+            <div class="research-header">
+                <span class="modal-tag">Problem Solving</span>
+                <h2 id="b-title" class="modal-title">Blog Title</h2>
+                <p id="b-date" class="research-meta">Date</p>
+            </div>
+            <div class="research-body">
+                <div id="b-content" class="research-section">
+                    <p>Full blog content goes here...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN SCRIPT -->
+    <script src="js/main.js"></script>
+    
+</body>
+</html>
