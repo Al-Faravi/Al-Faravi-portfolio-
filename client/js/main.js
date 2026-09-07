@@ -133,7 +133,7 @@ async function fetchData() {
             if(expContainer) expContainer.innerHTML = "<p>Experience data unavailable.</p>";
         }
 
-        // --- 2.5 Fetch Certifications (UPDATED) ---
+       // --- 2.5 Fetch Certifications (FIXED) ---
         const certContainer = document.getElementById('cert-grid');
         try {
             const certRes = await fetch(`${API_URL}/certs`);
@@ -141,12 +141,16 @@ async function fetchData() {
                 allCerts = await certRes.json();
                 if (allCerts.length > 0 && certContainer) {
                     certContainer.innerHTML = allCerts.map((c, index) => {
-                        // Image Fallback Logic
-                        const imageUrl = c.image && c.image !== '' ? c.image : 'assets/default-cert.png';
+                        // 1. Fixed Image Fallback Logic
+                        // If the database has a valid image string, use it. Otherwise, use a reliable external placeholder.
+                        const hasImage = c.image && c.image.trim() !== '' && c.image !== 'assets/default-cert.png';
+                        const imageUrl = hasImage ? c.image : 'https://placehold.co/600x400/10B981/FFFFFF?text=Certificate';
+                        
                         return `
                             <div class="cert-card" onclick="openCertModal(${index})" style="cursor: pointer;">
                                 <div class="cert-img-box">
-                                    <img src="${imageUrl}" alt="${c.issuer}" class="cert-img" onerror="this.src='assets/default-cert.png'">
+                                    <!-- 2. Fixed onerror handler -->
+                                    <img src="${imageUrl}" alt="${c.issuer}" class="cert-img" onerror="this.src='https://placehold.co/600x400/10B981/FFFFFF?text=Certificate'">
                                 </div>
                                 <div class="cert-info">
                                     <h3>${c.title}</h3>
@@ -162,6 +166,7 @@ async function fetchData() {
             }
         } catch (err) {
             if(certContainer) certContainer.innerHTML = "<p>Could not load certifications.</p>";
+            console.error("Cert fetch error:", err);
         }
 
         // --- 2.6 Fetch Blogs ---
