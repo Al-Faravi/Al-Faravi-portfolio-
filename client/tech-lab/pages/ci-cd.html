@@ -1,0 +1,305 @@
+<style>
+    /* Scoped CSS for CI/CD Page */
+    .cicd-header { margin-bottom: 40px; border-left: 4px solid #0EA5E9; padding-left: 20px; }
+    .cicd-header h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 10px; color:#1F2937; }
+    .cicd-header p { color: #4B5563; margin-bottom: 15px; line-height: 1.8; font-size: 1.05rem; }
+    
+    .def-box { background: #F3F4F6; border-left: 4px solid #0EA5E9; padding: 15px 20px; margin-bottom: 20px; font-style: italic; color: #374151; font-size: 0.95rem; }
+    
+    /* Case Study Box */
+    .case-study-box { background: #F0F9FF; border: 1px solid #BAE6FD; border-left: 4px solid #0EA5E9; padding: 25px; border-radius: 8px; margin-bottom: 25px; }
+    .case-title { color: #0369A1; font-weight: 700; margin-bottom: 12px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+    .case-study-box p { color: #0C4A6E; font-size: 0.95rem; line-height: 1.7; margin-bottom: 10px; }
+    .inline-code { background: rgba(255,255,255,0.7); padding: 2px 8px; border-radius: 4px; font-family: monospace; font-size: 0.9rem; color: #0284C7; border: 1px solid #BAE6FD; }
+
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 25px 0; }
+    .compare-card { padding: 25px; border-radius: 10px; border: 1px solid #E5E7EB; background: #F8F9FA; transition: all 0.3s; }
+    .compare-card:hover { transform: translateY(-3px); }
+    .compare-card h4 { margin-bottom: 15px; color: #1F2937; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+    .compare-card ul { padding-left: 20px; color: #4B5563; line-height: 1.7; }
+    
+    /* Code Window */
+    .code-window { background: #0D1117; border-radius: 8px; overflow: hidden; margin: 25px 0; border: 1px solid #30363D; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+    .code-header { background: #161B22; padding: 12px 15px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #30363D; }
+    .mac-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .code-body { padding: 20px; color: #C9D1D9; font-family: 'Fira Code', monospace; font-size: 0.95rem; overflow-x: auto; line-height: 1.6; }
+    
+    .yk { color: #FF7B72; } /* YAML Key */
+    .ys { color: #A5D6FF; } /* YAML String */
+    .yc { color: #8B949E; font-style: italic; } /* YAML Comment */
+
+    /* Simulator UI */
+    .demo-area { border: 2px dashed #0EA5E9; border-radius: 12px; padding: 35px; background: rgba(14, 165, 233, 0.03); margin-top: 20px; }
+    
+    .git-controls { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #E5E7EB; margin-bottom: 30px; flex-wrap: wrap; gap: 15px; }
+    
+    .bug-toggle { display: flex; align-items: center; gap: 10px; font-weight: 600; color: #4B5563; font-size: 0.95rem; cursor: pointer; }
+    .bug-toggle input { width: 18px; height: 18px; cursor: pointer; accent-color: #EF4444; }
+
+    .btn-push { background: #1F2937; color: #fff; border: none; padding: 12px 25px; border-radius: 6px; font-weight: 700; font-family: monospace; font-size: 1.05rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px; }
+    .btn-push:hover { background: #0EA5E9; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3); }
+    .btn-push:disabled { background: #9CA3AF; cursor: not-allowed; box-shadow: none; }
+
+    /* Pipeline Visualizer */
+    .pipeline-track { display: flex; justify-content: space-between; align-items: center; position: relative; max-width: 600px; margin: 0 auto; padding: 20px 0; }
+    
+    /* Connecting Line */
+    .pipeline-track::before { content: ''; position: absolute; top: 50%; left: 10%; right: 10%; height: 4px; background: #E5E7EB; z-index: 1; transform: translateY(-5px); }
+    
+    .stage { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100px; }
+    .stage-circle { width: 50px; height: 50px; border-radius: 50%; background: #fff; border: 4px solid #E5E7EB; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; color: #9CA3AF; transition: 0.3s; background: #F9FAFB; }
+    .stage-label { font-weight: 700; font-size: 0.85rem; color: #6B7280; text-transform: uppercase; letter-spacing: 1px; }
+    
+    /* Stage States */
+    .stage.running .stage-circle { border-color: #0EA5E9; color: #0EA5E9; background: #F0F9FF; box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2); animation: pulse-blue 1.5s infinite; }
+    .stage.running .stage-label { color: #0EA5E9; }
+    
+    .stage.success .stage-circle { border-color: #10B981; color: #10B981; background: #F0FDF4; }
+    .stage.success .stage-label { color: #10B981; }
+
+    .stage.failed .stage-circle { border-color: #EF4444; color: #EF4444; background: #FEF2F2; box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2); animation: pulse-red 1.5s infinite; }
+    .stage.failed .stage-label { color: #EF4444; }
+
+    @keyframes pulse-blue { 0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(14, 165, 233, 0); } 100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); } }
+    @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
+    .terminal-out { background: #111; color: #D1D5DB; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.85rem; margin-top: 30px; height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; border-left: 3px solid #0EA5E9; }
+    .log-success { color: #10B981; }
+    .log-error { color: #EF4444; }
+    .log-sys { color: #0EA5E9; }
+
+    @media(max-width: 768px) {
+        .compare-grid { grid-template-columns: 1fr; }
+        .git-controls { flex-direction: column; align-items: stretch; }
+    }
+</style>
+
+<div style="margin-bottom: 40px;">
+    <span style="display:inline-block; padding: 5px 12px; background: rgba(14, 165, 233, 0.1); color: #0284C7; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;"><i class="fa-solid fa-cloud"></i> DEVOPS & DEPLOYMENT</span>
+    <h1 style="font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 10px; color:#1F2937;">CI/CD Pipelines</h1>
+    
+    <div class="def-box">
+        <strong>Definition:</strong> CI/CD (Continuous Integration / Continuous Deployment) is a method to frequently deliver apps to customers by introducing automation into the stages of app development.
+    </div>
+    
+    <p>মডার্ন সফটওয়্যার ডেভেলপমেন্টে আমরা ম্যানুয়ালি সার্ভারে কোড আপলোড করি না। আমরা এমন একটি অটোমেটেড পাইপলাইন তৈরি করি যা কোড পুশ করার সাথে সাথে নিজে থেকেই টেস্ট করে সার্ভারে রিলিজ করে দেয়।</p>
+</div>
+
+<!-- Section 1: The Case Study -->
+<div class="module-section">
+    <h2><i class="fa-solid fa-server" style="color: #0EA5E9;"></i> 1. The Deployment Nightmare</h2>
+    
+    <div class="case-study-box">
+        <div class="case-title"><i class="fa-solid fa-code-merge"></i> Architectural Challenge (Team Collaboration)</div>
+        <p>ধরি, আমরা ৫ জন ডেভেলপারের একটি টিম একটি প্রজেক্টে কাজ করছি। ম্যানুয়াল যুগে কী হতো? একজন ডেভেলপার কাজ শেষ করে ফাইল জিপ (Zip) করে সার্ভারে আপলোড করতো। মাঝে মাঝে সে ভুলে কোনো প্যাকেজ ইনস্টল করতে ভুলে যেতো, ফলে লাইভ সার্ভার ক্র্যাশ করতো! একে বলা হয় <strong>"It works on my machine"</strong> প্রবলেম।</p>
+        <p><strong>CI/CD এর সলিউশন:</strong> এখন আমরা কোড লিখে শুধু গিটহাবে <span class="inline-code">git push</span> করি। ক্লাউডে থাকা একটি ভার্চুয়াল মেশিন (যেমন: GitHub Actions) আমাদের কোডটি ডাউনলোড করে, অটোমেটিকভাবে <code>npm test</code> রান করে। যদি টেস্টে কোনো বাগ (Bug) ধরা পড়ে, তবে সে কোডটি লাইভ সার্ভারে পাঠাবে না এবং আমাদেরকে অ্যালার্ট দিবে। আর টেস্ট পাস করলে স্বয়ংক্রিয়ভাবে সার্ভারে রিলিজ (Deploy) করে দিবে!</p>
+    </div>
+    
+    <div class="compare-grid">
+        <div class="compare-card" style="border-top: 3px solid #EF4444;">
+            <h4><i class="fa-solid fa-hand-paper" style="color:#EF4444;"></i> Manual Deployment</h4>
+            <ul>
+                <li>FTP বা SSH দিয়ে ফাইল ম্যানুয়ালি আপলোড করতে হয়।</li>
+                <li>মানুষের ভুলে সার্ভার ডাউন হওয়ার ঝুঁকি অনেক বেশি।</li>
+                <li>বাগ (Bug) সহ কোড প্রোডাকশনে চলে যাওয়ার ভয় থাকে।</li>
+            </ul>
+        </div>
+        <div class="compare-card" style="border-top: 3px solid #10B981; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.05);">
+            <h4><i class="fa-solid fa-robot" style="color:#10B981;"></i> Automated CI/CD</h4>
+            <ul>
+                <li><code>git push</code> করলেই সবকিছু অটোমেটিক হয়।</li>
+                <li>কোড লাইভ হওয়ার আগেই স্বয়ংক্রিয়ভাবে টেস্ট (Testing) হয়।</li>
+                <li>টিমের প্রোডাক্টিভিটি ১০ গুণ বেড়ে যায়।</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Section 2: Code Implementation -->
+<div class="module-section">
+    <h2><i class="fa-brands fa-github" style="color: #1F2937;"></i> 2. GitHub Actions YAML</h2>
+    <p>নিচে একটি স্ট্যান্ডার্ড CI/CD পাইপলাইনের কোড দেওয়া হলো। এই <code>.yml</code> ফাইলটি রিপোজিটরিতে থাকলে GitHub নিজে থেকেই একটি উবুন্টু (Ubuntu) সার্ভার তৈরি করে আমাদের কোড বিল্ড এবং টেস্ট করবে।</p>
+    
+    <div class="code-window">
+        <div class="code-header">
+            <div class="mac-dot" style="background:#ff5f56;"></div>
+            <div class="mac-dot" style="background:#ffbd2e;"></div>
+            <div class="mac-dot" style="background:#27c93f;"></div>
+            <span style="color: #8B949E; font-size: 0.85rem; margin-left: auto;"><i class="fa-brands fa-git-alt"></i> .github/workflows/deploy.yml</span>
+        </div>
+        <div class="code-body">
+<pre style="margin: 0;"><span class="yk">name:</span> <span class="ys">Node.js CI/CD Pipeline</span>
+
+<span class="yk">on:</span>
+  <span class="yk">push:</span>
+    <span class="yk">branches:</span> [ <span class="ys">"main"</span> ]
+
+<span class="yk">jobs:</span>
+  <span class="yk">build_and_test:</span>
+    <span class="yk">runs-on:</span> <span class="ys">ubuntu-latest</span>
+    
+    <span class="yk">steps:</span>
+    <span class="yk">- uses:</span> <span class="ys">actions/checkout@v3</span>
+    
+    <span class="yk">- name:</span> <span class="ys">Use Node.js 18.x</span>
+      <span class="yk">uses:</span> <span class="ys">actions/setup-node@v3</span>
+      <span class="yk">with:</span>
+        <span class="yk">node-version:</span> <span class="ys">'18.x'</span>
+        
+    <span class="yc"># Continuous Integration (CI)</span>
+    <span class="yk">- name:</span> <span class="ys">Install Dependencies</span>
+      <span class="yk">run:</span> <span class="ys">npm ci</span>
+      
+    <span class="yk">- name:</span> <span class="ys">Run Unit Tests</span>
+      <span class="yk">run:</span> <span class="ys">npm test</span>
+      
+    <span class="yc"># Continuous Deployment (CD) runs ONLY if tests pass</span>
+    <span class="yk">- name:</span> <span class="ys">Deploy to Production (Vercel/Render)</span>
+      <span class="yk">if:</span> <span class="ys">success()</span>
+      <span class="yk">run:</span> <span class="ys">npm run deploy</span>
+      <span class="yk">env:</span>
+        <span class="yk">PROD_API_KEY:</span> <span class="ys">${{ secrets.PROD_API_KEY }}</span></pre>
+        </div>
+    </div>
+</div>
+
+<!-- Section 3: Live Simulator -->
+<div class="module-section" style="border-color: #0EA5E9;">
+    <h2><i class="fa-solid fa-wand-magic-sparkles" style="color: #0EA5E9;"></i> 3. Live Pipeline Simulator</h2>
+    <p>চলুন প্র্যাকটিক্যালি দেখি। "Push Code" বাটনে ক্লিক করলে পাইপলাইন শুরু হবে। আপনি চাইলে একটি <strong>"Bug"</strong> ইন্ট্রোডিউস করতে পারেন, যা টেস্ট স্টেজে গিয়ে পুরো ডিপ্লয়মেন্ট আটকে দিবে, যাতে প্রোডাকশন সার্ভার বেঁচে যায়!</p>
+    
+    <div class="demo-area">
+        
+        <div class="git-controls">
+            <label class="bug-toggle">
+                <input type="checkbox" id="bug-switch"> 
+                Introduce a fatal syntax error in the code (Simulate a Bug)
+            </label>
+            <button class="btn-push" id="btn-push" onclick="runPipeline()">
+                <i class="fa-brands fa-git-alt"></i> git push origin main
+            </button>
+        </div>
+
+        <!-- Pipeline Visual -->
+        <div class="pipeline-track">
+            
+            <div class="stage" id="stage-build">
+                <div class="stage-circle"><i class="fa-solid fa-box"></i></div>
+                <div class="stage-label">Build</div>
+            </div>
+
+            <div class="stage" id="stage-test">
+                <div class="stage-circle"><i class="fa-solid fa-vial"></i></div>
+                <div class="stage-label">Test</div>
+            </div>
+
+            <div class="stage" id="stage-deploy">
+                <div class="stage-circle"><i class="fa-solid fa-rocket"></i></div>
+                <div class="stage-label">Deploy</div>
+            </div>
+
+        </div>
+
+        <!-- Terminal Output -->
+        <div class="terminal-out" id="ci-term">
+            <span>Waiting for code changes...</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    let isPipelineRunning = false;
+
+    function resetStages() {
+        const stages = ['build', 'test', 'deploy'];
+        stages.forEach(s => {
+            const el = document.getElementById(`stage-${s}`);
+            el.className = 'stage';
+            el.querySelector('.stage-circle').innerHTML = getIcon(s);
+        });
+    }
+
+    function getIcon(stage) {
+        if(stage === 'build') return '<i class="fa-solid fa-box"></i>';
+        if(stage === 'test') return '<i class="fa-solid fa-vial"></i>';
+        if(stage === 'deploy') return '<i class="fa-solid fa-rocket"></i>';
+    }
+
+    const sleepTimer = (ms) => new Promise(r => setTimeout(r, ms));
+
+    async function runPipeline() {
+        if (isPipelineRunning) return;
+        isPipelineRunning = true;
+        
+        const hasBug = document.getElementById('bug-switch').checked;
+        const btn = document.getElementById('btn-push');
+        const term = document.getElementById('ci-term');
+        
+        // Reset UI
+        btn.disabled = true;
+        resetStages();
+        term.innerHTML = `<span class="log-sys">> Detected push to branch 'main'</span>`;
+        term.innerHTML += `<span>> Booting ubuntu-latest runner...</span>`;
+
+        // --- STAGE 1: BUILD ---
+        await sleepTimer(600);
+        const stgBuild = document.getElementById('stage-build');
+        stgBuild.classList.add('running');
+        stgBuild.querySelector('.stage-circle').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        term.innerHTML += `<br><span>> [Build] Running 'npm install'...</span>`;
+        
+        await sleepTimer(1200);
+        stgBuild.classList.remove('running');
+        stgBuild.classList.add('success');
+        stgBuild.querySelector('.stage-circle').innerHTML = '<i class="fa-solid fa-check"></i>';
+        term.innerHTML += `<span class="log-success">> [Build] Dependencies installed successfully.</span>`;
+
+        // --- STAGE 2: TEST ---
+        await sleepTimer(500);
+        const stgTest = document.getElementById('stage-test');
+        stgTest.classList.add('running');
+        stgTest.querySelector('.stage-circle').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        term.innerHTML += `<br><span>> [Test] Executing Jest Unit Tests...</span>`;
+        term.scrollTop = term.scrollHeight;
+
+        await sleepTimer(1500);
+        
+        if (hasBug) {
+            // PIPELINE FAILS
+            stgTest.classList.remove('running');
+            stgTest.classList.add('failed');
+            stgTest.querySelector('.stage-circle').innerHTML = '<i class="fa-solid fa-xmark"></i>';
+            term.innerHTML += `<span class="log-error">> [Test] FAIL: SyntaxError: Unexpected token in userAuth.js</span>`;
+            term.innerHTML += `<span class="log-error">> [System] Pipeline stopped. Deployment aborted to protect production!</span>`;
+            
+            const stgDeploy = document.getElementById('stage-deploy');
+            stgDeploy.classList.add('failed');
+            stgDeploy.querySelector('.stage-circle').innerHTML = '<i class="fa-solid fa-ban"></i>';
+            
+        } else {
+            // PIPELINE PASSES
+            stgTest.classList.remove('running');
+            stgTest.classList.add('success');
+            stgTest.querySelector('.stage-circle').innerHTML = '<i class="fa-solid fa-check"></i>';
+            term.innerHTML += `<span class="log-success">> [Test] 42/42 tests passed perfectly.</span>`;
+            
+            // --- STAGE 3: DEPLOY ---
+            await sleepTimer(500);
+            const stgDeploy = document.getElementById('stage-deploy');
+            stgDeploy.classList.add('running');
+            stgDeploy.querySelector('.stage-circle').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            term.innerHTML += `<br><span>> [Deploy] Pushing artifacts to Vercel Edge Network...</span>`;
+            term.scrollTop = term.scrollHeight;
+
+            await sleepTimer(1200);
+            stgDeploy.classList.remove('running');
+            stgDeploy.classList.add('success');
+            stgDeploy.querySelector('.stage-circle').innerHTML = '<i class="fa-solid fa-rocket"></i>';
+            term.innerHTML += `<span class="log-success">> [Deploy] SUCCESS! Application is now LIVE.</span>`;
+        }
+
+        term.scrollTop = term.scrollHeight;
+        btn.disabled = false;
+        isPipelineRunning = false;
+    }
+</script>

@@ -1,0 +1,240 @@
+<style>
+    /* Scoped CSS */
+    .module-section { margin-bottom: 40px; background: #fff; padding: 40px; border-radius: 12px; border: 1px solid #E5E7EB; box-shadow: 0 4px 15px rgba(0,0,0,0.01); }
+    .module-section h2 { font-size: 1.5rem; color: #1F2937; margin-bottom: 20px; font-family: 'Playfair Display', serif; display: flex; align-items: center; gap: 10px; }
+    .module-section p { color: #4B5563; margin-bottom: 15px; line-height: 1.8; font-size: 1.05rem; }
+    
+    .def-box { background: #F3F4F6; border-left: 4px solid #14B8A6; padding: 15px 20px; margin-bottom: 20px; font-style: italic; color: #374151; font-size: 0.95rem; }
+    
+    /* Case Study Box */
+    .case-study-box { background: #FEF2F2; border: 1px solid #FECACA; border-left: 4px solid #EF4444; padding: 25px; border-radius: 8px; margin-bottom: 25px; }
+    .case-title { color: #991B1B; font-weight: 700; margin-bottom: 12px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+    .case-study-box p { color: #7F1D1D; font-size: 0.95rem; line-height: 1.7; margin-bottom: 10px; }
+
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 25px 0; }
+    .compare-card { padding: 25px; border-radius: 10px; border: 1px solid #E5E7EB; background: #F8F9FA; transition: all 0.3s; }
+    .compare-card:hover { transform: translateY(-3px); }
+    .compare-card h4 { margin-bottom: 15px; color: #1F2937; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+    .compare-card ul { padding-left: 20px; color: #4B5563; line-height: 1.7; }
+    
+    /* Code Window */
+    .code-window { background: #1F2937; border-radius: 8px; overflow: hidden; margin: 25px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .code-header { background: #111827; padding: 12px 15px; display: flex; gap: 8px; align-items: center; }
+    .mac-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .code-body { padding: 20px; color: #E5E7EB; font-family: 'Courier New', Courier, monospace; font-size: 0.95rem; overflow-x: auto; line-height: 1.6; }
+    
+    .kw { color: #c678dd; } .fn { color: #61afef; } .st { color: #98c379; } .cm { color: #5c6370; font-style: italic; } .vr { color: #e06c75; }
+
+    /* Simulator UI */
+    .demo-area { border: 2px dashed #14B8A6; border-radius: 12px; padding: 30px; background: rgba(20, 184, 166, 0.03); margin-top: 20px; display: flex; gap: 30px; flex-wrap: wrap; }
+    
+    .sim-controls { flex: 1; min-width: 250px; display: flex; flex-direction: column; justify-content: center; }
+    .btn-spam { background: #14B8A6; color: #fff; border: none; padding: 15px 20px; border-radius: 8px; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.1s; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 0 #0D9488; margin-bottom: 20px; }
+    .btn-spam:active { transform: translateY(4px); box-shadow: 0 0 0 #0D9488; }
+    .btn-spam:disabled { background: #9CA3AF; box-shadow: 0 4px 0 #6B7280; cursor: not-allowed; }
+
+    .limit-info { background: #fff; border: 1px solid #E5E7EB; padding: 15px; border-radius: 8px; font-size: 0.9rem; color: #4B5563; }
+    
+    .sim-server { flex: 1.5; min-width: 300px; background: #1F2937; border-radius: 12px; padding: 25px; position: relative; display: flex; flex-direction: column; }
+    .server-header { display: flex; justify-content: space-between; color: #9CA3AF; font-family: monospace; border-bottom: 1px solid #374151; padding-bottom: 10px; margin-bottom: 15px; font-size: 0.85rem; }
+    
+    .server-logs { flex-grow: 1; overflow-y: auto; max-height: 200px; font-family: monospace; font-size: 0.85rem; display: flex; flex-direction: column; gap: 5px; }
+    .log-item { background: rgba(255,255,255,0.05); padding: 8px 10px; border-radius: 4px; border-left: 3px solid #10B981; color: #D1FAE5; animation: slideIn 0.2s ease-out; }
+    .log-error { border-left-color: #EF4444; color: #FEE2E2; background: rgba(239, 68, 68, 0.1); }
+    
+    .block-overlay { position: absolute; inset: 0; background: rgba(17, 24, 39, 0.9); border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 10; }
+    .block-overlay.active { opacity: 1; pointer-events: auto; }
+    .countdown-circle { width: 80px; height: 80px; border-radius: 50%; border: 4px solid #EF4444; display: flex; justify-content: center; align-items: center; font-size: 2rem; font-weight: 700; color: #EF4444; margin-bottom: 15px; }
+
+    @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+    @media(max-width: 768px) {
+        .compare-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div style="margin-bottom: 40px;">
+    <span style="display:inline-block; padding: 5px 12px; background: rgba(20, 184, 166, 0.1); color: #0D9488; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;"><i class="fa-solid fa-shield-virus"></i> SECURITY ARCHITECTURE</span>
+    <h1 style="font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 10px; color:#1F2937;">API Rate Limiting</h1>
+    
+    <div class="def-box">
+        <strong>Definition:</strong> Rate limiting is a strategy for limiting network traffic. It puts a cap on how often someone can repeat an action within a certain timeframe (e.g., trying to log in to an account).
+    </div>
+    
+    <p>সিস্টেমকে হ্যাকারদের স্প্যামিং এবং ক্লাউডের বিশাল বিল (Cloud Billing) থেকে বাঁচাতে আমরা API-এর ওপর একটি অদৃশ্য স্পিড ব্রেকার বসিয়ে দিই।</p>
+</div>
+
+<!-- Section 1: The Case Study -->
+<div class="module-section">
+    <h2><i class="fa-solid fa-bug" style="color: #EF4444;"></i> 1. The Vulnerability Problem</h2>
+    
+    <div class="case-study-box">
+        <div class="case-title"><i class="fa-solid fa-triangle-exclamation"></i> Architectural Challenge (DDoS & Brute-force)</div>
+        <p>ধরি, আমরা একটি লগইন সিস্টেম বা পাবলিক API বানালাম। সবকিছু দারুণভাবে কাজ করছে। কিন্তু হঠাৎ একদিন একজন হ্যাকার স্ক্রিপ্ট লিখে আমাদের <code>/api/login</code> এন্ডপয়েন্টে প্রতি সেকেন্ডে ৫,০০০ রিকোয়েস্ট পাঠানো শুরু করলো।</p>
+        <p><strong>ফলাফল কী হবে?</strong> আমাদের সার্ভারের RAM ফুল হয়ে অ্যাপ্লিকেশন ক্র্যাশ করবে (যাকে বলে DDoS Attack)। অথবা, হ্যাকার হাজার হাজার পাসওয়ার্ড কম্বিনেশন ট্রাই করে কোনো না কোনো ইউজারের অ্যাকাউন্ট হ্যাক করে ফেলবে (Brute-force Attack)। তাছাড়া, ডাটাবেসে এতগুলো কোয়েরি হিট করার কারণে মাসের শেষে AWS বা ক্লাউড প্রোভাইডার আমাদেরকে বিশাল বড় একটি বিল ধরিয়ে দেবে!</p>
+    </div>
+    
+    <div class="compare-grid">
+        <div class="compare-card" style="border-top: 3px solid #EF4444;">
+            <h4><i class="fa-solid fa-door-open" style="color:#EF4444;"></i> Without Rate Limiting</h4>
+            <ul>
+                <li>সার্ভার সহজেই ওভারলোড হয়ে যায়।</li>
+                <li>বট (Bot) বা স্ক্রিপ্ট দিয়ে স্প্যামিং করা সহজ।</li>
+                <li>সার্ভার রিসোর্স এবং ডাটাবেস ব্যান্ডের অপচয়।</li>
+            </ul>
+        </div>
+        <div class="compare-card" style="border-top: 3px solid #14B8A6; box-shadow: 0 4px 10px rgba(20, 184, 166, 0.05);">
+            <h4><i class="fa-solid fa-shield-halved" style="color:#14B8A6;"></i> With Rate Limiting</h4>
+            <ul>
+                <li>নির্দিষ্ট সময়ের পর রিকোয়েস্ট ব্লক করে দেয়।</li>
+                <li>Brute-force অ্যাটাক শতভাগ প্রতিহত করে।</li>
+                <li>সিস্টেম সবসময় স্টেবল এবং ফাস্ট থাকে।</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Section 2: Code Implementation -->
+<div class="module-section">
+    <h2><i class="fa-solid fa-code" style="color: #2563EB;"></i> 2. Express.js Implementation</h2>
+    <p>Node.js-এ এই সমস্যা সমাধানের সবচেয়ে সহজ এবং প্রোডাকশন-রেডি উপায় হলো <code>express-rate-limit</code> প্যাকেজ ব্যবহার করা। বড় স্কেলের অ্যাপ্লিকেশনে আমরা এর সাথে <strong>Redis</strong> যুক্ত করি যাতে একাধিক সার্ভার (Load balancer) এর মাঝে লিমিট সিঙ্ক (Sync) থাকে।</p>
+    
+    <div class="code-window">
+        <div class="code-header">
+            <div class="mac-dot" style="background:#ff5f56;"></div>
+            <div class="mac-dot" style="background:#ffbd2e;"></div>
+            <div class="mac-dot" style="background:#27c93f;"></div>
+            <span style="color: #9CA3AF; font-size: 0.85rem; margin-left: auto;"><i class="fa-brands fa-node-js" style="color:#68a063;"></i> middleware/rateLimiter.js</span>
+        </div>
+        <div class="code-body">
+<pre style="margin: 0;"><span class="kw">const</span> <span class="vr">rateLimit</span> = <span class="fn">require</span>(<span class="st">'express-rate-limit'</span>);
+
+<span class="cm">// 1. Standard API Limiter</span>
+<span class="kw">export const</span> <span class="vr">apiLimiter</span> = <span class="fn">rateLimit</span>({
+    windowMs: 15 * 60 * 1000, <span class="cm">// 15 minutes window</span>
+    max: 100, <span class="cm">// Limit each IP to 100 requests per windowMs</span>
+    message: {
+        error: <span class="st">'Too many requests from this IP, please try again after 15 minutes.'</span>
+    },
+    standardHeaders: <span class="kw">true</span>, <span class="cm">// Return rate limit info in the `RateLimit-*` headers</span>
+    legacyHeaders: <span class="kw">false</span>,
+});
+
+<span class="cm">// 2. Strict Login Limiter (Against Brute-force)</span>
+<span class="kw">export const</span> <span class="vr">loginLimiter</span> = <span class="fn">rateLimit</span>({
+    windowMs: 60 * 1000, <span class="cm">// 1 minute window</span>
+    max: 5, <span class="cm">// Start blocking after 5 consecutive failed attempts</span>
+    message: {
+        error: <span class="st">'Too many login attempts. Account locked for 60 seconds.'</span>
+    }
+});</pre>
+        </div>
+    </div>
+</div>
+
+<!-- Section 3: Live Simulator -->
+<div class="module-section" style="border-color: #14B8A6;">
+    <h2><i class="fa-solid fa-stopwatch" style="color: #14B8A6;"></i> 3. API Spammer Simulator</h2>
+    <p>চলুন প্র্যাকটিক্যালি দেখি। নিচের "Hit API" বাটনে খুব দ্রুত ক্লিক করতে থাকুন। আমাদের রুল সেট করা আছে: <strong>সর্বোচ্চ ৫টি রিকোয়েস্ট / ১০ সেকেন্ড</strong>। লিমিট ক্রস করলে সার্ভার আপনাকে সাময়িকভাবে ব্লক করে দিবে!</p>
+    
+    <div class="demo-area">
+        
+        <!-- Controls -->
+        <div class="sim-controls">
+            <button class="btn-spam" id="btn-spam" onclick="sendRequest()">
+                <i class="fa-solid fa-bolt"></i> Send API Request
+            </button>
+            <div class="limit-info">
+                <strong>Current Rule:</strong><br>
+                Max 5 requests allowed per 10-second rolling window.
+            </div>
+        </div>
+
+        <!-- Server Screen -->
+        <div class="sim-server">
+            <div class="server-header">
+                <span><i class="fa-solid fa-server"></i> Node.js Server</span>
+                <span>Port: 5000</span>
+            </div>
+            
+            <div class="server-logs" id="server-logs">
+                <span style="color:#6B7280;">Server is listening for requests...</span>
+            </div>
+
+            <!-- Blocked Overlay -->
+            <div class="block-overlay" id="block-overlay">
+                <i class="fa-solid fa-hand" style="font-size: 3rem; color: #EF4444; margin-bottom: 10px;"></i>
+                <h3 style="color: #fff; margin-bottom: 15px;">IP BLOCKED</h3>
+                <div class="countdown-circle" id="countdown-timer">5</div>
+                <p style="color: #9CA3AF; font-size: 0.85rem; text-align: center; margin-top: 10px;">HTTP 429: Too Many Requests<br>Cooling down...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let requestTimestamps = [];
+    const MAX_REQUESTS = 5;
+    const TIME_WINDOW_MS = 10000; // 10 seconds rolling window
+    let isBlocked = false;
+    let reqCount = 0;
+
+    function sendRequest() {
+        if (isBlocked) return;
+
+        const now = Date.now();
+        
+        // Remove timestamps older than the time window
+        requestTimestamps = requestTimestamps.filter(timestamp => (now - timestamp) < TIME_WINDOW_MS);
+        
+        const logs = document.getElementById('server-logs');
+        reqCount++;
+
+        if (requestTimestamps.length >= MAX_REQUESTS) {
+            // Trigger Block
+            triggerBlock();
+            logs.innerHTML += `<div class="log-item log-error">[Req #${reqCount}] POST /api/data - 429 Too Many Requests</div>`;
+        } else {
+            // Success Request
+            requestTimestamps.push(now);
+            logs.innerHTML += `<div class="log-item">[Req #${reqCount}] POST /api/data - 200 OK (${requestTimestamps.length}/${MAX_REQUESTS})</div>`;
+        }
+        
+        logs.scrollTop = logs.scrollHeight;
+    }
+
+    function triggerBlock() {
+        isBlocked = true;
+        const btn = document.getElementById('btn-spam');
+        const overlay = document.getElementById('block-overlay');
+        const timerText = document.getElementById('countdown-timer');
+        
+        btn.disabled = true;
+        overlay.classList.add('active');
+        
+        let timeLeft = 5; // Block for 5 seconds
+        timerText.innerText = timeLeft;
+
+        const interval = setInterval(() => {
+            timeLeft--;
+            timerText.innerText = timeLeft;
+            
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                unblock();
+            }
+        }, 1000);
+    }
+
+    function unblock() {
+        isBlocked = false;
+        requestTimestamps = []; // Reset the window after block
+        
+        document.getElementById('btn-spam').disabled = false;
+        document.getElementById('block-overlay').classList.remove('active');
+        
+        const logs = document.getElementById('server-logs');
+        logs.innerHTML += `<div class="log-item" style="border-left-color: #3B82F6; color:#93C5FD; background: rgba(59, 130, 246, 0.1);">System Cooled Down. IP Unblocked.</div>`;
+        logs.scrollTop = logs.scrollHeight;
+    }
+</script>

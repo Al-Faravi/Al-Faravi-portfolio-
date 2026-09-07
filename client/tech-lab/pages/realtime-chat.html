@@ -1,0 +1,392 @@
+<style>
+    /* Scoped CSS for WebSockets Page */
+    .ws-header { margin-bottom: 40px; border-left: 4px solid #8B5CF6; padding-left: 20px; }
+    .ws-header h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 10px; color:#1F2937; }
+    .ws-header p { color: #4B5563; font-size: 1.05rem; max-width: 800px; line-height: 1.8; }
+    
+    .def-box { background: #F3F4F6; border-left: 4px solid #8B5CF6; padding: 15px 20px; margin-bottom: 20px; font-style: italic; color: #374151; font-size: 0.95rem; }
+    
+    .case-study-box { background: #F5F3FF; border: 1px solid #DDD6FE; border-left: 4px solid #8B5CF6; padding: 25px; border-radius: 8px; margin-bottom: 25px; }
+    .case-title { color: #5B21B6; font-weight: 700; margin-bottom: 12px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+    .case-study-box p { color: #4C1D95; font-size: 0.95rem; line-height: 1.7; margin-bottom: 10px; }
+    
+    .content-block { margin-bottom: 50px; }
+    .content-block h2 { font-size: 1.6rem; color: #1F2937; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #E5E7EB; padding-bottom: 10px; }
+    
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 25px 0; }
+    .compare-card { padding: 25px; border-radius: 10px; border: 1px solid #E5E7EB; background: #F8F9FA; transition: all 0.3s; }
+    .compare-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+    .compare-card h4 { margin-bottom: 15px; color: #1F2937; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+    .compare-card ul { padding-left: 20px; color: #4B5563; line-height: 1.7; }
+    
+    /* Code Window */
+    .code-window { background: #1E1E1E; border-radius: 8px; overflow: hidden; margin: 20px 0; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .code-header { background: #2D2D2D; padding: 10px 15px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #333; }
+    .mac-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .code-body { padding: 20px; font-family: 'Fira Code', monospace; font-size: 0.92rem; overflow-x: auto; line-height: 1.6; color: #D4D4D4; }
+    
+    .pk { color: #C586C0; } .pf { color: #DCDCAA; } .ps { color: #CE9178; } .pc { color: #6A9955; font-style: italic; }
+
+    /* Visualizer UI (Section 3) */
+    .demo-area { border: 2px dashed #8B5CF6; border-radius: 12px; padding: 30px; background: rgba(139, 92, 246, 0.03); margin-top: 20px; display: flex; flex-direction: column; gap: 20px; }
+    
+    .sim-toggle-bar { display: flex; justify-content: center; gap: 15px; margin-bottom: 10px; }
+    .btn-toggle { background: #fff; border: 1px solid #E5E7EB; padding: 10px 20px; border-radius: 8px; font-weight: 600; color: #4B5563; cursor: pointer; transition: 0.2s; }
+    .btn-toggle.active { background: #8B5CF6; color: #fff; border-color: #7C3AED; box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3); }
+
+    .network-visualizer { background: #1F2937; border-radius: 12px; padding: 30px; position: relative; height: 200px; display: flex; justify-content: space-between; align-items: center; overflow: hidden; border: 1px solid #374151; box-shadow: inset 0 5px 20px rgba(0,0,0,0.5); }
+    
+    .node-box { background: #374151; border: 2px solid #4B5563; padding: 15px; border-radius: 8px; color: #fff; font-weight: 600; z-index: 10; text-align: center; width: 120px; }
+    .connection-zone { position: absolute; left: 150px; right: 150px; height: 100%; top: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    
+    .http-req { position: absolute; width: 20px; height: 20px; background: #EF4444; border-radius: 50%; opacity: 0; }
+    @keyframes moveRight { 0% { left: 0; opacity: 1; } 50% { opacity: 1; } 100% { left: 100%; opacity: 0; } }
+    @keyframes moveLeft { 0% { right: 0; opacity: 1; } 50% { opacity: 1; } 100% { right: 100%; opacity: 0; } }
+    
+    .ws-pipe { width: 100%; height: 12px; background: rgba(16, 185, 129, 0.2); border-radius: 10px; border: 1px solid #10B981; position: relative; display: none; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+    .status-text { text-align: center; color: #9CA3AF; font-family: monospace; margin-top: 15px; font-size: 0.9rem; }
+
+    /* Dual Chat UI (Section 4) */
+    .chat-demo-area { border: 2px dashed #10B981; border-radius: 12px; padding: 30px; background: rgba(16, 185, 129, 0.03); margin-top: 20px; }
+    .dual-chat-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+    .chat-wrapper { background: #fff; border: 1px solid #E5E7EB; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
+    
+    .chat-header { color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .header-a { background: #8B5CF6; } /* Purple for Client A */
+    .header-b { background: #3B82F6; } /* Blue for Client B */
+    
+    .chat-status { font-size: 0.75rem; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 20px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+    .chat-status.offline { background: #EF4444; }
+    .status-dot { width: 8px; height: 8px; background: #10B981; border-radius: 50%; display: inline-block; }
+    .chat-status.offline .status-dot { background: #fff; }
+    
+    .chat-body { height: 320px; background: #F9FAFB; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+    .msg-bubble { max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 0.95rem; line-height: 1.5; position: relative; animation: popIn 0.3s ease-out; }
+    
+    .msg-sent-a { background: #8B5CF6; color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
+    .msg-sent-b { background: #3B82F6; color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
+    .msg-received { background: #fff; color: #1F2937; border: 1px solid #E5E7EB; align-self: flex-start; border-bottom-left-radius: 2px; }
+    .msg-author { font-size: 0.7rem; color: #9CA3AF; margin-bottom: 4px; display: block; font-weight: 600; }
+    
+    .chat-footer { padding: 15px; background: #fff; border-top: 1px solid #E5E7EB; display: flex; gap: 10px; }
+    .chat-input { flex-grow: 1; padding: 10px 15px; border: 1px solid #E5E7EB; border-radius: 20px; outline: none; font-family: 'Inter', sans-serif; }
+    .chat-input:focus { border-color: #9CA3AF; }
+    
+    .btn-send { color: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; }
+    .btn-send-a { background: #8B5CF6; } .btn-send-a:hover { background: #7C3AED; }
+    .btn-send-b { background: #3B82F6; } .btn-send-b:hover { background: #2563EB; }
+
+    .typing-indicator { display: none; align-self: flex-start; background: #E5E7EB; padding: 8px 15px; border-radius: 20px; font-size: 0.8rem; color: #6B7280; font-style: italic; animation: popIn 0.3s ease-out; }
+
+    @keyframes popIn { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+
+    @media(max-width: 768px) {
+        .dual-chat-container { grid-template-columns: 1fr; }
+        .compare-grid { grid-template-columns: 1fr; }
+        .network-visualizer { flex-direction: column; height: 350px; }
+        .connection-zone { left: 0; right: 0; top: 100px; bottom: 100px; height: auto; width: 100%; flex-direction: row; }
+        .ws-pipe { height: 100%; width: 12px; }
+    }
+</style>
+
+<div class="ws-header">
+    <span style="display:inline-block; padding: 4px 12px; background: rgba(139, 92, 246, 0.1); color: #8B5CF6; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 15px; letter-spacing: 1px;"><i class="fa-solid fa-bolt"></i> REAL-TIME ARCHITECTURE</span>
+    <h1>Real-Time WebSockets (Socket.io)</h1>
+    
+    <div class="def-box">
+        <strong>Definition:</strong> WebSocket is a computer communications protocol, providing full-duplex, bi-directional communication channels over a single TCP connection.
+    </div>
+
+    <p>সাধারণ HTTP রিকোয়েস্ট হলো "One-way" যোগাযোগ (ক্লায়েন্ট চাইল, সার্ভার দিল)। কিন্তু চ্যাট অ্যাপ বা লাইভ ড্যাশবোর্ডের ক্ষেত্রে সার্ভার থেকে সরাসরি ক্লায়েন্টকে ডেটা পুশ (Push) করার জন্য আমাদের একটি রিয়েল-টাইম পাইপলাইন প্রয়োজন হয়।</p>
+</div>
+
+<!-- Section 1: Polling vs WebSocket -->
+<div class="content-block">
+    <h2><i class="fa-solid fa-network-wired" style="color: #8B5CF6;"></i> 1. The HTTP Overhead Problem</h2>
+    
+    <div class="case-study-box">
+        <div class="case-title"><i class="fa-solid fa-server"></i> The Polling Trap</div>
+        <p>ধরি, আমরা একটি স্টক মার্কেট লাইভ ড্যাশবোর্ড বানাচ্ছি। অনেক নতুন ডেভেলপার `setInterval` দিয়ে প্রতি ১ সেকেন্ড পর পর এপিআই কল করে ডেটা আপডেট করে (যাকে <strong>HTTP Polling</strong> বলে)। সমস্যা হলো, প্রতিটি HTTP রিকোয়েস্টের সাথে বিশাল সাইজের <strong>Headers, Cookies, এবং Handshake overhead</strong> যায়।</p>
+        <p>১০০০ জন ইউজার থাকলে প্রতি সেকেন্ডে ১০০০ রিকোয়েস্ট! সার্ভার খামোখাই ওভারলোড হয়ে ক্র্যাশ করবে। <strong>WebSocket এর সলিউশন:</strong> এটি একবার হ্যান্ডশেক (Handshake) করে একটি পার্মানেন্ট কানেকশন তৈরি করে রাখে। এরপর ডেটাগুলো কোনো হেডার ছাড়াই লাইটওয়েট ফ্রেম (Frame) হিসেবে আদান-প্রদান হয়।</p>
+    </div>
+    
+    <div class="compare-grid">
+        <div class="compare-card" style="border-top: 3px solid #EF4444;">
+            <h4><i class="fa-solid fa-rotate" style="color:#EF4444;"></i> HTTP Short/Long Polling</h4>
+            <ul>
+                <li>ক্লায়েন্ট বারবার সার্ভারকে জিজ্ঞেস করে "নতুন ডেটা আছে?"</li>
+                <li>অপ্রয়োজনীয় নেটওয়ার্ক ওভারহেড তৈরি হয়।</li>
+                <li>১০০% রিয়েল-টাইম নয় (ডিলে থাকে)।</li>
+            </ul>
+        </div>
+        <div class="compare-card" style="border-top: 3px solid #10B981; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.05);">
+            <h4><i class="fa-solid fa-bolt" style="color:#10B981;"></i> WebSocket Protocol (ws://)</h4>
+            <ul>
+                <li>সার্ভার নিজেই ক্লায়েন্টকে ডেটা পুশ করতে পারে।</li>
+                <li>মাত্র কয়েক বাইট (Bytes) ওভারহেড থাকে।</li>
+                <li>Sub-millisecond রিয়েল-টাইম লেটেন্সি।</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Section 2: Advanced Scaling (Code) -->
+<div class="content-block">
+    <h2><i class="fa-solid fa-layer-group" style="color: #1F2937;"></i> 2. Scaling Sockets with Redis Pub/Sub</h2>
+    
+    <div class="case-study-box" style="background:#FFFBEB; border-color:#FDE68A; border-left-color:#F59E0B;">
+        <div class="case-title" style="color:#B45309;"><i class="fa-solid fa-cubes"></i> The Multi-Server Dilemma</div>
+        <p style="color:#78350F;">যখন আপনার অ্যাপে লাখ লাখ ইউজার আসবে, তখন একটি Node.js সার্ভার দিয়ে কাজ হবে না। আপনি Load Balancer দিয়ে ৩টি সার্ভার বানালেন। সমস্যা হলো— Socket.io মেমোরিতে (RAM) কানেকশন সেভ রাখে। ইউজার "A" কানেক্ট হলো সার্ভার-১ এ, আর ইউজার "B" কানেক্ট হলো সার্ভার-২ এ। এখন "A" মেসেজ পাঠালে "B" সেটি পাবে না!</p>
+        <p style="color:#78350F;"><strong>The Pro Solution:</strong> আমরা <strong>Redis Adapter (Pub/Sub)</strong> ব্যবহার করবো। কোনো সার্ভারে মেসেজ আসলেই সে সেটি Redis এ ব্রডকাস্ট (Publish) করে দিবে। বাকি সার্ভারগুলো সেটি শুনে (Subscribe) তাদের ক্লায়েন্টদের পাঠিয়ে দিবে।</p>
+    </div>
+
+    <div class="code-window">
+        <div class="code-header">
+            <div class="mac-dot" style="background:#ff5f56;"></div>
+            <div class="mac-dot" style="background:#ffbd2e;"></div>
+            <div class="mac-dot" style="background:#27c93f;"></div>
+            <span style="color: #888; font-size: 0.85rem; margin-left: auto;">server.js (Scaling Sockets)</span>
+        </div>
+        <div class="code-body">
+<pre style="margin: 0;"><span class="pk">const</span> { Server } = <span class="pf">require</span>(<span class="ps">'socket.io'</span>);
+<span class="pk">const</span> { createAdapter } = <span class="pf">require</span>(<span class="ps">'@socket.io/redis-adapter'</span>);
+<span class="pk">const</span> { createClient } = <span class="pf">require</span>(<span class="ps">'redis'</span>);
+
+<span class="pc">// 1. Create Redis Pub/Sub Clients</span>
+<span class="pk">const</span> pubClient = <span class="pf">createClient</span>({ url: <span class="ps">'redis://localhost:6379'</span> });
+<span class="pk">const</span> subClient = pubClient.<span class="pf">duplicate</span>();
+
+<span class="pf">Promise</span>.<span class="pf">all</span>([pubClient.<span class="pf">connect</span>(), subClient.<span class="pf">connect</span>()]).<span class="pf">then</span>(() => {
+    
+    <span class="pk">const</span> io = <span class="pk">new</span> <span class="pf">Server</span>(httpServer, {
+        <span class="pc">// 2. Attach Redis Adapter to Socket.io</span>
+        adapter: <span class="pf">createAdapter</span>(pubClient, subClient)
+    });
+
+    io.<span class="pf">on</span>(<span class="ps">'connection'</span>, (socket) => {
+        socket.<span class="pf">on</span>(<span class="ps">'chat_message'</span>, (msg) => {
+            <span class="pc">// 3. This will now broadcast across ALL Node.js instances!</span>
+            io.<span class="pf">emit</span>(<span class="ps">'chat_message'</span>, msg); 
+        });
+    });
+});</pre>
+        </div>
+    </div>
+</div>
+
+<!-- Section 3: Visualizer -->
+<div class="content-block">
+    <h2><i class="fa-solid fa-gamepad" style="color: #8B5CF6;"></i> 3. Network Architecture Simulator</h2>
+    <p style="color: #4B5563;">HTTP Polling এবং WebSockets এর মধ্যে আন্ডার-দ্য-হুড (Under the hood) গতির পার্থক্য দেখতে নিচের টগল (Toggle) বাটনগুলো ব্যবহার করুন। মনে রাখবেন, <strong>WebSocket মোড অন না থাকলে নিচের লাইভ চ্যাট সিস্টেমটি কাজ করবে না!</strong></p>
+
+    <div class="demo-area">
+        <div class="sim-toggle-bar">
+            <button class="btn-toggle active" id="btn-http" onclick="setMode('http')">HTTP Polling</button>
+            <button class="btn-toggle" id="btn-ws" onclick="setMode('ws')">WebSocket (ws://)</button>
+        </div>
+
+        <div class="network-visualizer">
+            <!-- Client Node -->
+            <div class="node-box" style="border-color: #60A5FA;">
+                <i class="fa-solid fa-laptop" style="color: #60A5FA;"></i>
+                <span style="font-size: 0.85rem;">Clients</span>
+            </div>
+
+            <!-- Connection Zone -->
+            <div class="connection-zone" id="conn-zone">
+                <div class="ws-pipe" id="ws-pipe"></div>
+            </div>
+
+            <!-- Server Node -->
+            <div class="node-box" style="border-color: #F87171;">
+                <i class="fa-solid fa-server" style="color: #F87171;"></i>
+                <span style="font-size: 0.85rem;">Socket Server</span>
+            </div>
+        </div>
+        
+        <div class="status-text" id="status-txt">
+            [HTTP Polling] Connections closed after response. Real-time chat disabled.
+        </div>
+    </div>
+</div>
+
+<!-- Section 4: Live Dual Chat Demo -->
+<div class="content-block">
+    <h2><i class="fa-solid fa-comments" style="color: #10B981;"></i> 4. Live Chat Application (Demo)</h2>
+    <p style="color: #4B5563;">চলুন এবার একটি রিয়েল-টাইম চ্যাট ইন্টারফেস দেখি। আপনি Client-A (Faravi) থেকে কোনো মেসেজ টাইপ করে সেন্ড করলে, সেটি Client-B এর স্ক্রিনে রিয়েল-টাইমে ব্রডকাস্ট হবে এবং উল্টোটাও কাজ করবে!</p>
+
+    <div class="chat-demo-area">
+        <div class="dual-chat-container">
+            
+            <!-- CLIENT A -->
+            <div class="chat-wrapper">
+                <div class="chat-header header-a">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <i class="fa-solid fa-user-astronaut" style="font-size: 1.5rem;"></i>
+                        <div><h3 style="font-size: 1.1rem; margin:0;">Client A (Faravi)</h3></div>
+                    </div>
+                    <div class="chat-status ws-status-badge offline">
+                        <span class="status-dot"></span> <span class="badge-text">Disconnected</span>
+                    </div>
+                </div>
+                
+                <div class="chat-body" id="chat-body-A">
+                    <div class="msg-bubble msg-received">
+                        <span class="msg-author">System</span>
+                        Welcome to the WebSocket Room.
+                    </div>
+                    <div class="typing-indicator" id="typing-A">Client B is typing...</div>
+                </div>
+                
+                <div class="chat-footer">
+                    <input type="text" id="input-A" class="chat-input" placeholder="Message from Faravi..." onkeypress="handleKey(event, 'A', 'B')">
+                    <button class="btn-send btn-send-a" onclick="sendMsg('A', 'B')"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+
+            <!-- CLIENT B -->
+            <div class="chat-wrapper">
+                <div class="chat-header header-b">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <i class="fa-solid fa-user-ninja" style="font-size: 1.5rem;"></i>
+                        <div><h3 style="font-size: 1.1rem; margin:0;">Client B (Guest)</h3></div>
+                    </div>
+                    <div class="chat-status ws-status-badge offline">
+                        <span class="status-dot"></span> <span class="badge-text">Disconnected</span>
+                    </div>
+                </div>
+                
+                <div class="chat-body" id="chat-body-B">
+                    <div class="msg-bubble msg-received">
+                        <span class="msg-author">System</span>
+                        Welcome to the WebSocket Room.
+                    </div>
+                    <div class="typing-indicator" id="typing-B">Client A is typing...</div>
+                </div>
+                
+                <div class="chat-footer">
+                    <input type="text" id="input-B" class="chat-input" placeholder="Reply from Guest..." onkeypress="handleKey(event, 'B', 'A')">
+                    <button class="btn-send btn-send-b" onclick="sendMsg('B', 'A')"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+
+        </div> <!-- End Dual Chat -->
+    </div>
+</div>
+
+<script>
+    /* --- SECTION 3: NETWORK SIMULATOR LOGIC --- */
+    let mode = 'http';
+    let pollingInterval;
+
+    function setMode(newMode) {
+        mode = newMode;
+        document.getElementById('btn-http').classList.remove('active');
+        document.getElementById('btn-ws').classList.remove('active');
+        document.getElementById(`btn-${mode}`).classList.add('active');
+        
+        const zone = document.getElementById('conn-zone');
+        const pipe = document.getElementById('ws-pipe');
+        const status = document.getElementById('status-txt');
+        
+        // Update UI Badges on both chats
+        const badges = document.querySelectorAll('.ws-status-badge');
+        
+        clearInterval(pollingInterval);
+        document.querySelectorAll('.http-req').forEach(el => el.remove());
+
+        if (mode === 'http') {
+            pipe.style.display = 'none';
+            status.innerHTML = '<span style="color:#EF4444;">[HTTP Polling] Server connection closed after each request. Real-time chat is disabled.</span>';
+            
+            badges.forEach(b => {
+                b.classList.add('offline');
+                b.querySelector('.badge-text').innerText = 'Disconnected';
+            });
+            startPollingSim(zone);
+        } else {
+            pipe.style.display = 'block';
+            status.innerHTML = '<span style="color:#10B981;">[WebSocket] Handshake complete. TCP connection open. Bi-directional chat is active!</span>';
+            
+            badges.forEach(b => {
+                b.classList.remove('offline');
+                b.querySelector('.badge-text').innerText = 'WS Connected';
+            });
+        }
+    }
+
+    function startPollingSim(zone) {
+        pollingInterval = setInterval(() => {
+            const req = document.createElement('div');
+            req.className = 'http-req';
+            req.style.animation = 'moveRight 0.8s linear forwards';
+            req.style.top = '40%';
+            zone.appendChild(req);
+            
+            setTimeout(() => {
+                req.remove();
+                const res = document.createElement('div');
+                res.className = 'http-req';
+                res.style.background = '#60A5FA';
+                res.style.animation = 'moveLeft 0.8s linear forwards';
+                res.style.top = '60%';
+                zone.appendChild(res);
+                setTimeout(() => res.remove(), 800);
+            }, 800);
+        }, 2000);
+    }
+
+    /* --- SECTION 4: LIVE CHAT LOGIC --- */
+    function handleKey(e, sender, receiver) {
+        if (e.key === 'Enter') sendMsg(sender, receiver);
+    }
+
+    function sendMsg(sender, receiver) {
+        if (mode === 'http') {
+            alert("Warning: WebSocket connection is closed! Please toggle 'WebSocket (ws://)' in the simulator (Section 3) to enable chat.");
+            return;
+        }
+
+        const inputEl = document.getElementById(`input-${sender}`);
+        const msg = inputEl.value.trim();
+        if(!msg) return;
+
+        const senderBody = document.getElementById(`chat-body-${sender}`);
+        const receiverBody = document.getElementById(`chat-body-${receiver}`);
+        const receiverTyping = document.getElementById(`typing-${receiver}`);
+
+        // 1. Render message in Sender's screen
+        const myBubble = document.createElement('div');
+        myBubble.className = `msg-bubble msg-sent-${sender.toLowerCase()}`;
+        myBubble.innerText = msg;
+        senderBody.insertBefore(myBubble, document.getElementById(`typing-${sender}`));
+        
+        inputEl.value = '';
+        senderBody.scrollTop = senderBody.scrollHeight;
+
+        // 2. Simulate Server Broadcast Latency (200ms)
+        setTimeout(() => {
+            // Show typing indicator on receiver's screen briefly
+            receiverTyping.style.display = 'block';
+            receiverBody.scrollTop = receiverBody.scrollHeight;
+            
+            setTimeout(() => {
+                receiverTyping.style.display = 'none';
+                
+                // Render message in Receiver's screen
+                const replyBubble = document.createElement('div');
+                replyBubble.className = 'msg-bubble msg-received';
+                const authorName = sender === 'A' ? 'Faravi' : 'Guest';
+                replyBubble.innerHTML = `<span class="msg-author">${authorName}</span>${msg}`;
+                
+                receiverBody.insertBefore(replyBubble, receiverTyping);
+                receiverBody.scrollTop = receiverBody.scrollHeight;
+                
+            }, 300); // UI processing delay
+            
+        }, 150); // Network transmission latency
+    }
+
+    // Initialize
+    setMode('http');
+</script>

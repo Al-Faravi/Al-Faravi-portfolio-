@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tech Lab | Shakawat Faravi</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../assets/logo_1_512x512.png">
+    <style>
+        /* Global Styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background-color: #FAFAFA; 
+            background-image: radial-gradient(#E5E7EB 1px, transparent 1px); 
+            background-size: 30px 30px; 
+            font-family: 'Inter', sans-serif; 
+            color: #1F2937;
+            overflow-x: hidden;
+        }
+        
+        .hub-container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; position: relative; }
+        
+        /* 1. Top Navigation / Back Button */
+        .hub-nav { display: flex; justify-content: flex-start; margin-bottom: 30px; animation: fadeInDown 0.8s ease-out; }
+        .btn-back { 
+            display: inline-flex; align-items: center; gap: 8px; 
+            padding: 10px 20px; background: #fff; border: 1px solid #E5E7EB; 
+            border-radius: 30px; color: #4B5563; text-decoration: none; 
+            font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        .btn-back:hover { 
+            background: #1F2937; color: #fff; border-color: #1F2937;
+            transform: translateX(-5px); box-shadow: 0 10px 15px rgba(31, 41, 55, 0.1);
+        }
+        
+        /* 2. Header Animations */
+        .hub-header { text-align: center; margin-bottom: 60px; animation: fadeInUp 0.8s ease-out 0.2s both; }
+        .hub-header h1 { font-family: 'Playfair Display', serif; font-size: 3.8rem; color: #111827; margin-bottom: 15px; letter-spacing: -1px; }
+        .hub-header p { color: #6B7280; font-size: 1.15rem; max-width: 650px; margin: 0 auto; line-height: 1.7; }
+        
+        .badge-hub { 
+            display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; 
+            background: rgba(139, 92, 246, 0.1); color: #8B5CF6; border-radius: 30px; 
+            font-size: 0.85rem; font-weight: 700; margin-bottom: 20px; 
+            text-transform: uppercase; letter-spacing: 1.5px; border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        /* 3. Dashboard Grid (Desktop) */
+        .lab-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; perspective: 1000px; }
+        
+        /* Lab Cards (Staggered Entrance Animation) */
+        .lab-card { 
+            background: #fff; border: 1px solid #E5E7EB; border-radius: 20px; 
+            padding: 35px 30px; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+            position: relative; overflow: hidden; cursor: pointer; display: flex; 
+            flex-direction: column; text-decoration: none; z-index: 1;
+            opacity: 0; animation: scaleUp 0.6s ease-out forwards;
+        }
+        
+        .lab-card:nth-child(1) { animation-delay: 0.4s; }
+        .lab-card:nth-child(2) { animation-delay: 0.5s; }
+        .lab-card:nth-child(3) { animation-delay: 0.6s; }
+        .lab-card:nth-child(4) { animation-delay: 0.7s; }
+
+        .lab-card::after {
+            content: ''; position: absolute; inset: 0; border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08); opacity: 0; transition: opacity 0.5s ease; z-index: -1;
+        }
+
+        .lab-card:hover { transform: translateY(-10px) scale(1.02); border-color: transparent; }
+        .lab-card:hover::after { opacity: 1; }
+        
+        /* Dynamic Top Borders */
+        .card-fullstack { border-top: 5px solid #3B82F6; }
+        .card-ml { border-top: 5px solid #10B981; }
+        .card-data { border-top: 5px solid #F59E0B; }
+        .card-branding { border-top: 5px solid #EC4899; }
+
+        /* 4. Card Icons & Inner UI */
+        .icon-wrapper { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
+        .card-icon { 
+            width: 65px; height: 65px; border-radius: 16px; display: flex; justify-content: center; 
+            align-items: center; font-size: 2rem; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); 
+        }
+        
+        .lab-card:hover .card-icon { transform: scale(1.1) rotate(5deg); }
+
+        .card-fullstack .card-icon { background: linear-gradient(135deg, #EFF6FF, #DBEAFE); color: #3B82F6; box-shadow: 0 10px 20px rgba(59,130,246,0.1); }
+        .card-ml .card-icon { background: linear-gradient(135deg, #F0FDF4, #D1FAE5); color: #10B981; box-shadow: 0 10px 20px rgba(16,185,129,0.1); }
+        .card-data .card-icon { background: linear-gradient(135deg, #FFFBEB, #FEF3C7); color: #F59E0B; box-shadow: 0 10px 20px rgba(245,158,11,0.1); }
+        .card-branding .card-icon { background: linear-gradient(135deg, #FDF2F8, #FCE7F3); color: #EC4899; box-shadow: 0 10px 20px rgba(236,72,153,0.1); }
+
+        .top-arrow { color: #D1D5DB; font-size: 1.2rem; transition: 0.3s; }
+        .lab-card:hover .top-arrow { color: #1F2937; transform: translate(5px, -5px); }
+
+        .lab-card h3 { color: #111827; font-size: 1.45rem; margin-bottom: 12px; font-weight: 700; letter-spacing: -0.5px; }
+        .lab-card p { color: #6B7280; font-size: 0.95rem; line-height: 1.6; flex-grow: 1; margin-bottom: 30px; }
+
+        .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #F3F4F6; padding-top: 20px; }
+        .module-count { font-size: 0.85rem; font-weight: 600; color: #4B5563; display: flex; align-items: center; gap: 6px; background: #F3F4F6; padding: 5px 12px; border-radius: 20px; }
+        
+        .enter-btn { font-size: 0.95rem; font-weight: 700; transition: 0.3s; display: flex; align-items: center; gap: 6px; }
+        .card-fullstack .enter-btn { color: #3B82F6; }
+        .card-ml .enter-btn { color: #10B981; }
+        .card-data .enter-btn { color: #F59E0B; }
+        .card-branding .enter-btn { color: #EC4899; }
+        .lab-card:hover .enter-btn { gap: 12px; } 
+
+        /* 5. Keyframe Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleUp {
+            from { opacity: 0; transform: scale(0.9) translateY(30px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* =========================================
+           MOBILE RESPONSIVE (2 Cards Per Row) 
+           ========================================= */
+        @media(max-width: 768px) {
+            .hub-container { padding: 25px 15px; }
+            .hub-header { margin-bottom: 35px; }
+            .hub-header h1 { font-size: 2.2rem; margin-bottom: 10px; }
+            .hub-header p { font-size: 0.9rem; line-height: 1.5; }
+            .badge-hub { font-size: 0.75rem; padding: 5px 12px; margin-bottom: 15px; }
+
+            /* Force 2 Columns on Mobile */
+            .lab-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px; /* Reduced gap for mobile */
+            }
+
+            /* Compact Card Layout for Mobile */
+            .lab-card { 
+                padding: 18px 15px; 
+                border-radius: 14px; 
+            }
+            .lab-card::after { border-radius: 14px; }
+
+            /* Smaller Icons */
+            .icon-wrapper { margin-bottom: 15px; }
+            .card-icon { width: 42px; height: 42px; font-size: 1.3rem; border-radius: 10px; }
+            .top-arrow { font-size: 0.9rem; }
+
+            /* Compact Typography */
+            .lab-card h3 { font-size: 1rem; margin-bottom: 6px; letter-spacing: 0; }
+            
+            /* Truncate Description to 3 lines on mobile */
+            .lab-card p { 
+                font-size: 0.75rem; 
+                line-height: 1.4; 
+                margin-bottom: 15px; 
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            /* Stack Footer vertically to fit narrow space */
+            .card-footer { 
+                flex-direction: column; 
+                align-items: flex-start; 
+                gap: 10px; 
+                padding-top: 15px; 
+            }
+            .module-count { font-size: 0.7rem; padding: 3px 8px; }
+            .enter-btn { font-size: 0.8rem; gap: 4px; }
+        }
+        
+        /* For very small devices (e.g., iPhone SE) */
+        @media(max-width: 375px) {
+            .lab-card h3 { font-size: 0.9rem; }
+            .lab-card p { font-size: 0.7rem; -webkit-line-clamp: 2; } /* Show only 2 lines */
+        }
+    </style>
+</head>
+<body>
+
+<div class="hub-container">
+    
+    <!-- Back to Portfolio Button -->
+    <div class="hub-nav">
+        <a href="../index.html" class="btn-back">
+            <i class="fa-solid fa-arrow-left-long"></i> Back
+        </a>
+    </div>
+
+    <!-- Header Section -->
+    <div class="hub-header">
+        <span class="badge-hub"><i class="fa-solid fa-flask"></i> Welcome to the Lab</span>
+        <h1>My Tech Lab</h1>
+        <p>A collection of interactive case studies, system architecture simulations, and visual experiments across my multi-disciplinary expertise.</p>
+    </div>
+
+    <!-- Animated Grid (2x2 on Mobile) -->
+    <div class="lab-grid">
+        
+        <!-- 1. Full Stack Engineering -->
+        <a href="pages/overview.html" class="lab-card card-fullstack">
+            <div class="icon-wrapper">
+                <div class="card-icon"><i class="fa-solid fa-layer-group"></i></div>
+                <i class="fa-solid fa-arrow-up-right-from-square top-arrow"></i>
+            </div>
+            <h3>Full-Stack Engineering</h3>
+            <p>Interactive simulations of React rendering strategies, WebSocket architecture, Redis caching, CI/CD pipelines, and JWT security.</p>
+            <div class="card-footer">
+                <span class="module-count"><i class="fa-solid fa-book"></i> 15 Modules</span>
+                <span class="enter-btn">Explore <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <!-- 2. Machine Learning & Vision -->
+        <a href="#" class="lab-card card-ml">
+            <div class="icon-wrapper">
+                <div class="card-icon"><i class="fa-solid fa-brain"></i></div>
+                <i class="fa-solid fa-arrow-up-right-from-square top-arrow"></i>
+            </div>
+            <h3>Machine Learning & AI</h3>
+            <p>Case studies on image classification models, medical scan diagnostics using TensorFlow and OpenCV in Python.</p>
+            <div class="card-footer">
+                <span class="module-count"><i class="fa-solid fa-vial-virus"></i> Diagnostic AI</span>
+                <span class="enter-btn">Explore <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <!-- 3. Data Analytics & BI -->
+        <a href="#" class="lab-card card-data">
+            <div class="icon-wrapper">
+                <div class="card-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                <i class="fa-solid fa-arrow-up-right-from-square top-arrow"></i>
+            </div>
+            <h3>Data Analytics & BI</h3>
+            <p>Interactive data visualization dashboards, SQL Server aggregations, and business intelligence reporting using Power BI.</p>
+            <div class="card-footer">
+                <span class="module-count"><i class="fa-solid fa-chart-line"></i> Dashboards</span>
+                <span class="enter-btn">Explore <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+        <!-- 4. UI/UX & Digital Branding -->
+        <a href="#" class="lab-card card-branding">
+            <div class="icon-wrapper">
+                <div class="card-icon"><i class="fa-solid fa-pen-nib"></i></div>
+                <i class="fa-solid fa-arrow-up-right-from-square top-arrow"></i>
+            </div>
+            <h3>Digital Branding & UI/UX</h3>
+            <p>Institutional marketing operations, graphic design, layouts, and professional documentation crafted with LaTeX.</p>
+            <div class="card-footer">
+                <span class="module-count"><i class="fa-solid fa-palette"></i> Design & Copy</span>
+                <span class="enter-btn">Explore <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+        </a>
+
+    </div>
+</div>
+
+</body>
+</html>

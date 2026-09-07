@@ -1,0 +1,259 @@
+<style>
+    /* Scoped CSS for Next.js Page */
+    .nextjs-header { margin-bottom: 40px; border-left: 4px solid #171717; padding-left: 20px; }
+    .nextjs-header h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 10px; color:#1F2937; }
+    .nextjs-header p { color: #4B5563; font-size: 1.05rem; max-width: 800px; line-height: 1.8; }
+    
+    .badge-pro { background: #FEE2E2; color: #DC2626; font-size: 0.75rem; padding: 4px 10px; border-radius: 4px; font-weight: 700; letter-spacing: 1px; vertical-align: middle; margin-left: 10px; }
+
+    .def-box { background: #F3F4F6; border-left: 4px solid #171717; padding: 15px 20px; margin-bottom: 20px; font-style: italic; color: #374151; font-size: 0.95rem; }
+    
+    /* Case Study Box */
+    .case-study-box { background: #FAFAFA; border: 1px solid #E5E7EB; border-left: 4px solid #171717; padding: 25px; border-radius: 8px; margin-bottom: 25px; }
+    .case-title { color: #171717; font-weight: 700; margin-bottom: 12px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+    .case-study-box p { color: #4B5563; font-size: 0.95rem; line-height: 1.7; margin-bottom: 10px; }
+    .inline-code { background: rgba(0,0,0,0.05); padding: 2px 8px; border-radius: 4px; font-family: monospace; font-size: 0.9rem; color: #171717; border: 1px solid #E5E7EB; }
+
+    .content-block { margin-bottom: 50px; }
+    .content-block h2 { font-size: 1.6rem; color: #1F2937; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #E5E7EB; padding-bottom: 10px; }
+    
+    /* Rendering Strategies Grid */
+    .render-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 20px; }
+    .render-card { background: #fff; border: 1px solid #E5E7EB; padding: 25px; border-radius: 8px; transition: all 0.3s; position: relative; overflow: hidden; }
+    .render-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #E5E7EB; transition: 0.3s; }
+    .render-card:hover::before { background: #171717; }
+    .render-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+    .render-card h3 { color: #1F2937; font-size: 1.2rem; margin-bottom: 10px; }
+    .render-card p { color: #4B5563; font-size: 0.9rem; line-height: 1.6; }
+    
+    /* Next.js Code Window */
+    .code-window { background: #000000; border-radius: 8px; overflow: hidden; margin: 20px 0; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .code-header { background: #111; padding: 10px 15px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #333; }
+    .mac-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .code-body { padding: 20px; font-family: 'Fira Code', monospace; font-size: 0.95rem; overflow-x: auto; line-height: 1.6; color: #ededed; }
+    
+    .nk { color: #f81ce5; } .nf { color: #61afef; } .ns { color: #50e3c2; } .nc { color: #888; font-style: italic; }
+
+    /* Rendering Simulator UI */
+    .simulator-box { border: 2px solid #E5E7EB; border-radius: 12px; background: #F8F9FA; padding: 30px; display: flex; gap: 30px; flex-wrap: wrap; }
+    .sim-controls { flex: 1; min-width: 250px; }
+    .sim-screen { flex: 1; min-width: 300px; background: #fff; border: 4px solid #1F2937; border-radius: 12px; height: 250px; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+    
+    .browser-top { background: #1F2937; height: 30px; display: flex; align-items: center; padding: 0 10px; gap: 5px; }
+    .b-dot { width: 10px; height: 10px; border-radius: 50%; background: #4B5563; }
+    
+    .browser-body { flex-grow: 1; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: #fff; }
+    
+    .btn-sim { display: block; width: 100%; text-align: left; background: #fff; border: 1px solid #E5E7EB; padding: 12px 15px; border-radius: 8px; font-weight: 600; color: #1F2937; margin-bottom: 10px; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; }
+    .btn-sim:hover, .btn-sim.active { border-color: #1F2937; background: #F3F4F6; }
+
+    .sim-logs { margin-top: 20px; background: #111; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.85rem; color: #10B981; height: 120px; overflow-y: auto; }
+    
+    .spinner { border: 3px solid rgba(0,0,0,0.1); border-left-color: #1F2937; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .skeleton-box { background: #E5E7EB; border-radius: 4px; margin-bottom: 10px; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
+</style>
+
+<div class="nextjs-header">
+    <span style="display:inline-block; padding: 4px 12px; background: rgba(0, 0, 0, 0.05); color: #171717; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 15px; letter-spacing: 1px;"><i class="fa-solid fa-layer-group"></i> ADVANCED ARCHITECTURE</span>
+    <h1>Rendering Strategies <span class="badge-pro">PRO</span></h1>
+    
+    <div class="def-box">
+        <strong>Definition:</strong> Pre-rendering is the process of generating HTML for a page on the server in advance, rather than having it all done by client-side JavaScript in the browser.
+    </div>
+
+    <p>কেন আমরা সাধারণ React (Vite/CRA) বাদ দিয়ে Next.js ব্যবহার করি? মূল কারণ হলো রেন্ডারিং আর্কিটেকচার। Next.js আমাদের ক্লায়েন্ট-সাইড (CSR) এবং সার্ভার-সাইড (SSR/SSG) এর একটি পারফেক্ট ব্লেন্ডিং উপহার দেয়, যা পারফরম্যান্স এবং SEO এর জন্য অপরিহার্য।</p>
+</div>
+
+<!-- Section 1: The Case Study -->
+<div class="content-block">
+    <h2><i class="fa-solid fa-server"></i> 1. The Rendering Landscape</h2>
+    
+    <div class="case-study-box">
+        <div class="case-title"><i class="fa-solid fa-file-code"></i> The Blank Page Problem</div>
+        <p>ধরি, আমরা পিওর React দিয়ে একটি ব্লগ সাইট বানালাম। যখন কোনো ইউজার বা গুগলের সার্চ বট (Crawler) আমাদের সাইটে ভিজিট করে, সার্ভার তাদেরকে শুধু একটি সাদা HTML ফাইল পাঠায়, যার ভেতরে লেখা থাকে: <span class="inline-code">&lt;div id="root"&gt;&lt;/div&gt;</span></p>
+        <p>এরপর ব্রাউজারকে কয়েক মেগাবাইট সাইজের জাভাস্ক্রিপ্ট (bundle.js) ডাউনলোড করে সেই সাদা পেজে UI রেন্ডার করতে হয়। এই প্রক্রিয়ায় <strong>ইনিশিয়াল লোড অনেক স্লো হয়ে যায়</strong> এবং <strong>গুগল বট সাদা পেজ দেখে সাইটের রেংকিং কমিয়ে দেয় (Bad SEO)</strong>। এর সমাধান হলো Next.js, যা সার্ভারেই HTML তৈরি (Pre-render) করে ব্রাউজারে পাঠায়!</p>
+    </div>
+    
+    <div class="render-grid">
+        <div class="render-card">
+            <h3><i class="fa-brands fa-react" style="color: #61DAFB;"></i> CSR</h3>
+            <p><strong>Client-Side Rendering:</strong> ব্রাউজার JS ডাউনলোড করে UI বানায়। SEO এর জন্য খারাপ, লোড হতে বেশি সময় নেয়। ড্যাশবোর্ডের মতো হাইলি ইন্টারঅ্যাক্টিভ পেজে এটি মানানসই।</p>
+        </div>
+        <div class="render-card">
+            <h3><i class="fa-solid fa-database" style="color: #F59E0B;"></i> SSR</h3>
+            <p><strong>Server-Side Rendering:</strong> প্রতিবার ইউজার রিকোয়েস্ট করলে সার্ভার নতুন করে ডাটাবেস থেকে ডেটা এনে HTML তৈরি করে। ডেটা সবসময় ফ্রেশ থাকে, তবে সার্ভারে একটু লোড পড়ে।</p>
+        </div>
+        <div class="render-card">
+            <h3><i class="fa-solid fa-bolt" style="color: #10B981;"></i> SSG</h3>
+            <p><strong>Static Site Generation:</strong> প্রোজেক্ট বিল্ড (Build) করার সময় একবারই HTML তৈরি হয়ে যায়। ডেটা গ্লোবাল CDN থেকে সার্ভ হয় বলে এটি রকেটের মতো ফাস্ট!</p>
+        </div>
+        <div class="render-card">
+            <h3><i class="fa-solid fa-rotate-right" style="color: #8B5CF6;"></i> ISR</h3>
+            <p><strong>Incremental Static Regeneration:</strong> SSG এর মতোই ফাস্ট, তবে এটি ব্যাকগ্রাউন্ডে নির্দিষ্ট সময় পরপর (যেমন: প্রতি ৬০ সেকেন্ডে) ডাটাবেস থেকে নতুন ডেটা এনে পেজটিকে স্বয়ংক্রিয়ভাবে আপডেট করে দেয়।</p>
+        </div>
+    </div>
+</div>
+
+<!-- Section 2: App Router Implementation (Code) -->
+<div class="content-block">
+    <h2><i class="fa-solid fa-code"></i> 2. Next.js 14 (App Router) Implementation</h2>
+    <p style="color: #4B5563;">Next.js 14-এর App Router-এ সবকিছু ডিফল্টভাবে <strong>Server Component</strong>। এখানে আগের মতো <code>getServerSideProps</code> ফাংশন লিখতে হয় না। আমরা নেটিভ <code>fetch</code> API এর ক্যাশিং বিহেভিয়ার (Caching behavior) কন্ট্রোল করেই পুরো পেজের রেন্ডারিং স্ট্র্যাটেজি পাল্টে ফেলতে পারি!</p>
+    
+    <div class="code-window">
+        <div class="code-header">
+            <div class="mac-dot" style="background:#ff5f56;"></div>
+            <div class="mac-dot" style="background:#ffbd2e;"></div>
+            <div class="mac-dot" style="background:#27c93f;"></div>
+            <span style="color: #888; font-size: 0.85rem; margin-left: auto;">app/blog/page.js</span>
+        </div>
+        <div class="code-body">
+<pre style="margin: 0;"><span class="nc">// 1. SSG (Static) - Default Behavior. Cached indefinitely.</span>
+<span class="nk">const</span> res = <span class="nk">await</span> <span class="nf">fetch</span>(<span class="ns">'https://api.example.com/posts'</span>);
+
+<span class="nc">// 2. SSR (Dynamic) - Fetches fresh data on every single request.</span>
+<span class="nk">const</span> res = <span class="nk">await</span> <span class="nf">fetch</span>(<span class="ns">'https://api.example.com/posts'</span>, {
+    cache: <span class="ns">'no-store'</span>
+});
+
+<span class="nc">// 3. ISR (Incremental) - Serves cached HTML, but updates in background every 60s.</span>
+<span class="nk">const</span> res = <span class="nk">await</span> <span class="nf">fetch</span>(<span class="ns">'https://api.example.com/posts'</span>, {
+    next: { revalidate: <span class="nk">60</span> }
+});
+
+<span class="nk">export default async function</span> <span class="nf">BlogPage</span>() {
+    <span class="nk">const</span> data = <span class="nk">await</span> res.<span class="nf">json</span>();
+    <span class="nk">return</span> (
+        &lt;div&gt;
+            &lt;h1&gt;{data.title}&lt;/h1&gt;
+            &lt;p&gt;{data.content}&lt;/p&gt;
+        &lt;/div&gt;
+    );
+}</pre>
+        </div>
+    </div>
+</div>
+
+<!-- Section 3: Visualizer -->
+<div class="content-block">
+    <h2><i class="fa-solid fa-gauge-high"></i> 3. Rendering Engine Simulator</h2>
+    <p style="color: #4B5563;">নিচের সিমুলেটরটি ট্রাই করুন। CSR, SSR এবং SSG তে ক্লিক করে দেখুন ব্রাউজার, সার্ভার এবং CDN-এর মাঝে ডাটা কীভাবে ফ্লো করে এবং Initial Load Time বা <strong>TTFB (Time-To-First-Byte)</strong> তে কত বড় পার্থক্য তৈরি হয়!</p>
+
+    <div class="simulator-box">
+        <!-- Controls -->
+        <div class="sim-controls">
+            <button class="btn-sim" onclick="runSim('csr', this)"><span>Client-Side (React)</span> <i class="fa-solid fa-play"></i></button>
+            <button class="btn-sim" onclick="runSim('ssr', this)"><span>Server-Side (Next.js)</span> <i class="fa-solid fa-play"></i></button>
+            <button class="btn-sim" onclick="runSim('ssg', this)"><span>Static CDN (Next.js)</span> <i class="fa-solid fa-play"></i></button>
+            
+            <div class="sim-logs" id="terminal-logs">
+                > System ready.<br>
+                > Select a rendering strategy...
+            </div>
+        </div>
+
+        <!-- Browser Screen -->
+        <div class="sim-screen">
+            <div class="browser-top">
+                <div class="b-dot" style="background:#ff5f56;"></div>
+                <div class="b-dot" style="background:#ffbd2e;"></div>
+                <div class="b-dot" style="background:#27c93f;"></div>
+                <div style="background:#374151; color:#9CA3AF; font-size:0.7rem; padding: 2px 10px; border-radius:10px; margin-left:10px;">localhost:3000</div>
+            </div>
+            
+            <div class="browser-body" id="browser-canvas">
+                <h3 style="color:#D1D5DB;">Awaiting Request...</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+    
+    async function runSim(type, btnElement) {
+        // Reset UI
+        document.querySelectorAll('.btn-sim').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+        
+        const canvas = document.getElementById('browser-canvas');
+        const terminal = document.getElementById('terminal-logs');
+        terminal.innerHTML = '';
+        
+        function log(msg) {
+            terminal.innerHTML += `> ${msg}<br>`;
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        // --- CSR (Client Side Rendering) ---
+        if (type === 'csr') {
+            canvas.innerHTML = ''; // Blank screen initially
+            log('Request sent to server...');
+            await sleep(400);
+            log('Server returned blank HTML file.');
+            await sleep(300);
+            log('Browser downloading bundle.js (1.2MB)...');
+            
+            // Show loading spinner (React mounting)
+            canvas.innerHTML = '<div class="spinner"></div><p style="margin-top:10px; font-size:0.8rem; color:#6B7280;">React is mounting on Client...</p>';
+            await sleep(800);
+            
+            log('React fetching API data from client...');
+            
+            // Show Skeletons
+            canvas.innerHTML = `
+                <div style="width:100%; max-width:200px;">
+                    <div class="skeleton-box" style="height:20px; width:70%;"></div>
+                    <div class="skeleton-box" style="height:10px; width:100%;"></div>
+                    <div class="skeleton-box" style="height:10px; width:100%;"></div>
+                </div>
+            `;
+            await sleep(800);
+            
+            log('Data fetched. UI Rendered! (Slowest TTFB)');
+            canvas.innerHTML = `
+                <div style="background:#F0FDF4; border:1px solid #10B981; padding:15px; border-radius:8px;">
+                    <h3 style="color:#10B981;">Data Loaded via CSR</h3>
+                    <p style="font-size:0.85rem; color:#4B5563;">Search engines saw a blank page.</p>
+                </div>
+            `;
+        }
+        
+        // --- SSR (Server Side Rendering) ---
+        else if (type === 'ssr') {
+            canvas.innerHTML = '<h3 style="color:#D1D5DB;">Waiting for Node.js Server...</h3>';
+            log('Request hit Node.js Server...');
+            await sleep(500);
+            log('Server fetching data from Database...');
+            await sleep(800);
+            log('Server stitching Data into HTML string...');
+            await sleep(300);
+            log('HTML sent to Browser. (Medium TTFB)');
+            
+            canvas.innerHTML = `
+                <div style="background:#FFFBEB; border:1px solid #F59E0B; padding:15px; border-radius:8px;">
+                    <h3 style="color:#F59E0B;">Data Loaded via SSR</h3>
+                    <p style="font-size:0.85rem; color:#4B5563;">SEO optimized, always fresh data.</p>
+                </div>
+            `;
+        }
+
+        // --- SSG (Static Site Generation) ---
+        else if (type === 'ssg') {
+            canvas.innerHTML = '';
+            log('Request hit Global Edge CDN...');
+            await sleep(200); // Extremely fast
+            log('Serving pre-built HTML from Cache.');
+            log('UI Rendered! (Blazing Fast TTFB)');
+            
+            canvas.innerHTML = `
+                <div style="background:#EFF6FF; border:1px solid #3B82F6; padding:15px; border-radius:8px;">
+                    <h3 style="color:#3B82F6;">Data Loaded via SSG</h3>
+                    <p style="font-size:0.85rem; color:#4B5563;">Instant load. Perfect for SEO & Blogs.</p>
+                </div>
+            `;
+        }
+    }
+</script>

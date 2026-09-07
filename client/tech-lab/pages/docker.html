@@ -1,0 +1,263 @@
+<style>
+    /* Scoped CSS for Docker Page */
+    .docker-header { margin-bottom: 40px; border-left: 4px solid #2496ED; padding-left: 20px; }
+    .docker-header h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 10px; color:#1F2937; }
+    .docker-header p { color: #4B5563; margin-bottom: 15px; line-height: 1.8; font-size: 1.05rem; }
+    
+    .def-box { background: #F3F4F6; border-left: 4px solid #2496ED; padding: 15px 20px; margin-bottom: 20px; font-style: italic; color: #374151; font-size: 0.95rem; }
+    
+    /* Case Study Box */
+    .case-study-box { background: #F0F9FF; border: 1px solid #BAE6FD; border-left: 4px solid #0284C7; padding: 25px; border-radius: 8px; margin-bottom: 25px; }
+    .case-title { color: #0369A1; font-weight: 700; margin-bottom: 12px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+    .case-study-box p { color: #0C4A6E; font-size: 0.95rem; line-height: 1.7; margin-bottom: 10px; }
+    .inline-code { background: rgba(255,255,255,0.7); padding: 2px 8px; border-radius: 4px; font-family: monospace; font-size: 0.9rem; color: #0284C7; border: 1px solid #BAE6FD; }
+
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 25px 0; }
+    .compare-card { padding: 25px; border-radius: 10px; border: 1px solid #E5E7EB; background: #F8F9FA; transition: all 0.3s; }
+    .compare-card:hover { transform: translateY(-3px); }
+    .compare-card h4 { margin-bottom: 15px; color: #1F2937; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+    .compare-card ul { padding-left: 20px; color: #4B5563; line-height: 1.7; }
+    
+    /* Dual Code Windows */
+    .code-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 25px 0; }
+    .code-window { background: #1E1E1E; border-radius: 8px; overflow: hidden; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+    .code-header { background: #2D2D2D; padding: 10px 15px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #333; }
+    .mac-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .code-body { padding: 20px; color: #D4D4D4; font-family: 'Fira Code', monospace; font-size: 0.85rem; overflow-x: auto; line-height: 1.6; flex-grow: 1; }
+    
+    .dk { color: #569CD6; } /* Docker Keyword */
+    .ds { color: #CE9178; } /* String */
+    .dc { color: #6A9955; font-style: italic; } /* Comment */
+
+    /* Simulator UI */
+    .demo-area { border: 2px dashed #2496ED; border-radius: 12px; padding: 30px; background: rgba(36, 150, 237, 0.03); margin-top: 20px; display: flex; gap: 20px; flex-wrap: wrap; }
+    
+    .sim-controls { flex: 1; min-width: 250px; display: flex; flex-direction: column; gap: 15px; }
+    
+    .btn-docker { background: #1F2937; color: #fff; border: none; padding: 15px; border-radius: 8px; font-weight: 700; font-family: monospace; font-size: 1rem; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; text-align: left; }
+    .btn-docker:hover { background: #2496ED; box-shadow: 0 4px 15px rgba(36, 150, 237, 0.3); }
+    .btn-docker:disabled { background: #9CA3AF; cursor: not-allowed; box-shadow: none; }
+    
+    .sim-engine { flex: 1.5; min-width: 320px; background: #fff; border: 1px solid #E5E7EB; border-radius: 12px; padding: 20px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    
+    .container-box { width: 100%; height: 120px; border: 3px dashed #CBD5E1; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-weight: 700; color: #9CA3AF; font-size: 1.2rem; transition: 0.3s; position: relative; background: #F8F9FA; margin-bottom: 20px; }
+    
+    .container-box.has-image { border: 3px solid #60A5FA; background: #EFF6FF; color: #3B82F6; }
+    .container-box.running { border: 3px solid #10B981; background: #F0FDF4; color: #10B981; box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
+    
+    .port-bridge { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); background: #1F2937; color: #fff; font-size: 0.75rem; padding: 4px 10px; border-radius: 4px; font-family: monospace; opacity: 0; transition: 0.3s; }
+    .container-box.running .port-bridge { opacity: 1; bottom: -15px; }
+
+    .terminal-out { background: #111; color: #D1D5DB; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.85rem; height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; border-left: 3px solid #2496ED; }
+    .log-sys { color: #60A5FA; }
+    .log-succ { color: #10B981; }
+
+    @media(max-width: 768px) {
+        .compare-grid, .code-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div style="margin-bottom: 40px;">
+    <span style="display:inline-block; padding: 5px 12px; background: rgba(36, 150, 237, 0.1); color: #2496ED; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;"><i class="fa-brands fa-docker"></i> INFRASTRUCTURE</span>
+    <h1 style="font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 10px; color:#1F2937;">Containerization (Docker)</h1>
+    
+    <div class="def-box">
+        <strong>Definition:</strong> Docker is a platform designed to help developers build, share, and run modern applications. It packages software into standardized units called containers that have everything the software needs to run.
+    </div>
+    
+    <p>ডেভেলপারের লোকাল মেশিন থেকে শুরু করে ক্লাউড সার্ভার পর্যন্ত— অ্যাপ্লিকেশন যেন সব জায়গায় হুবহু একই পরিবেশে (Environment) চলতে পারে, তা নিশ্চিত করাই হলো ডকারের কাজ।</p>
+</div>
+
+<!-- Section 1: The Case Study -->
+<div class="module-section">
+    <h2><i class="fa-solid fa-bug" style="color: #0284C7;"></i> 1. The "It works on my machine" Problem</h2>
+    
+    <div class="case-study-box">
+        <div class="case-title"><i class="fa-solid fa-desktop"></i> OS & Dependency Conflict</div>
+        <p>ধরি, আপনি লোকাল মেশিনে (Windows) <strong>Node.js v20</strong> এবং <strong>MongoDB v6</strong> দিয়ে একটি প্রজেক্ট বানালেন। আপনার পিসিতে সব পারফেক্ট কাজ করছে। এরপর আপনি কোডটি আপনার ক্লায়েন্টের উবুন্টু (Ubuntu) প্রোডাকশন সার্ভারে পাঠালেন। কিন্তু সেখানে <strong>Node.js v14</strong> ইন্সটল করা আছে। ফলে কোড রান করার সাথে সাথেই সার্ভার ক্র্যাশ!</p>
+        <p><strong>Docker এর সলিউশন:</strong> ডকার আপনার সোর্স কোড, Node.js-এর নির্দিষ্ট ভার্সন, এবং অন্যান্য লাইব্রেরিগুলোকে একটি বাক্সে (Image) বন্দি করে ফেলে। এই বাক্সটিকে যখন চালানো হয়, তখন এটি একটি <strong>Container</strong> এ পরিণত হয়। এই কন্টেইনার লোকাল পিসি হোক বা ক্লাউড সার্ভার— সব জায়গায় হুবহু একই পরিবেশে চলবে। অপারেটিং সিস্টেম কী আছে, তা নিয়ে আর কোনো মাথাব্যথা নেই!</p>
+    </div>
+    
+    <div class="compare-grid">
+        <div class="compare-card">
+            <h4><i class="fa-solid fa-server" style="color:#F59E0B;"></i> Virtual Machines (Heavy)</h4>
+            <ul>
+                <li>পুরো একটি গেস্ট অপারেটিং সিস্টেম (OS) রান করতে হয়।</li>
+                <li>বুট হতে কয়েক মিনিট সময় লাগে।</li>
+                <li>অপ্রয়োজনীয়ভাবে গিগাবাইট (GBs) সাইজের RAM দখল করে রাখে।</li>
+            </ul>
+        </div>
+        <div class="compare-card" style="border-top: 3px solid #2496ED; box-shadow: 0 4px 10px rgba(36, 150, 237, 0.05);">
+            <h4><i class="fa-brands fa-docker" style="color:#2496ED;"></i> Docker Containers (Lightweight)</h4>
+            <ul>
+                <li>হোস্ট পিসির (Host OS) কার্নেল শেয়ার করে, কোনো আলাদা OS লাগে না।</li>
+                <li>মিলিসেকেন্ডের মধ্যে স্টার্ট হয়ে যায়।</li>
+                <li>মাত্র কয়েক মেগাবাইট (MBs) RAM ব্যবহার করে।</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Section 2: Code Implementation -->
+<div class="module-section">
+    <h2><i class="fa-solid fa-code" style="color: #1F2937;"></i> 2. Infrastructure as Code (IaC)</h2>
+    <p>নিচে একটি অ্যাডভান্সড <strong>Multi-stage Dockerfile</strong> এবং একটি <strong>docker-compose.yml</strong> ফাইলের উদাহরণ দেওয়া হলো, যা একটি ফুল-স্ট্যাক অ্যাপ এবং Redis সার্ভারকে একসাথে রান করাতে ব্যবহৃত হয়।</p>
+    
+    <div class="code-grid">
+        <!-- Dockerfile -->
+        <div class="code-window">
+            <div class="code-header">
+                <div class="mac-dot" style="background:#ff5f56;"></div>
+                <div class="mac-dot" style="background:#ffbd2e;"></div>
+                <div class="mac-dot" style="background:#27c93f;"></div>
+                <span style="color: #8B949E; font-size: 0.85rem; margin-left: auto;">Dockerfile (Node.js)</span>
+            </div>
+            <div class="code-body">
+<pre style="margin: 0;"><span class="dc"># Stage 1: Build</span>
+<span class="dk">FROM</span> node:18-alpine <span class="dk">AS</span> builder
+<span class="dk">WORKDIR</span> /app
+<span class="dk">COPY</span> package*.json ./
+<span class="dk">RUN</span> npm install
+<span class="dk">COPY</span> . .
+<span class="dk">RUN</span> npm run build
+
+<span class="dc"># Stage 2: Production (Lighter Image)</span>
+<span class="dk">FROM</span> node:18-alpine
+<span class="dk">WORKDIR</span> /app
+<span class="dk">COPY</span> --from=builder /app/dist ./dist
+<span class="dk">COPY</span> package*.json ./
+<span class="dk">RUN</span> npm install --only=production
+<span class="dk">EXPOSE</span> 3000
+<span class="dk">CMD</span> [<span class="ds">"npm"</span>, <span class="ds">"start"</span>]</pre>
+            </div>
+        </div>
+
+        <!-- docker-compose -->
+        <div class="code-window">
+            <div class="code-header">
+                <div class="mac-dot" style="background:#ff5f56;"></div>
+                <div class="mac-dot" style="background:#ffbd2e;"></div>
+                <div class="mac-dot" style="background:#27c93f;"></div>
+                <span style="color: #8B949E; font-size: 0.85rem; margin-left: auto;">docker-compose.yml</span>
+            </div>
+            <div class="code-body">
+<pre style="margin: 0;"><span class="dk">version:</span> <span class="ds">'3.8'</span>
+<span class="dk">services:</span>
+  <span class="dk">web-api:</span>
+    <span class="dk">build:</span> .
+    <span class="dk">ports:</span>
+      <span class="dk">-</span> <span class="ds">"3000:3000"</span>
+    <span class="dk">environment:</span>
+      <span class="dk">-</span> NODE_ENV=production
+      <span class="dk">-</span> REDIS_URL=redis://cache:6379
+    <span class="dk">depends_on:</span>
+      <span class="dk">-</span> cache
+
+  <span class="dk">cache:</span>
+    <span class="dk">image:</span> <span class="ds">redis:alpine</span>
+    <span class="dk">ports:</span>
+      <span class="dk">-</span> <span class="ds">"6379:6379"</span></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Section 3: Live Simulator -->
+<div class="module-section" style="border-color: #2496ED;">
+    <h2><i class="fa-solid fa-gears" style="color: #2496ED;"></i> 3. Docker Engine Simulator</h2>
+    <p>প্রথমে <code>docker build</code> এ ক্লিক করে সোর্স কোড থেকে ইমেজ (Image) তৈরি করুন। এরপর <code>docker run</code> এ ক্লিক করে সেই ইমেজ থেকে লাইভ কন্টেইনার (Container) স্টার্ট করুন এবং পোর্ট ম্যাপিং দেখুন!</p>
+    
+    <div class="demo-area">
+        
+        <div class="sim-controls">
+            <button class="btn-docker" id="btn-build" onclick="simulateBuild()">
+                <span>$ docker build .</span>
+                <i class="fa-solid fa-box-open"></i>
+            </button>
+            <button class="btn-docker" id="btn-run" onclick="simulateRun()" disabled>
+                <span>$ docker run -p 3000</span>
+                <i class="fa-solid fa-play"></i>
+            </button>
+        </div>
+
+        <div class="sim-engine">
+            
+            <div class="container-box" id="container-visual">
+                [ No Image Available ]
+                <div class="port-bridge" id="port-bridge">Host: 3000 ➔ Container: 3000</div>
+            </div>
+
+            <!-- Terminal Output -->
+            <div class="terminal-out" id="docker-term">
+                <span style="color:#6B7280;">Waiting for Docker daemon commands...</span>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<script>
+    let hasImage = false;
+    let isRunning = false;
+    
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+    async function simulateBuild() {
+        if (hasImage) return;
+        
+        const btnBuild = document.getElementById('btn-build');
+        const term = document.getElementById('docker-term');
+        const visual = document.getElementById('container-visual');
+        
+        btnBuild.disabled = true;
+        btnBuild.innerHTML = '<span>Building...</span> <i class="fa-solid fa-spinner fa-spin"></i>';
+        
+        term.innerHTML = `<span class="log-sys">Step 1/6 : FROM node:18-alpine</span>`;
+        await sleep(500);
+        term.innerHTML += `<br><span> ---> Fetching from docker hub...</span>`;
+        await sleep(800);
+        term.innerHTML += `<br><span class="log-sys">Step 4/6 : RUN npm install</span>`;
+        term.innerHTML += `<br><span> ---> added 342 packages in 2s</span>`;
+        term.scrollTop = term.scrollHeight;
+        await sleep(1000);
+        
+        term.innerHTML += `<br><span class="log-sys">Step 6/6 : EXPOSE 3000</span>`;
+        term.innerHTML += `<br><span class="log-succ">Successfully built image 'my-app:latest'</span>`;
+        term.scrollTop = term.scrollHeight;
+        
+        // Update UI
+        hasImage = true;
+        visual.classList.add('has-image');
+        visual.innerHTML = '<i class="fa-solid fa-box" style="margin-right:10px;"></i> Image: my-app:latest <div class="port-bridge" id="port-bridge">Host: 3000 ➔ Container: 3000</div>';
+        
+        btnBuild.innerHTML = '<span>$ docker build .</span> <i class="fa-solid fa-check"></i>';
+        document.getElementById('btn-run').disabled = false;
+    }
+
+    async function simulateRun() {
+        if (!hasImage || isRunning) return;
+        isRunning = true;
+        
+        const btnRun = document.getElementById('btn-run');
+        const term = document.getElementById('docker-term');
+        const visual = document.getElementById('container-visual');
+        
+        btnRun.disabled = true;
+        btnRun.innerHTML = '<span>Starting...</span> <i class="fa-solid fa-spinner fa-spin"></i>';
+        
+        term.innerHTML += `<br><br><span class="log-sys">$ docker run -p 3000:3000 my-app</span>`;
+        term.innerHTML += `<br><span>Creating container isolation...</span>`;
+        await sleep(600);
+        
+        // Update UI
+        visual.classList.add('running');
+        visual.innerHTML = '<i class="fa-solid fa-server" style="margin-right:10px;"></i> Container is Running <div class="port-bridge" style="opacity: 1; bottom: -15px;">Host 3000 ➔ Container 3000</div>';
+        
+        term.innerHTML += `<br><span>Mapping ports 3000->3000...</span>`;
+        await sleep(600);
+        term.innerHTML += `<br><span class="log-succ">[Node.js] Server listening on port 3000 🚀</span>`;
+        term.scrollTop = term.scrollHeight;
+        
+        btnRun.innerHTML = '<span>Container Running</span> <i class="fa-solid fa-check-double"></i>';
+    }
+</script>

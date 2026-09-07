@@ -133,25 +133,29 @@ async function fetchData() {
             if(expContainer) expContainer.innerHTML = "<p>Experience data unavailable.</p>";
         }
 
-        // --- 2.5 Fetch Certifications ---
+        // --- 2.5 Fetch Certifications (UPDATED) ---
         const certContainer = document.getElementById('cert-grid');
         try {
             const certRes = await fetch(`${API_URL}/certs`);
             if(certRes.ok) {
                 allCerts = await certRes.json();
                 if (allCerts.length > 0 && certContainer) {
-                    certContainer.innerHTML = allCerts.map((c, index) => `
-                        <div class="cert-card" onclick="openCertModal(${index})" style="cursor: pointer;">
-                            <div class="cert-img-box">
-                                <img src="${c.image}" alt="${c.issuer}" class="cert-img" onerror="this.src='https://placehold.co/100?text=Cert'">
+                    certContainer.innerHTML = allCerts.map((c, index) => {
+                        // Image Fallback Logic
+                        const imageUrl = c.image && c.image !== '' ? c.image : 'assets/default-cert.png';
+                        return `
+                            <div class="cert-card" onclick="openCertModal(${index})" style="cursor: pointer;">
+                                <div class="cert-img-box">
+                                    <img src="${imageUrl}" alt="${c.issuer}" class="cert-img" onerror="this.src='assets/default-cert.png'">
+                                </div>
+                                <div class="cert-info">
+                                    <h3>${c.title}</h3>
+                                    <div class="cert-issuer">${c.issuer}</div>
+                                    <div class="cert-date">Issued ${c.date}</div>
+                                </div>
                             </div>
-                            <div class="cert-info">
-                                <h3>${c.title}</h3>
-                                <div class="cert-issuer">${c.issuer}</div>
-                                <div class="cert-date">Issued ${c.date}</div>
-                            </div>
-                        </div>
-                    `).join('');
+                        `;
+                    }).join('');
                 } else if (certContainer) {
                     certContainer.innerHTML = "<p>No certifications found.</p>";
                 }
@@ -266,7 +270,7 @@ window.closeFeaturedModal = function() {
     }
 };
 
-// --- 3.3 Certification Modal ---
+// --- 3.3 Certification Modal (UPDATED) ---
 const certModal = document.getElementById('cert-modal');
 
 window.openCertModal = function(index) {
@@ -275,8 +279,10 @@ window.openCertModal = function(index) {
 
     document.getElementById('c-title').innerText = cert.title;
     document.getElementById('c-issuer').innerText = cert.issuer;
-    document.getElementById('c-desc').innerText = cert.description || "Training covering core concepts.";
-    document.getElementById('c-impact').innerText = cert.impact || "Applied knowledge in real-world projects.";
+    
+    // Updated description and impact mapping
+    document.getElementById('c-desc').innerText = cert.description || "Comprehensive training covering core concepts and practical applications.";
+    document.getElementById('c-impact').innerText = cert.impact || "Enhanced professional capability and applied knowledge in real-world projects.";
     
     const verifyLink = document.getElementById('c-link');
     if(verifyLink) {
@@ -431,7 +437,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 // =========================================
-// 6. SMART LIVE CLOCK, DATE & GEOLOCATION WEATHER (NEW)
+// 6. SMART LIVE CLOCK, DATE & GEOLOCATION WEATHER
 // =========================================
 
 // --- A. Time & Date (Browser's Local Time) ---

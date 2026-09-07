@@ -1,0 +1,33 @@
+<style>
+    /* Scoped CSS for Welcome Page Only */
+    .welcome-hero { background: #fff; border: 1px solid #E5E7EB; border-radius: 16px; padding: 50px; text-align: center; margin-bottom: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
+    .status-badge { display: inline-block; background: rgba(37, 99, 235, 0.1); color: #2563EB; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 20px; }
+    .welcome-hero h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 15px; color: #1F2937; }
+    .welcome-hero p { color: #6B7280; font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .feature-card { background: #fff; border: 1px solid #E5E7EB; border-radius: 12px; padding: 25px; transition: all 0.3s ease; text-decoration: none; color: inherit; display: block; cursor:pointer;}
+    .feature-card:hover { border-color: #10B981; transform: translateY(-3px); box-shadow: 0 10px 25px rgba(16, 185, 129, 0.1); }
+    .f-icon { width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 15px; }
+    .bg-green { background: rgba(16, 185, 129, 0.1); color: #10B981; }
+    .bg-blue { background: rgba(37, 99, 235, 0.1); color: #2563EB; }
+</style>
+
+<div class="welcome-hero">
+    <span class="status-badge"><i class="fa-solid fa-code-commit"></i> Engine v1.0.0 Live</span>
+    <h1>Digital Playground</h1>
+    <p>Welcome to my interactive tech lab. This space is dedicated to demonstrating how complex systems work under the hood through theories, code snippets, and live interactive demos.</p>
+</div>
+
+<h2 style="font-size: 1.2rem; margin-bottom: 20px; color: #1F2937;">Explore Modules</h2>
+<div class="features-grid">
+    <div class="feature-card" onclick="document.querySelector('a[onclick*=\'realtime-chat\']').click()">
+        <div class="f-icon bg-green"><i class="fa-regular fa-comments"></i></div>
+        <h3>Real-Time Systems</h3>
+        <p>Explore bi-directional communication using Socket.io and Node.js with live chat demos.</p>
+    </div>
+    <div class="feature-card">
+        <div class="f-icon bg-blue"><i class="fa-solid fa-shield-halved"></i></div>
+        <h3>Authentication Flow</h3>
+        <p>Understand JWT tokens, Access/Refresh token cycles, and secure cookie storage.</p>
+    </div>
+</div>

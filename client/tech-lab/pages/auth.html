@@ -1,0 +1,231 @@
+<style>
+    /* Scoped CSS */
+    .module-section { margin-bottom: 40px; background: #fff; padding: 40px; border-radius: 12px; border: 1px solid #E5E7EB; box-shadow: 0 4px 15px rgba(0,0,0,0.01); }
+    .module-section h2 { font-size: 1.5rem; color: #1F2937; margin-bottom: 20px; font-family: 'Playfair Display', serif; display: flex; align-items: center; gap: 10px; }
+    .module-section p { color: #4B5563; margin-bottom: 15px; line-height: 1.8; font-size: 1.05rem; }
+    
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 25px 0; }
+    .compare-card { padding: 25px; border-radius: 10px; border: 1px solid #E5E7EB; background: #F8F9FA; }
+    .compare-card h4 { margin-bottom: 15px; color: #1F2937; font-size: 1.1rem; }
+    .compare-card ul { padding-left: 20px; color: #4B5563; line-height: 1.7; }
+    .compare-card li { margin-bottom: 8px; }
+
+    .code-window { background: #1F2937; border-radius: 8px; overflow: hidden; margin: 25px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .code-header { background: #111827; padding: 12px 15px; display: flex; gap: 8px; align-items: center; }
+    .mac-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .code-body { padding: 20px; color: #E5E7EB; font-family: 'Courier New', Courier, monospace; font-size: 0.95rem; overflow-x: auto; line-height: 1.6; }
+    
+    .kw { color: #c678dd; } .fn { color: #61afef; } .st { color: #98c379; } .cm { color: #5c6370; font-style: italic; } .vr { color: #e06c75; }
+    
+    /* JWT Playground UI */
+    .demo-area { border: 2px dashed #10B981; border-radius: 12px; padding: 40px; background: rgba(16, 185, 129, 0.03); margin-top: 20px; }
+    .login-box { background: #fff; padding: 25px; border-radius: 12px; border: 1px solid #E5E7EB; max-width: 400px; margin: 0 auto; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    .input-field { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #E5E7EB; border-radius: 8px; font-family: 'Inter', sans-serif; outline: none; }
+    .input-field:focus { border-color: #10B981; }
+    .btn-login { width: 100%; background: #10B981; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+    .btn-login:hover { background: #059669; }
+
+    .token-result { margin-top: 30px; display: none; text-align: left; }
+    .jwt-string { background: #111827; padding: 15px; border-radius: 8px; font-family: monospace; word-break: break-all; line-height: 1.6; margin-top: 10px; }
+    
+    .jwt-header { color: #F87171; }
+    .jwt-payload { color: #A78BFA; }
+    .jwt-signature { color: #60A5FA; }
+    
+    .decoded-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+    .decoded-box { background: #fff; border: 1px solid #E5E7EB; padding: 20px; border-radius: 8px; }
+    .decoded-box pre { font-family: monospace; color: #1F2937; font-size: 0.9rem; margin-top: 10px; }
+
+    /* Custom Blockquote for Definitions */
+    .def-box { background: #F3F4F6; border-left: 4px solid #1F2937; padding: 15px 20px; margin-bottom: 20px; font-style: italic; color: #374151; font-size: 0.95rem; }
+
+    @media(max-width: 768px) {
+        .compare-grid, .decoded-grid { grid-template-columns: 1fr; }
+        .module-section { padding: 25px; }
+    }
+</style>
+
+<div style="margin-bottom: 40px;">
+    <span style="display:inline-block; padding: 5px 12px; background: rgba(16, 185, 129, 0.1); color: #10B981; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Security & Auth</span>
+    <h1 style="font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 10px; color:#1F2937;">JWT Authentication Flow</h1>
+    
+    <div class="def-box">
+        <strong>Definition:</strong> JSON Web Token (JWT) is an open standard (RFC 7519) that defines a compact and self-contained way for securely transmitting information between parties as a JSON object.
+    </div>
+    
+    <p>মডার্ন ওয়েব অ্যাপ্লিকেশনে API সিকিউর করার জন্য Session-এর বদলে বর্তমানে Stateless Authentication বা JWT ব্যবহার করা হয়। চলুন দেখি আন্ডার-দ্য-হুড এটি কীভাবে কাজ করে!</p>
+</div>
+
+<!-- Section 1: Theory -->
+<div class="module-section">
+    <h2><i class="fa-solid fa-shield-halved" style="color: #10B981;"></i> 1. The Architecture: Stateless Security</h2>
+    
+    <p>ঐতিহ্যবাহী (Traditional) সার্ভারগুলো <strong>Sessions</strong> ব্যবহার করত। অর্থাৎ, একজন ইউজার লগইন করলে সার্ভার তার ডাটাবেস বা RAM-এ ইউজারের ইনফরমেশন সেভ করে রাখতো এবং ব্রাউজারকে একটি Session ID দিত। কিন্তু সমস্যা হলো, যখন আপনার অ্যাপে লাখ লাখ ইউজার আসবে বা একাধিক সার্ভার (Load Balancer) ব্যবহার করবেন, তখন প্রতিটি রিকোয়েস্টে ডাটাবেস চেক করা সার্ভারের জন্য অনেক ব্যয়বহুল (expensive) হয়ে যায়।</p>
+    <p>এর সমাধান হিসেবেই এসেছে <strong>Stateless Architecture</strong> বা JWT। এখানে সার্ভার ইউজারের কোনো তথ্য নিজের কাছে সেভ রাখে না!</p>
+    
+    <div class="compare-grid">
+        <div class="compare-card">
+            <h4><i class="fa-solid fa-database" style="color:#EA580C; margin-right:8px;"></i> Stateful (Session Cookies)</h4>
+            <ul>
+                <li>সার্ভার সেশন ডাটা মেমোরি বা ডাটাবেসে স্টোর করে।</li>
+                <li>মাল্টিপল সার্ভারে স্কেল (Scale) করা বেশ কঠিন।</li>
+                <li>প্রতিটি Protected Route-এ ডাটাবেস কোয়েরি চালাতে হয়।</li>
+            </ul>
+        </div>
+        <div class="compare-card" style="border-color: #10B981; box-shadow: 0 4px 10px rgba(16,185,129,0.05);">
+            <h4><i class="fa-solid fa-key" style="color:#10B981; margin-right:8px;"></i> Stateless (JWT)</h4>
+            <ul>
+                <li>সার্ভার কোনো সেশন ডাটা স্টোর করে না (Self-contained)।</li>
+                <li>খুব সহজেই স্কেল করা যায়।</li>
+                <li>সার্ভার শুধুমাত্র একটি Secret Key দিয়ে গাণিতিকভাবে টোকেনের Signature ভেরিফাই করে।</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="def-box" style="border-color: #10B981; background: rgba(16, 185, 129, 0.05);">
+        <strong>The Golden Rule:</strong> JWTs are <em>Encoded</em>, not <em>Encrypted</em>. যে কেউ চাইলেই টোকেন ডিকোড করে ভেতরের ডাটা পড়তে পারবে। এর আসল সিকিউরিটি হলো এর <strong>Signature</strong>। কেউ যদি ভেতরের ডাটা টেম্পার (পরিবর্তন) করার চেষ্টা করে, তবে সিগনেচারটি ইনভ্যালিড হয়ে যাবে এবং সার্ভার সেটি রিজেক্ট করে দিবে।
+    </div>
+</div>
+
+<!-- Section 2: Code (Backend) -->
+<div class="module-section">
+    <h2><i class="fa-solid fa-server" style="color: #2563EB;"></i> 2. Node.js Implementation (Sign & Verify)</h2>
+    <p>নিচের কোড স্নিপেটে দেখানো হয়েছে কিভাবে Express.js এ একজন ইউজার লগইন করার পর টোকেন জেনারেট (Sign) করতে হয় এবং পরবর্তীতে প্রটেক্টেড রাউটের জন্য সেই টোকেন ভেরিফাই (Verify) করতে হয়।</p>
+    
+    <div class="code-window">
+        <div class="code-header">
+            <div class="mac-dot" style="background:#ff5f56;"></div>
+            <div class="mac-dot" style="background:#ffbd2e;"></div>
+            <div class="mac-dot" style="background:#27c93f;"></div>
+            <span style="color: #9CA3AF; font-size: 0.85rem; margin-left: auto;"><i class="fa-brands fa-node-js" style="color:#68a063;"></i> authController.js</span>
+        </div>
+        <div class="code-body">
+<pre style="margin: 0;"><span class="kw">const</span> <span class="vr">jwt</span> = <span class="fn">require</span>(<span class="st">'jsonwebtoken'</span>);
+
+<span class="cm">// 1. Generate Token on Login</span>
+<span class="kw">exports</span>.<span class="fn">login</span> = <span class="kw">async</span> (req, res) => {
+    <span class="kw">const</span> <span class="vr">user</span> = { id: <span class="st">"64a1b2"</span>, role: <span class="st">"admin"</span> };
+    
+    <span class="cm">// Signing the token with a Secret Key</span>
+    <span class="kw">const</span> <span class="vr">accessToken</span> = jwt.<span class="fn">sign</span>(
+        user, 
+        process.env.<span class="vr">JWT_SECRET</span>, 
+        { expiresIn: <span class="st">'15m'</span> }
+    );
+    
+    res.<span class="fn">status</span>(200).<span class="fn">json</span>({ token: accessToken });
+};
+
+<span class="cm">// 2. Middleware to Protect Routes</span>
+<span class="kw">exports</span>.<span class="fn">verifyToken</span> = (req, res, next) => {
+    <span class="kw">const</span> <span class="vr">token</span> = req.headers.authorization?.<span class="fn">split</span>(<span class="st">" "</span>)[1];
+    <span class="kw">if</span> (!token) <span class="kw">return</span> res.<span class="fn">status</span>(401).<span class="fn">json</span>({ msg: <span class="st">"No Token Provided"</span> });
+
+    jwt.<span class="fn">verify</span>(token, process.env.<span class="vr">JWT_SECRET</span>, (err, decoded) => {
+        <span class="kw">if</span> (err) <span class="kw">return</span> res.<span class="fn">status</span>(403).<span class="fn">json</span>({ msg: <span class="st">"Token Expired or Invalid"</span> });
+        
+        req.user = decoded; <span class="cm">// Attaching decoded payload { id, role }</span>
+        <span class="fn">next</span>();
+    });
+};</pre>
+        </div>
+    </div>
+</div>
+
+<!-- Section 3: Live JWT Playground -->
+<div class="module-section" style="border-color: #10B981;">
+    <h2><i class="fa-solid fa-unlock-keyhole" style="color: #10B981;"></i> 3. Interactive JWT Generator & Decoder</h2>
+    <p>নিচের ডামি লগইন ফর্মটি পূরণ করুন। আমাদের ফ্রন্টএন্ড ইঞ্জিন একটি Mock JWT জেনারেট করবে। এরপর আমরা সেটিকে ডিকোড করে দেখবো একটি টোকেনের ভেতরে আসলে কী কী তথ্য লুকিয়ে থাকে এবং কেন সেনসিটিভ ডাটা (যেমন: পাসওয়ার্ড) টোকেনে রাখা উচিত নয়।</p>
+    
+    <div class="demo-area">
+        
+        <!-- Login Form -->
+        <div class="login-box" id="login-form">
+            <h3 style="color: #1F2937; margin-bottom: 20px; font-family: 'Playfair Display', serif;"><i class="fa-regular fa-user"></i> Mock Login</h3>
+            <input type="text" id="demo-name" class="input-field" placeholder="Enter Username (e.g. Faravi)" value="Faravi">
+            <select id="demo-role" class="input-field">
+                <option value="user">Standard User</option>
+                <option value="admin" selected>Admin</option>
+            </select>
+            <button class="btn-login" onclick="generateMockJWT()">Generate Token <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+
+        <!-- Token Result Section -->
+        <div class="token-result" id="token-result">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h3 style="color:#10B981;"><i class="fa-solid fa-circle-check"></i> Authentication Successful!</h3>
+                <p style="color:#4B5563; font-size: 0.95rem;">সার্ভার রেসপন্স হিসেবে নিচের JSON Web Token টি পাঠিয়েছে:</p>
+            </div>
+            
+            <!-- Raw Token -->
+            <div class="jwt-string" id="raw-jwt">
+                <!-- Injected via JS -->
+            </div>
+            <div style="display:flex; gap:15px; justify-content:center; margin-top:10px; font-size: 0.85rem; font-weight:600;">
+                <span style="color:#F87171;">HEADER</span>
+                <span style="color:#A78BFA;">PAYLOAD</span>
+                <span style="color:#60A5FA;">SIGNATURE</span>
+            </div>
+
+            <!-- Decoded Data -->
+            <div class="decoded-grid">
+                <div class="decoded-box">
+                    <h4 style="color:#F87171; border-bottom:1px solid #E5E7EB; padding-bottom:8px;">Decoded Header</h4>
+                    <p style="font-size:0.85rem; color:#6B7280;">অ্যালগরিদম এবং টোকেন টাইপ</p>
+                    <pre id="decode-header"></pre>
+                </div>
+                <div class="decoded-box">
+                    <h4 style="color:#A78BFA; border-bottom:1px solid #E5E7EB; padding-bottom:8px;">Decoded Payload</h4>
+                    <p style="font-size:0.85rem; color:#6B7280;">মূল ডাটা (যা যে কেউ দেখতে পারে)</p>
+                    <pre id="decode-payload"></pre>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn-login" style="background:#6B7280; width:auto; padding: 10px 20px;" onclick="resetJWT()">Try Again</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function base64UrlEncode(obj) {
+        const str = JSON.stringify(obj);
+        return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    function generateMockJWT() {
+        const name = document.getElementById('demo-name').value || 'Guest';
+        const role = document.getElementById('demo-role').value;
+        
+        const header = { alg: "HS256", typ: "JWT" };
+        const encodedHeader = base64UrlEncode(header);
+
+        const issueTime = Math.floor(Date.now() / 1000);
+        const payload = { 
+            sub: "usr_98x12", 
+            name: name, 
+            role: role, 
+            iat: issueTime,
+            exp: issueTime + (15 * 60)
+        };
+        const encodedPayload = base64UrlEncode(payload);
+
+        const mockSignature = "SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+
+        const jwtHtml = `<span class="jwt-header">${encodedHeader}</span>.<span class="jwt-payload">${encodedPayload}</span>.<span class="jwt-signature">${mockSignature}</span>`;
+        document.getElementById('raw-jwt').innerHTML = jwtHtml;
+
+        document.getElementById('decode-header').innerText = JSON.stringify(header, null, 2);
+        document.getElementById('decode-payload').innerText = JSON.stringify(payload, null, 2);
+
+        document.getElementById('login-form').style.display = 'none';
+        document.getElementById('token-result').style.display = 'block';
+    }
+
+    function resetJWT() {
+        document.getElementById('login-form').style.display = 'block';
+        document.getElementById('token-result').style.display = 'none';
+    }
+</script>

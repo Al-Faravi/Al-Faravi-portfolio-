@@ -1,0 +1,272 @@
+<style>
+    /* Scoped CSS for MongoDB Aggregation Page */
+    .mongo-header { margin-bottom: 40px; border-left: 4px solid #10B981; padding-left: 20px; }
+    .mongo-header h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 10px; color:#1F2937; }
+    .mongo-header p { color: #4B5563; font-size: 1.05rem; max-width: 800px; line-height: 1.8; }
+    
+    .def-box { background: #F3F4F6; border-left: 4px solid #10B981; padding: 15px 20px; margin-bottom: 20px; font-style: italic; color: #374151; font-size: 0.95rem; }
+    
+    /* Case Study Box */
+    .case-study-box { background: #ECFDF5; border: 1px solid #A7F3D0; border-left: 4px solid #10B981; padding: 25px; border-radius: 8px; margin-bottom: 25px; }
+    .case-title { color: #047857; font-weight: 700; margin-bottom: 12px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+    .case-study-box p { color: #065F46; font-size: 0.95rem; line-height: 1.7; margin-bottom: 10px; }
+
+    .content-block { margin-bottom: 40px; }
+    .content-block h2 { font-size: 1.6rem; color: #1F2937; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #E5E7EB; padding-bottom: 10px; }
+    
+    /* Concept Grid */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+    .compare-card { padding: 25px; border-radius: 10px; border: 1px solid #E5E7EB; background: #fff; transition: all 0.3s; position: relative; overflow: hidden; }
+    .compare-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+    .compare-card h4 { font-size: 1.1rem; color: #1F2937; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .compare-card p { font-size: 0.9rem; color: #4B5563; line-height: 1.6; }
+    
+    /* Stage Pills */
+    .stage-pill { display: inline-block; padding: 4px 10px; border-radius: 6px; font-family: monospace; font-weight: 600; font-size: 0.9rem; margin-right: 8px; margin-bottom: 8px; }
+    .bg-match { background: #DBEAFE; color: #1D4ED8; border: 1px solid #BFDBFE; }
+    .bg-group { background: #FCE7F3; color: #BE185D; border: 1px solid #FBCFE8; }
+    .bg-sort { background: #FEF3C7; color: #B45309; border: 1px solid #FDE68A; }
+    .bg-project { background: #E0E7FF; color: #4338CA; border: 1px solid #C7D2FE; }
+
+    /* Code Window */
+    .code-window { background: #1E1E1E; border-radius: 8px; overflow: hidden; margin: 20px 0; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .code-header { background: #2D2D2D; padding: 10px 15px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #333; }
+    .mac-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .code-body { padding: 20px; font-family: 'Fira Code', monospace; font-size: 0.92rem; overflow-x: auto; line-height: 1.6; color: #D4D4D4; }
+    
+    .mk { color: #C586C0; } .mf { color: #DCDCAA; } .ms { color: #CE9178; } .mc { color: #6A9955; font-style: italic; }
+
+    /* Simulator UI */
+    .pipeline-ui { border: 2px dashed #10B981; border-radius: 12px; padding: 30px; background: rgba(16, 185, 129, 0.03); margin-top: 20px; display: flex; gap: 20px; flex-wrap: wrap; }
+    
+    .pipeline-controls { flex: 1; min-width: 280px; }
+    .pipeline-step { background: #fff; border: 1px solid #E5E7EB; padding: 15px; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: #374151; }
+    .pipeline-step:hover { border-color: #10B981; }
+    .pipeline-step.active { background: #10B981; color: #fff; border-color: #059669; }
+    .pipeline-step.active .stage-desc { color: #D1FAE5; }
+    .stage-desc { font-size: 0.75rem; color: #9CA3AF; font-weight: 400; margin-top: 4px; display: block; }
+    
+    .pipeline-output { flex: 1.5; min-width: 320px; background: #1F2937; border-radius: 8px; padding: 20px; color: #10B981; font-family: monospace; font-size: 0.9rem; overflow-y: auto; max-height: 400px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); white-space: pre-wrap; word-break: break-all; }
+    
+    .output-header { color: #E5E7EB; margin-bottom: 15px; border-bottom: 1px solid #374151; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+
+    @media(max-width: 768px) {
+        .compare-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="mongo-header">
+    <span style="display:inline-block; padding: 4px 12px; background: rgba(16, 185, 129, 0.1); color: #059669; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 15px; letter-spacing: 1px;"><i class="fa-solid fa-database"></i> DATABASE ARCHITECTURE</span>
+    <h1>MongoDB Aggregation</h1>
+    
+    <div class="def-box">
+        <strong>Definition:</strong> Aggregation operations process data records and return computed results. It groups values from multiple documents together, and can perform a variety of operations to return a single result.
+    </div>
+
+    <p>ডেটাবেস থেকে শুধু ডেটা ফেচ করা নয়, বরং ডেটাকে ফিল্টার, গ্রুপ এবং এনালাইজ করে রিপোর্ট তৈরি করার জন্য MongoDB-এর সবচেয়ে শক্তিশালী টুল হলো Aggregation Pipeline।</p>
+</div>
+
+
+
+<div class="content-block">
+    <h2><i class="fa-solid fa-server" style="color: #10B981;"></i> 1. Node.js Memory vs DB Processing</h2>
+    
+    <div class="case-study-box">
+        <div class="case-title"><i class="fa-solid fa-triangle-exclamation"></i> The Out of Memory (OOM) Trap</div>
+        <p>ধরি, আমাদের ই-কমার্স অ্যাপে গত ৩০ দিনে ৫,০০,০০০টি অর্ডার পড়েছে। এখন আমাদের ম্যানেজমেন্ট একটি রিপোর্ট চাইল: <em>"গত মাসের টোটাল সেলস ক্যাটাগরি অনুযায়ী হিসাব করে দাও।"</em></p>
+        <p><strong>ভুল পদ্ধতি (Application Level):</strong> আপনি যদি <code>find()</code> দিয়ে ৫ লাখ অর্ডার Node.js সার্ভারে নিয়ে আসেন এবং জাভাস্ক্রিপ্ট লুপ চালিয়ে সাম (Sum) করতে যান, তবে সার্ভারের RAM ফুল হয়ে অ্যাপ্লিকেশন ক্র্যাশ করবে (OOM Error)।<br>
+        <strong>প্রো পদ্ধতি (Database Level):</strong> আমরা MongoDB Aggregation ব্যবহার করব। এতে পুরো প্রসেসিংটা সরাসরি ডাটাবেস ইঞ্জিনের (C++) ভেতরে হবে এবং ডাটাবেস শুধু একটি ছোট ফলাফল (যেমন: ৫টি ক্যাটাগরির টোটাল রেভিনিউ) নেটওয়ার্ক দিয়ে Node.js এ পাঠাবে। নেটওয়ার্ক ব্যান্ডউইথ ও সার্ভার মেমোরি দুটোই বেঁচে যাবে!</p>
+    </div>
+    
+    <div class="compare-grid">
+        <div class="compare-card" style="border-left: 4px solid #EF4444;">
+            <h4><i class="fa-solid fa-microchip" style="color:#EF4444;"></i> Application Level (Bad)</h4>
+            <p>১০০ মেগাবাইট ডেটা নেটওয়ার্ক দিয়ে ফেচ করা -> Node.js CPU ও RAM ব্যবহার করে লুপ চালানো -> অত্যন্ত স্লো এবং ক্র্যাশ করার ঝুঁকি থাকে।</p>
+        </div>
+        <div class="compare-card" style="border-left: 4px solid #10B981;">
+            <h4><i class="fa-solid fa-database" style="color:#10B981;"></i> Database Level (Pro)</h4>
+            <p>ডাটাবেস ইঞ্জিন তার অপ্টিমাইজড ইনডেক্স ব্যবহার করে হিসাব করে -> মাত্র ১ কিলোবাইট রেজাল্ট রিটার্ন করে। ব্লেজিং ফাস্ট!</p>
+        </div>
+    </div>
+</div>
+
+<div class="content-block">
+    <h2><i class="fa-solid fa-layer-group" style="color: #1F2937;"></i> 2. The Core Pipeline Stages</h2>
+    <p style="color: #4B5563; margin-bottom: 15px;">Aggregation Pipeline অনেকটা কারখানার একটি এসেম্বলি লাইনের মতো কাজ করে। ডকুমেন্টসগুলো এক স্টেপ থেকে অন্য স্টেপে পাস হয় এবং ধাপে ধাপে রূপান্তরিত হয়:</p>
+    
+    <div style="background:#fff; border:1px solid #E5E7EB; padding:20px; border-radius:8px;">
+        <span class="stage-pill bg-match">$match</span> ডটকমেন্ট ফিল্টার করে (SQL-এর WHERE ক্লাজের মতো)। পাইপলাইনের প্রথমে এটি ব্যবহার করলে ডেটার সাইজ অনেক কমে যায়।<br><br>
+        <span class="stage-pill bg-group">$group</span> নির্দিষ্ট কোনো কী (Key) অনুযায়ী ডেটা গ্রুপ করে এবং বিভিন্ন ম্যাট্রিক্স (Sum, Avg, Min, Max) হিসাব করে।<br><br>
+        <span class="stage-pill bg-sort">$sort</span> প্রসেসড ডেটাগুলোকে সাজায় (1 মানে Ascending, -1 মানে Descending)।<br><br>
+        <span class="stage-pill bg-project">$project</span> ফাইনাল আউটপুটের শেপ পরিবর্তন করে (দরকারী ফিল্ড রাখা এবং অপ্রয়োজনীয় ফিল্ড লুকিয়ে ফেলা)।
+    </div>
+</div>
+
+<div class="content-block">
+    <h2><i class="fa-solid fa-code" style="color: #2563EB;"></i> 3. Complex Analytics Query (Mongoose)</h2>
+    <p style="color: #4B5563;">নিচে একটি ইন্ডাস্ট্রি-স্ট্যান্ডার্ড কোড দেওয়া হলো, যার মাধ্যমে আমরা শেষ ৩০ দিনের সেরা ৫টি সেরা সেলিং ক্যাটাগরি বের করে আনি:</p>
+    
+    <div class="code-window">
+        <div class="code-header">
+            <div class="mac-dot" style="background:#ff5f56;"></div>
+            <div class="mac-dot" style="background:#ffbd2e;"></div>
+            <div class="mac-dot" style="background:#27c93f;"></div>
+            <span style="color: #888; font-size: 0.85rem; margin-left: auto;">controllers/analyticsController.js</span>
+        </div>
+        <div class="code-body">
+<pre style="margin: 0;"><span class="mk">const</span> Order = <span class="mf">require</span>(<span class="ms">'../models/Order'</span>);
+
+<span class="mk">exports</span>.<span class="mf">getTopCategories</span> = <span class="mk">async</span> (req, res) => {
+    <span class="mk">const</span> pipeline = [
+        <span class="mc">// 1. Filter completed orders from the last 30 days</span>
+        { <span class="ms">$match</span>: { 
+            status: <span class="ms">'completed'</span>,
+            createdAt: { <span class="ms">$gte</span>: <span class="mk">new</span> <span class="mf">Date</span>(<span class="mf">Date</span>.<span class="mf">now</span>() - 30 * 24 * 60 * 60 * 1000) } 
+        }},
+        <span class="mc">// 2. Group by category and calculate total revenue & units sold</span>
+        { <span class="ms">$group</span>: { 
+            _id: <span class="ms">'$category'</span>, 
+            totalRevenue: { <span class="ms">$sum</span>: <span class="ms">'$price'</span> },
+            unitsSold: { <span class="ms">$sum</span>: 1 }
+        }},
+        <span class="mc">// 3. Sort by total revenue (Descending)</span>
+        { <span class="ms">$sort</span>: { totalRevenue: -1 } },
+        <span class="mc">// 4. Limit to top 5 categories</span>
+        { <span class="ms">$limit</span>: 5 }
+    ];
+
+    <span class="mk">const</span> report = <span class="mk">await</span> Order.<span class="mf">aggregate</span>(pipeline);
+    res.<span class="mf">json</span>(report);
+};</pre>
+        </div>
+    </div>
+</div>
+
+<div class="content-block">
+    <h2><i class="fa-solid fa-diagram-project" style="color: #10B981;"></i> 4. Live Pipeline Builder Simulator</h2>
+    <p style="color: #4B5563;">নিচে পাইপলাইন স্টেজগুলো একটার পর একটা অন করুন। দেখুন কীভাবে কাঁচা কালেকশন ডেটা (Raw Collection) স্টেপে স্টেপে ফিল্টার হয়ে একটি সুন্দর বিজনেস রিপোর্টে পরিণত হয়।</p>
+
+    <div class="pipeline-ui">
+        <div class="pipeline-controls">
+            <h4 style="margin-bottom: 15px; color: #1F2937;">Pipeline Stages:</h4>
+            
+            <div class="pipeline-step" id="btn-match" onclick="toggleStage('match')">
+                <div>
+                    <i class="fa-solid fa-filter"></i> 1. $match
+                    <span class="stage-desc">status: "completed"</span>
+                </div>
+                <i class="fa-solid fa-plus icon-state"></i>
+            </div>
+            
+            <div class="pipeline-step" id="btn-group" onclick="toggleStage('group')" style="opacity: 0.5; pointer-events: none;">
+                <div>
+                    <i class="fa-solid fa-object-group"></i> 2. $group
+                    <span class="stage-desc">_id: "$category", total: { $sum }</span>
+                </div>
+                <i class="fa-solid fa-plus icon-state"></i>
+            </div>
+
+            <div class="pipeline-step" id="btn-sort" onclick="toggleStage('sort')" style="opacity: 0.5; pointer-events: none;">
+                <div>
+                    <i class="fa-solid fa-arrow-down-a-z"></i> 3. $sort
+                    <span class="stage-desc">totalRevenue: -1 (DESC)</span>
+                </div>
+                <i class="fa-solid fa-plus icon-state"></i>
+            </div>
+            
+            <button onclick="resetPipeline()" style="margin-top: 15px; padding: 10px 15px; border-radius: 6px; border: 1px solid #E5E7EB; background: #fff; cursor: pointer; width: 100%; font-weight: 600;">
+                <i class="fa-solid fa-rotate-right"></i> Reset Pipeline
+            </button>
+        </div>
+
+        <div class="pipeline-output" id="json-output">
+            </div>
+    </div>
+</div>
+
+<script>
+    const rawData = [
+        { id: 1, item: "Laptop", category: "Electronics", price: 1200, status: "completed" },
+        { id: 2, item: "Mouse", category: "Electronics", price: 40, status: "pending" },
+        { id: 3, item: "T-Shirt", category: "Clothing", price: 25, status: "completed" },
+        { id: 4, item: "Monitor", category: "Electronics", price: 300, status: "completed" },
+        { id: 5, item: "Jeans", category: "Clothing", price: 50, status: "completed" }
+    ];
+
+    let currentStage = 0;
+
+    function renderJSON(data, title) {
+        const out = document.getElementById('json-output');
+        out.innerHTML = `
+            <div class="output-header">
+                <span><i class="fa-solid fa-terminal"></i> ${title}</span>
+                <span style="font-size: 0.75rem; background: #374151; padding: 2px 8px; border-radius: 4px;">Count: ${data.length}</span>
+            </div>
+            ${JSON.stringify(data, null, 4)}
+        `;
+    }
+
+    function toggleStage(stageStr) {
+        const btnMatch = document.getElementById('btn-match');
+        const btnGroup = document.getElementById('btn-group');
+        const btnSort = document.getElementById('btn-sort');
+
+        if (stageStr === 'match' && currentStage === 0) {
+            currentStage = 1;
+            btnMatch.classList.add('active');
+            btnMatch.querySelector('.icon-state').className = "fa-solid fa-check icon-state";
+            btnGroup.style.opacity = '1';
+            btnGroup.style.pointerEvents = 'auto';
+            
+            const matchedData = rawData.filter(d => d.status === "completed");
+            renderJSON(matchedData, "Output after $match (Filtered Completed)");
+        } 
+        else if (stageStr === 'group' && currentStage === 1) {
+            currentStage = 2;
+            btnGroup.classList.add('active');
+            btnGroup.querySelector('.icon-state').className = "fa-solid fa-check icon-state";
+            btnSort.style.opacity = '1';
+            btnSort.style.pointerEvents = 'auto';
+
+            const matchedData = rawData.filter(d => d.status === "completed");
+            const grouped = {};
+            matchedData.forEach(d => {
+                if(!grouped[d.category]) grouped[d.category] = { _id: d.category, totalRevenue: 0 };
+                grouped[d.category].totalRevenue += d.price;
+            });
+            const groupedData = Object.values(grouped);
+            renderJSON(groupedData, "Output after $group (Summed by Category)");
+        }
+        else if (stageStr === 'sort' && currentStage === 2) {
+            currentStage = 3;
+            btnSort.classList.add('active');
+            btnSort.querySelector('.icon-state').className = "fa-solid fa-check icon-state";
+
+            const matchedData = rawData.filter(d => d.status === "completed");
+            const grouped = {};
+            matchedData.forEach(d => {
+                if(!grouped[d.category]) grouped[d.category] = { _id: d.category, totalRevenue: 0 };
+                grouped[d.category].totalRevenue += d.price;
+            });
+            const sortedData = Object.values(grouped).sort((a, b) => b.totalRevenue - a.totalRevenue);
+            renderJSON(sortedData, "Final Output after $sort (Highest Revenue First)");
+        }
+    }
+
+    function resetPipeline() {
+        currentStage = 0;
+        const btns = [document.getElementById('btn-match'), document.getElementById('btn-group'), document.getElementById('btn-sort')];
+        
+        btns.forEach(btn => {
+            btn.classList.remove('active');
+            btn.querySelector('.icon-state').className = "fa-solid fa-plus icon-state";
+        });
+        
+        btns[1].style.opacity = '0.5'; btns[1].style.pointerEvents = 'none';
+        btns[2].style.opacity = '0.5'; btns[2].style.pointerEvents = 'none';
+        
+        renderJSON(rawData, "Raw Collection Data (db.orders)");
+    }
+
+    resetPipeline();
+</script>

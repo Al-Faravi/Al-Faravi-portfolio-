@@ -1,0 +1,242 @@
+<style>
+    /* Scoped CSS for Supabase Page */
+    .supa-header { margin-bottom: 40px; border-left: 4px solid #3ECF8E; padding-left: 20px; }
+    .supa-header h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 10px; color:#1F2937; }
+    .supa-header p { color: #4B5563; font-size: 1.05rem; max-width: 800px; line-height: 1.8; }
+    
+    .badge-new { background: #DBEAFE; color: #2563EB; font-size: 0.75rem; padding: 4px 10px; border-radius: 4px; font-weight: 700; letter-spacing: 1px; vertical-align: middle; margin-left: 10px; }
+    .def-box { background: #F3F4F6; border-left: 4px solid #3ECF8E; padding: 15px 20px; margin-bottom: 20px; font-style: italic; color: #374151; font-size: 0.95rem; }
+
+    /* Case Study Box */
+    .case-study-box { background: #F0FDF4; border: 1px solid #BBF7D0; border-left: 4px solid #10B981; padding: 25px; border-radius: 8px; margin-bottom: 25px; }
+    .case-title { color: #047857; font-weight: 700; margin-bottom: 12px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+    .case-study-box p { color: #065F46; font-size: 0.95rem; line-height: 1.7; margin-bottom: 10px; }
+    .inline-code { background: rgba(255,255,255,0.7); padding: 2px 8px; border-radius: 4px; font-family: monospace; font-size: 0.9rem; color: #047857; border: 1px solid #BBF7D0; }
+
+    .content-block { margin-bottom: 40px; }
+    .content-block h2 { font-size: 1.6rem; color: #1F2937; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #E5E7EB; padding-bottom: 10px; }
+    
+    /* Concept Grid */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+    .compare-card { padding: 25px; border-radius: 10px; border: 1px solid #E5E7EB; background: #fff; transition: all 0.3s; }
+    .compare-card:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    .compare-card h4 { font-size: 1.1rem; color: #1F2937; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .compare-card p { font-size: 0.9rem; color: #4B5563; line-height: 1.6; }
+
+    /* Code Window (Dual) */
+    .code-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 25px 0; }
+    .code-window { background: #1E1E1E; border-radius: 8px; overflow: hidden; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
+    .code-header { background: #2D2D2D; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
+    .mac-dots { display: flex; gap: 8px; align-items: center; }
+    .mac-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .file-tag { font-size: 0.8rem; font-weight: 600; padding: 3px 8px; border-radius: 4px; background: #374151; color: #E5E7EB; }
+    .bg-sql { background: #3B82F6; }
+    .bg-js { background: #F59E0B; color: #1F2937; }
+    
+    .code-body { padding: 20px; font-family: 'Fira Code', monospace; font-size: 0.85rem; overflow-x: auto; line-height: 1.6; color: #D4D4D4; flex-grow: 1; }
+    
+    .sk { color: #569CD6; } /* SQL Keyword */
+    .sf { color: #DCDCAA; } /* Function */
+    .ss { color: #CE9178; } /* String */
+
+    /* Simulator UI */
+    .demo-area { border: 2px dashed #3ECF8E; border-radius: 12px; padding: 30px; background: rgba(62, 207, 142, 0.03); margin-top: 20px; }
+    
+    .auth-toggle-bar { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 15px 20px; border-radius: 8px; border: 1px solid #E5E7EB; margin-bottom: 25px; }
+    .auth-status { display: flex; align-items: center; gap: 10px; font-weight: 600; color: #1F2937; }
+    .status-dot { width: 12px; height: 12px; border-radius: 50%; background: #EF4444; box-shadow: 0 0 8px #EF4444; transition: 0.3s; }
+    
+    .btn-toggle { background: #1F2937; color: #fff; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+    .btn-toggle:hover { background: #374151; }
+
+    .upload-box { background: #fff; border: 2px dashed #D1D5DB; border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: 0.3s; }
+    .upload-box:hover { border-color: #3ECF8E; background: #F0FDF4; }
+    .upload-icon { font-size: 3rem; color: #9CA3AF; margin-bottom: 15px; transition: 0.3s; }
+    .upload-box:hover .upload-icon { color: #3ECF8E; transform: translateY(-5px); }
+
+    .terminal-out { background: #111; color: #A78BFA; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 0.85rem; margin-top: 20px; min-height: 80px; display: none; border-left: 3px solid #3ECF8E; }
+    .err-msg { color: #EF4444; }
+    .succ-msg { color: #3ECF8E; }
+
+    @media(max-width: 768px) {
+        .compare-grid, .code-grid { grid-template-columns: 1fr; }
+        .auth-toggle-bar { flex-direction: column; gap: 15px; }
+    }
+</style>
+
+<div class="supa-header">
+    <span style="display:inline-block; padding: 4px 12px; background: rgba(62, 207, 142, 0.1); color: #059669; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 15px; letter-spacing: 1px;"><i class="fa-solid fa-cloud"></i> DATABASE & STORAGE</span>
+    <h1>Supabase & PostgreSQL <span class="badge-new">NEW</span></h1>
+    
+    <div class="def-box">
+        <strong>Definition:</strong> Row Level Security (RLS) is a feature of PostgreSQL that allows database administrators to control which rows a user can access based on their authentication token.
+    </div>
+
+    <p>ডেভেলপারদের মাঝে একটি ভুল ধারণা আছে যে, Supabase হলো "Firebase এর ক্লোন"। কিন্তু আসলে Supabase এর কোর হলো একটি সম্পূর্ণ <strong>Relational PostgreSQL Database</strong>। এর সবচেয়ে পাওয়ারফুল ফিচার হলো RLS, যা আপনার ডাটাবেসকে হ্যাকারদের থেকে ১০০% সুরক্ষিত রাখে।</p>
+</div>
+
+<!-- Section 1: Architecture -->
+<div class="content-block">
+    <h2><i class="fa-solid fa-shield-halved" style="color: #3ECF8E;"></i> 1. The Zero-Trust Architecture</h2>
+    
+    <div class="case-study-box">
+        <div class="case-title"><i class="fa-solid fa-user-secret"></i> The API Bypass Problem</div>
+        <p>সাধারণত আমরা আমাদের Node.js ব্যাকএন্ডে (API লেভেলে) ইউজার লগ-ইন করেছে কি না তা চেক করি। কিন্তু কোনো হ্যাকার যদি API কে বাইপাস করে সরাসরি আপনার ডাটাবেস ইউআরএলে (Database URL) হিট করে? তখন ডাটাবেস কিন্তু জানে না এই ব্যক্তি অথোরাইজড কি না!</p>
+        <p><strong>The RLS Solution:</strong> Supabase-এ আমরা সিকিউরিটি লজিক Node.js-এ না লিখে, <strong>সরাসরি PostgreSQL ডাটাবেসের ভেতরে SQL দিয়ে লিখে দিই</strong>। একে বলে Zero-Trust Architecture। এখন কেউ API বাইপাস করে সরাসরি ডাটাবেসে হিট করলেও, ডাটাবেস ইঞ্জিন নিজেই ইউজারের JWT টোকেন চেক করবে। টোকেন ইনভ্যালিড হলে ডাটাবেস একটি Row (ডেটা) ও রিটার্ন করবে না!</p>
+    </div>
+    
+    <div class="compare-grid">
+        <div class="compare-card" style="border-top: 3px solid #EF4444;">
+            <h4><i class="fa-solid fa-code" style="color:#EF4444;"></i> Application-Level Security</h4>
+            <ul>
+                <li>সিকিউরিটি লজিক শুধু সার্ভার কোডে থাকে।</li>
+                <li>API এ কোনো বাগ (Bug) থাকলে পুরো ডাটাবেস কম্প্রোমাইজড হয়ে যায়।</li>
+            </ul>
+        </div>
+        <div class="compare-card" style="border-top: 3px solid #3ECF8E; box-shadow: 0 4px 10px rgba(62, 207, 142, 0.05);">
+            <h4><i class="fa-solid fa-database" style="color:#3ECF8E;"></i> Database-Level Security (RLS)</h4>
+            <ul>
+                <li>ডাটাবেস ইঞ্জিন নিজেই সিকিউরিটি হ্যান্ডেল করে।</li>
+                <li>ফ্রন্টএন্ড (React) থেকে সরাসরি ডাটাবেসে কোয়েরি করা ১০০% সেইফ!</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Section 2: Code Snippets (SQL + JS) -->
+<div class="content-block">
+    <h2><i class="fa-solid fa-laptop-code" style="color: #1F2937;"></i> 2. Secure File Upload Implementation</h2>
+    <p style="color: #4B5563;">নিচে দেখুন কিভাবে আমরা প্রথমে SQL দিয়ে পলিসি তৈরি করি, যেন শুধু লগ-ইন করা ইউজারই ছবি আপলোড করতে পারে। এরপর ক্লায়েন্ট সাইড (Javascript SDK) দিয়ে সরাসরি স্টোরেজ বাকেটে ফাইল পুশ করা হয়।</p>
+    
+    <div class="code-grid">
+        <!-- SQL Window -->
+        <div class="code-window">
+            <div class="code-header">
+                <div class="mac-dots">
+                    <div class="mac-dot" style="background:#ff5f56;"></div>
+                    <div class="mac-dot" style="background:#ffbd2e;"></div>
+                    <div class="mac-dot" style="background:#27c93f;"></div>
+                </div>
+                <span class="file-tag bg-sql">PostgreSQL RLS Policy</span>
+            </div>
+            <div class="code-body">
+<pre style="margin: 0;"><span class="sk">CREATE POLICY</span> <span class="ss">"Allow authenticated users to upload avatars"</span>
+<span class="sk">ON</span> storage.objects <span class="sk">FOR INSERT</span>
+<span class="sk">WITH CHECK</span> (
+    <span class="sk">bucket_id</span> = <span class="ss">'avatars'</span> 
+    <span class="sk">AND</span> <span class="sf">auth.role()</span> = <span class="ss">'authenticated'</span>
+);</pre>
+            </div>
+        </div>
+
+        <!-- JS Window -->
+        <div class="code-window">
+            <div class="code-header">
+                <div class="mac-dots">
+                    <div class="mac-dot" style="background:#333;"></div>
+                    <div class="mac-dot" style="background:#333;"></div>
+                    <div class="mac-dot" style="background:#333;"></div>
+                </div>
+                <span class="file-tag bg-js">uploadService.js</span>
+            </div>
+            <div class="code-body">
+<pre style="margin: 0;"><span style="color:#C586C0;">import</span> { supabase } <span style="color:#C586C0;">from</span> <span class="ss">'./supabaseClient'</span>;
+
+<span style="color:#C586C0;">export async function</span> <span class="sf">uploadAvatar</span>(file) {
+    <span style="color:#6A9955;">// Database engine will reject this if auth token is missing!</span>
+    <span style="color:#C586C0;">const</span> { data, error } = <span style="color:#C586C0;">await</span> supabase
+        .storage
+        .<span class="sf">from</span>(<span class="ss">'avatars'</span>)
+        .<span class="sf">upload</span>(<span class="ss">`public/${file.name}`</span>, file);
+
+    <span style="color:#C586C0;">if</span> (error) <span style="color:#C586C0;">throw</span> error;
+    <span style="color:#C586C0;">return</span> data;
+}</pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Section 3: Interactive RLS Simulator -->
+<div class="content-block">
+    <h2><i class="fa-solid fa-user-shield" style="color: #3ECF8E;"></i> 3. Live RLS Validation Simulator</h2>
+    <p style="color: #4B5563;">উপরে লেখা SQL পলিসিটি বাস্তবে কীভাবে কাজ করে, তা দেখতে নিচের ডেমোটি ট্রাই করুন। লগ-আউট থাকা অবস্থায় ফাইল আপলোড করার চেষ্টা করুন, দেখবেন ডাটাবেস ইঞ্জিন আপনাকে ব্লক করে দিয়েছে!</p>
+
+    <div class="demo-area">
+        
+        <!-- Auth Context Bar -->
+        <div class="auth-toggle-bar">
+            <div class="auth-status">
+                <div class="status-dot" id="auth-dot"></div>
+                <span>Session State: <span id="auth-text" style="color:#EF4444;">Anonymous (Logged Out)</span></span>
+            </div>
+            <button class="btn-toggle" onclick="toggleAuth()" id="btn-auth">Login as User</button>
+        </div>
+
+        <!-- Upload Trigger -->
+        <div class="upload-box" onclick="simulateUpload()">
+            <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+            <h3 style="color: #1F2937; margin-bottom: 5px;">Upload Profile Avatar</h3>
+            <p style="color: #6B7280; font-size: 0.9rem;">Click to push payload directly to PostgreSQL Storage Bucket</p>
+        </div>
+
+        <!-- Terminal Output -->
+        <div class="terminal-out" id="terminal-out">
+            <!-- JS Output -->
+        </div>
+    </div>
+</div>
+
+<script>
+    let isAuthenticated = false;
+
+    function toggleAuth() {
+        isAuthenticated = !isAuthenticated;
+        
+        const dot = document.getElementById('auth-dot');
+        const text = document.getElementById('auth-text');
+        const btn = document.getElementById('btn-auth');
+        const term = document.getElementById('terminal-out');
+        
+        term.style.display = 'none'; // Hide terminal on switch
+
+        if (isAuthenticated) {
+            dot.style.background = '#3ECF8E';
+            dot.style.boxShadow = '0 0 8px #3ECF8E';
+            text.innerText = 'Authenticated (JWT Active)';
+            text.style.color = '#3ECF8E';
+            btn.innerText = 'Log Out';
+        } else {
+            dot.style.background = '#EF4444';
+            dot.style.boxShadow = '0 0 8px #EF4444';
+            text.innerText = 'Anonymous (Logged Out)';
+            text.style.color = '#EF4444';
+            btn.innerText = 'Login as User';
+        }
+    }
+
+    function simulateUpload() {
+        const term = document.getElementById('terminal-out');
+        term.style.display = 'block';
+        term.innerHTML = '> Client initiating storage API request...<br>';
+        
+        setTimeout(() => {
+            term.innerHTML += '> Executing PostgreSQL Row Level Security check...<br>';
+            
+            setTimeout(() => {
+                if (!isAuthenticated) {
+                    // RLS Fails
+                    term.innerHTML += `<br><span class="err-msg">ERROR 403 Forbidden: new row violates row-level security policy for table "objects"</span><br>`;
+                    term.innerHTML += `<span style="color:#6B7280;">Action denied directly by the database engine. Request dropped.</span>`;
+                } else {
+                    // RLS Succeeds
+                    const hash = Math.random().toString(36).substring(2, 10);
+                    term.innerHTML += `<br><span class="succ-msg">SUCCESS 200 OK: RLS policy verified. File written to bucket.</span><br>`;
+                    term.innerHTML += `Generated CDN Link: <a href="#" style="color:#60A5FA;">https://${hash}.supabase.co/storage/v1/object/public/avatars/img.jpg</a>`;
+                }
+                
+                term.scrollTop = term.scrollHeight;
+            }, 800);
+        }, 600);
+    }
+</script>

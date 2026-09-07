@@ -1,0 +1,244 @@
+<style>
+    /* Scoped CSS for Caching Page */
+    .cache-header { margin-bottom: 40px; border-left: 4px solid #06B6D4; padding-left: 20px; }
+    .cache-header h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 10px; color:#1F2937; }
+    .cache-header p { color: #4B5563; font-size: 1.05rem; max-width: 800px; line-height: 1.8; }
+    
+    .def-box { background: #F3F4F6; border-left: 4px solid #06B6D4; padding: 15px 20px; margin-bottom: 20px; font-style: italic; color: #374151; font-size: 0.95rem; }
+    
+    /* Case Study Box */
+    .case-study-box { background: #ECFEFF; border: 1px solid #A5F3FC; border-left: 4px solid #06B6D4; padding: 25px; border-radius: 8px; margin-bottom: 25px; }
+    .case-title { color: #0891B2; font-weight: 700; margin-bottom: 12px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+    .case-study-box p { color: #164E63; font-size: 0.95rem; line-height: 1.7; margin-bottom: 10px; }
+
+    .content-block { margin-bottom: 40px; }
+    .content-block h2 { font-size: 1.6rem; color: #1F2937; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #E5E7EB; padding-bottom: 10px; }
+    
+    /* Concept Grid */
+    .concept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+    .concept-card { padding: 25px; border-radius: 10px; border: 1px solid #E5E7EB; background: #fff; transition: all 0.3s; position: relative; overflow: hidden; }
+    .concept-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+    .concept-card h4 { font-size: 1.1rem; color: #1F2937; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .concept-card p { font-size: 0.9rem; color: #4B5563; line-height: 1.6; }
+    
+    /* Code Window */
+    .code-window { background: #1E1E1E; border-radius: 8px; overflow: hidden; margin: 20px 0; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .code-header { background: #2D2D2D; padding: 10px 15px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #333; }
+    .mac-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .code-body { padding: 20px; font-family: 'Fira Code', monospace; font-size: 0.92rem; overflow-x: auto; line-height: 1.6; color: #D4D4D4; }
+    
+    .ck { color: #C586C0; } .cf { color: #DCDCAA; } .cs { color: #CE9178; } .cc { color: #6A9955; font-style: italic; }
+
+    /* Simulator UI */
+    .sim-area { border: 2px dashed #06B6D4; border-radius: 12px; padding: 35px; background: rgba(6, 182, 212, 0.03); margin-top: 20px; display: flex; gap: 30px; align-items: center; flex-wrap: wrap; }
+    
+    .sim-controls { flex: 1; min-width: 250px; }
+    .btn-fetch { background: #1F2937; color: #fff; border: none; padding: 15px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 1rem; transition: 0.2s; width: 100%; justify-content: center; margin-bottom: 15px; }
+    .btn-fetch:hover { background: #06B6D4; }
+    .btn-clear { background: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; transition: 0.2s; display: flex; justify-content: center; gap: 8px; }
+    .btn-clear:hover { background: #FECACA; }
+
+    .sim-visual { flex: 1.5; min-width: 300px; background: #fff; border: 1px solid #E5E7EB; border-radius: 12px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); position: relative; min-height: 220px; display: flex; flex-direction: column; justify-content: center; }
+    
+    .status-badge { position: absolute; top: 15px; right: 15px; font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
+    .badge-miss { background: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5; }
+    .badge-hit { background: #F0FDF4; color: #166534; border: 1px solid #86EFAC; }
+    
+    .timing-text { font-size: 3rem; font-weight: 700; color: #1F2937; font-family: monospace; text-align: center; margin: 15px 0; }
+    .timing-label { text-align: center; color: #6B7280; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    
+    .loader-bar { height: 6px; background: #E5E7EB; border-radius: 4px; overflow: hidden; margin-top: 20px; display: none; }
+    .loader-fill { height: 100%; width: 0%; background: #06B6D4; }
+
+    @media(max-width: 768px) {
+        .concept-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="cache-header">
+    <span style="display:inline-block; padding: 4px 12px; background: rgba(6, 182, 212, 0.1); color: #0891B2; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;"><i class="fa-solid fa-memory"></i> SYSTEM DESIGN</span>
+    <h1>Caching Strategies (Redis)</h1>
+    
+    <div class="def-box">
+        <strong>Definition:</strong> Caching is the process of storing copies of files or data in a temporary storage location (like RAM) so that they can be accessed more quickly.
+    </div>
+
+    <p>সাধারণ ইউজার ট্রাফিকে ডাটাবেস পারফেক্ট কাজ করে। কিন্তু যখন রিকোয়েস্টের পরিমাণ বিশাল হয়, তখন ডাটাবেসকে অতিরিক্ত লোড থেকে বাঁচাতে এবং রেসপন্স টাইম মিলি-সেকেন্ডে নামিয়ে আনতে আমরা Caching আর্কিটেকচার ব্যবহার করি।</p>
+</div>
+
+<!-- Section 1: Theory & Case Study -->
+<div class="content-block">
+    <h2><i class="fa-solid fa-sitemap" style="color: #06B6D4;"></i> 1. Cache Hit vs Cache Miss</h2>
+    
+    <div class="case-study-box">
+        <div class="case-title"><i class="fa-solid fa-cart-shopping"></i> The Black Friday Crash</div>
+        <p>ধরি, আপনার ই-কমার্স সাইটে "Black Friday" সেল চলছে। এক সেকেন্ডে ১০,০০০ ইউজার হোমপেজে ভিজিট করলো। যদি আপনার Node.js সার্ভার এই ১০,০০০ বারের প্রতিবারই MongoDB বা PostgreSQL-এ গিয়ে "টপ প্রোডাক্ট" এর কোয়েরি (Query) রান করে, তবে আপনার ডাটাবেস নিশ্চিত ক্র্যাশ করবে!</p>
+        <p><strong>The Redis Solution:</strong> এর প্রো-সলিউশন হলো <strong>In-Memory Cache (Redis)</strong>। প্রথম ইউজার যখন ভিজিট করবে, সার্ভার ডাটাবেস থেকে ডেটা এনে RAM (Redis) এ সেভ করে রাখবে (যাকে বলে <em>Cache Miss</em>)। এরপর বাকি ৯,৯৯৯ জন ইউজারকে ডাটাবেস পর্যন্ত যেতেই হবে না! সার্ভার চোখের পলকে RAM থেকে ডেটা তুলে তাদেরকে দিয়ে দিবে (যাকে বলে <em>Cache Hit</em>)। এতে ডাটাবেস বেঁচে যাবে এবং রেসপন্স টাইম ১০০ গুণ ফাস্ট হবে!</p>
+    </div>
+    
+    <div class="concept-grid">
+        <div class="concept-card" style="border-left: 4px solid #EF4444;">
+            <h4><i class="fa-solid fa-database" style="color:#EF4444;"></i> Cache Miss (Slow)</h4>
+            <p>রিকোয়েস্ট করা ডেটা ক্যাশে (RAM) পাওয়া যায়নি। সার্ভারকে এখন মূল ডাটাবেসে যেতে হবে, ডেটা প্রসেস করতে হবে, ক্লায়েন্টকে পাঠাতে হবে এবং ভবিষ্যতের জন্য ক্যাশে একটি কপি সেভ করতে হবে। <em>(সময় বেশি লাগে)</em></p>
+        </div>
+        <div class="concept-card" style="border-left: 4px solid #10B981;">
+            <h4><i class="fa-solid fa-bolt" style="color:#10B981;"></i> Cache Hit (Lightning Fast)</h4>
+            <p>রিকোয়েস্ট করা ডেটা ক্যাশে আগে থেকেই রেডি করা আছে। সার্ভার মূল ডাটাবেসকে পুরোপুরি বাইপাস (Bypass) করে সরাসরি RAM থেকে ডেটা রিটার্ন করে দেয়। <em>(মিলিসেকেন্ডে কাজ শেষ)</em></p>
+        </div>
+    </div>
+</div>
+
+<!-- Section 2: Code Implementation -->
+<div class="content-block">
+    <h2><i class="fa-brands fa-node-js" style="color: #68a063;"></i> 2. Node.js + Redis Implementation</h2>
+    <p style="color: #4B5563;">একটি প্রোডাকশন-গ্রেড ক্যাশিং আর্কিটেকচার ঠিক এভাবেই কাজ করে: প্রথমে ক্যাশ চেক করো। ডেটা থাকলে সাথে সাথে রিটার্ন করো। না থাকলে DB থেকে আনো, সেটিকে একটি TTL (Time-To-Live) দিয়ে ক্যাশে রাখো, তারপর রিটার্ন করো।</p>
+    
+    <div class="code-window">
+        <div class="code-header">
+            <div class="mac-dot" style="background:#ff5f56;"></div>
+            <div class="mac-dot" style="background:#ffbd2e;"></div>
+            <div class="mac-dot" style="background:#27c93f;"></div>
+            <span style="color: #888; font-size: 0.85rem; margin-left: auto;">controllers/productController.js</span>
+        </div>
+        <div class="code-body">
+<pre style="margin: 0;"><span class="ck">const</span> redisClient = <span class="cf">require</span>(<span class="cs">'../config/redis'</span>);
+<span class="ck">const</span> Product = <span class="cf">require</span>(<span class="cs">'../models/Product'</span>);
+
+<span class="ck">exports</span>.<span class="cf">getTrendingProducts</span> = <span class="ck">async</span> (req, res) => {
+    <span class="ck">const</span> cacheKey = <span class="cs">'products:trending'</span>;
+
+    <span class="cc">// 1. Check Redis Cache Memory first</span>
+    <span class="ck">const</span> cachedData = <span class="ck">await</span> redisClient.<span class="cf">get</span>(cacheKey);
+    
+    <span class="ck">if</span> (cachedData) {
+        <span class="cc">// Cache HIT: Bypass Database & return immediately</span>
+        <span class="ck">return</span> res.<span class="cf">status</span>(200).<span class="cf">json</span>(JSON.<span class="cf">parse</span>(cachedData));
+    }
+
+    <span class="cc">// 2. Cache MISS: Query heavy data from MongoDB</span>
+    <span class="ck">const</span> products = <span class="ck">await</span> Product.<span class="cf">find</span>().<span class="cf">sort</span>({ views: -1 }).<span class="cf">limit</span>(10);
+
+    <span class="cc">// 3. Save to Redis with 1-hour expiration (3600 seconds)</span>
+    <span class="ck">await</span> redisClient.<span class="cf">setEx</span>(cacheKey, 3600, JSON.<span class="cf">stringify</span>(products));
+
+    res.<span class="cf">status</span>(200).<span class="cf">json</span>(products);
+};</pre>
+        </div>
+    </div>
+</div>
+
+<!-- Section 3: Interactive Simulator -->
+<div class="content-block">
+    <h2><i class="fa-solid fa-stopwatch" style="color: #06B6D4;"></i> 3. Latency Difference Simulator</h2>
+    <p style="color: #4B5563;">RAM বনাম হার্ড-ড্রাইভের স্পিডের পার্থক্য বাস্তবে অনুভব করুন। "Fetch Data" বাটনে ক্লিক করুন। প্রথম রিকোয়েস্টটি ডাটাবেস থেকে আসতে সময় নেবে (Cache Miss)। কিন্তু দ্বিতীয়বার ক্লিক করলেই ডেটা চোখের পলকে Redis থেকে সার্ভ হবে (Cache Hit)!</p>
+
+    <div class="sim-area">
+        <div class="sim-controls">
+            <button class="btn-fetch" id="btn-request" onclick="fetchData()">
+                <i class="fa-solid fa-cloud-arrow-down"></i> Fetch Trending Data
+            </button>
+            <button class="btn-clear" onclick="clearCache()">
+                <i class="fa-solid fa-trash-can"></i> Purge Redis Cache
+            </button>
+            <p style="font-size: 0.85rem; color: #6B7280; margin-top: 20px; text-align: center; background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #E5E7EB;" id="cache-status-text">Cache Memory is currently <strong style="color:#EF4444;">Empty</strong>.</p>
+        </div>
+
+        <div class="sim-visual">
+            <div id="sim-badge"></div>
+            <div class="timing-label" id="sim-label">Server Response Time</div>
+            <div class="timing-text" id="sim-time">000<span style="font-size: 1.2rem; color: #9CA3AF;">ms</span></div>
+            <p style="text-align: center; color: #6B7280; font-size: 0.95rem; font-weight: 500;" id="sim-source">Awaiting Client Request...</p>
+            
+            <div class="loader-bar" id="loader-bar">
+                <div class="loader-fill" id="loader-fill"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let isCached = false;
+    let isFetching = false;
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function fetchData() {
+        if (isFetching) return;
+        isFetching = true;
+        
+        const btn = document.getElementById('btn-request');
+        const timeDisplay = document.getElementById('sim-time');
+        const sourceDisplay = document.getElementById('sim-source');
+        const badge = document.getElementById('sim-badge');
+        const loader = document.getElementById('loader-bar');
+        const fill = document.getElementById('loader-fill');
+
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+        btn.style.opacity = '0.7';
+        loader.style.display = 'block';
+        timeDisplay.innerHTML = `---<span style="font-size: 1.2rem; color: #9CA3AF;">ms</span>`;
+        badge.innerHTML = '';
+
+        if (!isCached) {
+            // Simulate Cache Miss (Slow DB Query)
+            sourceDisplay.innerHTML = '<i class="fa-solid fa-database"></i> Querying Main Database (Disk)...';
+            sourceDisplay.style.color = "#DC2626"; // Red
+            
+            fill.style.transition = 'width 1.2s ease-out';
+            fill.style.width = '100%';
+            
+            await sleep(1200); // 1.2 seconds delay
+            
+            const randomSlowTime = Math.floor(Math.random() * (180 - 120 + 1)) + 1100; // ~1200ms
+            timeDisplay.innerHTML = `${randomSlowTime}<span style="font-size: 1.2rem; color: #9CA3AF;">ms</span>`;
+            sourceDisplay.innerText = "Data returned from Database & Saved to Redis.";
+            sourceDisplay.style.color = "#4B5563";
+            
+            badge.innerHTML = '<span class="status-code badge-miss">Cache Miss</span>';
+            
+            isCached = true;
+            document.getElementById('cache-status-text').innerHTML = `Cache Memory is currently <strong style="color:#10B981;">Active</strong>.`;
+            
+        } else {
+            // Simulate Cache Hit (Fast Redis)
+            sourceDisplay.innerHTML = '<i class="fa-solid fa-memory"></i> Checking Redis Memory (RAM)...';
+            sourceDisplay.style.color = "#10B981"; // Green
+            
+            fill.style.transition = 'width 0.1s linear';
+            fill.style.width = '100%';
+            
+            await sleep(100); // 100 ms delay
+            
+            const randomFastTime = Math.floor(Math.random() * (18 - 8 + 1)) + 8; // ~12ms
+            timeDisplay.innerHTML = `${randomFastTime}<span style="font-size: 1.2rem; color: #9CA3AF;">ms</span>`;
+            sourceDisplay.innerText = "Served directly from Redis! (Database Bypassed)";
+            sourceDisplay.style.color = "#4B5563";
+            
+            badge.innerHTML = '<span class="status-code badge-hit">Cache Hit</span>';
+        }
+
+        // Reset UI state
+        setTimeout(() => {
+            fill.style.transition = 'none';
+            fill.style.width = '0%';
+            loader.style.display = 'none';
+        }, 500);
+
+        btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-down"></i> Fetch Trending Data';
+        btn.style.opacity = '1';
+        isFetching = false;
+    }
+
+    function clearCache() {
+        if (isFetching) return;
+        isCached = false;
+        
+        document.getElementById('cache-status-text').innerHTML = `Cache Memory is currently <strong style="color:#EF4444;">Empty</strong>.`;
+        document.getElementById('sim-badge').innerHTML = '';
+        document.getElementById('sim-time').innerHTML = `000<span style="font-size: 1.2rem; color: #9CA3AF;">ms</span>`;
+        document.getElementById('sim-source').innerText = "Cache Purged successfully. Next request will hit DB.";
+        document.getElementById('sim-source').style.color = "#6B7280";
+    }
+</script>

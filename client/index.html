@@ -22,6 +22,7 @@
     <meta property="twitter:image" content="https://al-faravi-portfolio.vercel.app/assets/profile.jpg">
 
     <meta name="google-site-verification" content="ia-mEza2Gsyus9-JeJYIR6elLTiFLdrWwm191stU9cc" />
+    <link rel="icon" type="image/png" href="assets/logo_1_512x512.png">
 
     <link rel="stylesheet" href="css/style.css">
     
@@ -60,6 +61,62 @@
       "description": "Portfolio of Shakawat Faravi, a Full Stack Developer specializing in MERN Stack, AI, and Data Science."
     }
     </script>
+
+    <!-- Tech Lab Highlight Button Styles -->
+    <style>
+        .hero-btns {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .btn-tech-lab {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: #fff !important;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .btn-tech-lab:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
+
+        .btn-tech-lab i {
+            font-size: 1.1rem;
+        }
+
+        /* Mobile Responsive adjustments */
+        @media(max-width: 768px) {
+            .btn-tech-lab {
+                width: 100%; /* Spans full width right below the intro text */
+                justify-content: center;
+                margin-bottom: 8px;
+                padding: 14px 24px;
+                font-size: 1rem;
+            }
+            .hero-btns a.primary-link, 
+            .hero-btns a.secondary-link {
+                flex: 1; /* Makes the other two buttons share the next row equally */
+                text-align: center;
+                justify-content: center;
+                padding: 12px 0;
+            }
+        }
+    </style>
 </head>
 <body>
     
@@ -74,6 +131,7 @@
                 <li><a href="#featured" onclick="closeMenu()">Spotlight</a></li>
                 <li><a href="#experience" onclick="closeMenu()">Experience</a></li>
                 <li><a href="#work" onclick="closeMenu()">Projects</a></li>
+                <li><a href="#tech-lab-teaser" onclick="closeMenu()" style="color: #10B981; font-weight: 600;">My Tech Lab 🧪</a></li>
                 <li><a href="#contact" class="btn-contact" onclick="closeMenu()">Contact</a></li>
             </ul>
 
@@ -134,7 +192,12 @@
                 <p class="sub-headline">
                     Hi, I am <strong>Shakawat Faravi</strong>. A Full Stack Developer & AI Enthusiast specialized in Medical Imaging, BI Tools & MERN Stack.
                 </p>
+                
+                <!-- Updated Hero Buttons -->
                 <div class="hero-btns">
+                    <a href="tech-lab/index.html" class="btn-tech-lab">
+                        <i class="fa-solid fa-flask"></i> Explore My Tech Lab
+                    </a>
                     <a href="#featured" class="primary-link">View Featured Work ↓</a>
                     <a href="#contact" class="secondary-link">Let's Talk</a>
                 </div>
@@ -269,6 +332,45 @@
 
             <div style="text-align: center; margin-top: 40px;">
                 <a href="https://github.com/Al-Faravi" target="_blank" class="primary-link">Visit GitHub Profile ↗</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==============================================
+         NEW: TECH LAB TEASER SECTION
+    =============================================== -->
+    <section id="tech-lab-teaser" class="section" style="padding-top: 20px;">
+        <div class="container">
+            <div class="tech-lab-banner">
+                
+                <!-- Left: Content & Button -->
+                <div class="tech-lab-content">
+                    <span class="badge-lab-teaser"><i class="fa-solid fa-flask"></i> Interactive Playground</span>
+                    <h2>My Tech Lab 🧪</h2>
+                    <p>Want to see how I handle large-scale architecture? Explore my interactive simulations covering React rendering, WebSocket real-time chats, Redis caching, and MongoDB pipelines.</p>
+                    <a href="tech-lab/index.html" class="btn-lab-explore">
+                        Enter The Lab <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <!-- Right: Visual Terminal -->
+                <div class="tech-lab-visual">
+                    <div class="mock-window">
+                        <div class="window-header">
+                            <div class="w-dot" style="background:#ff5f56;"></div>
+                            <div class="w-dot" style="background:#ffbd2e;"></div>
+                            <div class="w-dot" style="background:#27c93f;"></div>
+                        </div>
+                        <div class="window-body">
+                            <span class="cmd-text">> systemctl start tech-lab</span><br>
+                            > Initializing Architecture... [OK]<br>
+                            > Loading WebSockets... [OK]<br>
+                            > Connect Redis Cache... [OK]<br>
+                            <span style="color:#D1D5DB;">> Status:</span> Ready for exploration.
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>

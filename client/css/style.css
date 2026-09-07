@@ -649,3 +649,58 @@ footer { background: #fff; border-top: 1px solid var(--border); padding-top: 80p
         grid-template-columns: 1fr;
     }
 }
+
+
+/* =========================================
+   Tech Lab Teaser Section
+========================================= */
+.tech-lab-banner {
+    background: linear-gradient(135deg, #111827 0%, #1F2937 100%);
+    border-radius: 24px;
+    padding: 50px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 50px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #374151;
+}
+
+.tech-lab-banner::before {
+    content: ''; 
+    position: absolute; 
+    top: -50%; left: -50%; 
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 60%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.tech-lab-content { position: relative; z-index: 1; flex: 1.2; }
+.badge-lab-teaser { display: inline-block; padding: 6px 14px; background: rgba(16, 185, 129, 0.15); color: #34D399; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; border: 1px solid rgba(52, 211, 153, 0.3); }
+
+.tech-lab-content h2 { color: #fff; font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 15px; }
+.tech-lab-content p { color: #9CA3AF; font-size: 1.05rem; line-height: 1.7; margin-bottom: 30px; }
+
+.btn-lab-explore {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #10B981; color: #fff; padding: 12px 28px;
+    border-radius: 30px; font-weight: 600; text-decoration: none;
+    transition: 0.3s ease; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+.btn-lab-explore:hover { background: #059669; transform: translateY(-3px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5); color: #fff; }
+
+.tech-lab-visual { flex: 1; position: relative; z-index: 1; width: 100%; }
+.mock-window { background: #000; border-radius: 12px; border: 1px solid #333; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
+.window-header { background: #1a1a1a; padding: 12px 15px; display: flex; gap: 8px; border-bottom: 1px solid #333; }
+.w-dot { width: 12px; height: 12px; border-radius: 50%; }
+.window-body { padding: 25px 20px; font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #10B981; line-height: 1.8; }
+.cmd-text { color: #A78BFA; }
+
+@media(max-width: 768px) {
+    .tech-lab-banner { flex-direction: column; padding: 35px 20px; text-align: center; gap: 30px; }
+    .tech-lab-content h2 { font-size: 2rem; }
+    .btn-lab-explore { width: 100%; justify-content: center; }
+}

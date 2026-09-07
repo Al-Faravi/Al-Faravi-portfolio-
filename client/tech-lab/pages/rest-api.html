@@ -1,0 +1,234 @@
+<style>
+    /* Scoped CSS for REST API Page */
+    .api-header { margin-bottom: 40px; border-left: 4px solid #6366F1; padding-left: 20px; }
+    .api-header h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 10px; color:#1F2937; }
+    .api-header p { color: #4B5563; font-size: 1.05rem; max-width: 800px; line-height: 1.8; }
+    
+    .def-box { background: #F3F4F6; border-left: 4px solid #6366F1; padding: 15px 20px; margin-bottom: 20px; font-style: italic; color: #374151; font-size: 0.95rem; }
+    
+    /* Case Study Box */
+    .case-study-box { background: #EEF2FF; border: 1px solid #C7D2FE; border-left: 4px solid #6366F1; padding: 25px; border-radius: 8px; margin-bottom: 25px; }
+    .case-title { color: #4338CA; font-weight: 700; margin-bottom: 12px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+    .case-study-box p { color: #312E81; font-size: 0.95rem; line-height: 1.7; margin-bottom: 10px; }
+    .inline-code { background: rgba(255,255,255,0.7); padding: 2px 8px; border-radius: 4px; font-family: monospace; font-size: 0.9rem; color: #3730A3; border: 1px solid #C7D2FE; }
+
+    .content-block { margin-bottom: 40px; }
+    .content-block h2 { font-size: 1.6rem; color: #1F2937; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #E5E7EB; padding-bottom: 10px; }
+    
+    /* Good vs Bad Grid */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 25px 0; }
+    .compare-card { padding: 20px; border-radius: 8px; font-family: monospace; font-size: 0.95rem; transition: 0.3s; }
+    .compare-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+    .bad-practices { background: #FEF2F2; border: 1px solid #FCA5A5; color: #991B1B; }
+    .good-practices { background: #F0FDF4; border: 1px solid #86EFAC; color: #166534; }
+    
+    .compare-card ul { list-style: none; padding: 0; margin-top: 15px; }
+    .compare-card li { margin-bottom: 12px; padding: 8px; background: rgba(255,255,255,0.5); border-radius: 4px; display: flex; align-items: center; gap: 10px; }
+    .compare-card i { font-size: 1.2rem; }
+
+    /* Method Badges */
+    .method { padding: 4px 10px; border-radius: 4px; font-weight: 700; font-size: 0.8rem; color: #fff; display: inline-block; width: 65px; text-align: center; }
+    .m-get { background: #3B82F6; } /* Blue */
+    .m-post { background: #10B981; } /* Green */
+    .m-put { background: #F59E0B; } /* Orange */
+    .m-patch { background: #8B5CF6; } /* Purple */
+    .m-delete { background: #EF4444; } /* Red */
+
+    /* Code Window */
+    .code-window { background: #1E1E1E; border-radius: 8px; overflow: hidden; margin: 20px 0; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .code-header { background: #2D2D2D; padding: 10px 15px; display: flex; gap: 8px; align-items: center; border-bottom: 1px solid #333; }
+    .mac-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .code-body { padding: 20px; font-family: 'Fira Code', monospace; font-size: 0.92rem; overflow-x: auto; line-height: 1.6; color: #D4D4D4; }
+
+    /* Simulator UI */
+    .simulator-area { border: 2px dashed #6366F1; border-radius: 12px; padding: 30px; background: rgba(99, 102, 241, 0.03); margin-top: 20px; }
+    .sim-selector { width: 100%; padding: 12px; border: 1px solid #E5E7EB; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 1rem; outline: none; margin-bottom: 20px; cursor: pointer; color: #1F2937; font-weight: 500; }
+    .sim-selector:focus { border-color: #6366F1; }
+    
+    .sim-result { background: #fff; border: 1px solid #E5E7EB; border-radius: 8px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 15px; }
+    .result-row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px dashed #E5E7EB; }
+    .result-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .r-label { color: #6B7280; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+    .r-value { font-family: monospace; font-size: 1.1rem; color: #1F2937; font-weight: 600; }
+    .status-code { padding: 4px 10px; background: #E5E7EB; border-radius: 4px; font-weight: 700; color: #1F2937; }
+
+    @media(max-width: 768px) {
+        .compare-grid { grid-template-columns: 1fr; }
+        .result-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+    }
+</style>
+
+<div class="api-header">
+    <span style="display:inline-block; padding: 4px 12px; background: rgba(99, 102, 241, 0.1); color: #6366F1; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 15px; letter-spacing: 1px;"><i class="fa-solid fa-network-wired"></i> BACKEND ARCHITECTURE</span>
+    <h1>REST API Design Principles</h1>
+    
+    <div class="def-box">
+        <strong>Definition:</strong> REST (Representational State Transfer) is a software architectural style that defines a set of constraints to be used for creating robust, predictable Web services.
+    </div>
+
+    <p>API তো সবাই বানাতে পারে, কিন্তু একটি <strong>Industry Standard REST API</strong> ডিজাইন করতে পারে খুব কম ডেভেলপার। URL Naming Convention কেমন হওয়া উচিত এবং কোন HTTP Status Code কখন ব্যবহার করতে হয়— এগুলো একজন ফুল-স্ট্যাক ইঞ্জিনিয়ারের কোর আর্কিটেকচারাল নলেজ।</p>
+</div>
+
+<!-- Section 1: Endpoints & Case Study -->
+<div class="content-block">
+    <h2><i class="fa-solid fa-route" style="color: #6366F1;"></i> 1. Resource-Oriented Routing</h2>
+    
+    <div class="case-study-box">
+        <div class="case-title"><i class="fa-solid fa-code-branch"></i> The "Verb" Trap (RPC vs REST)</div>
+        <p>ধরি, আমরা একটি ইউজার ম্যানেজমেন্ট সিস্টেম বানাচ্ছি। অনেক নতুন ডেভেলপার API এর URL এর ভেতরেই অ্যাকশন বা Verb (যেমন: <i>get, create, delete</i>) লিখে ফেলে। যেমন: <span class="inline-code">/api/getUsers</span> বা <span class="inline-code">/api/deleteUser?id=5</span>। একে বলা হয় <strong>RPC (Remote Procedure Call)</strong> স্টাইল, যা মেইনটেইন করা খুব কষ্টকর।</p>
+        <p><strong>REST Solution:</strong> REST API এর মূল শর্ত হলো URL সবসময় <strong>Noun বা Resource</strong> (যেমন: <code>/users</code>) হবে। আপনি কী করতে চাচ্ছেন তা বোঝানোর দায়িত্ব URL এর নয়, বরং সেটি বোঝানোর দায়িত্ব হলো <strong>HTTP Methods</strong> (GET, POST, PUT, DELETE) এর।</p>
+    </div>
+    
+    <div class="compare-grid">
+        <div class="compare-card bad-practices">
+            <h4 style="display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-circle-xmark"></i> Bad Practices (RPC Style)</h4>
+            <ul>
+                <li><i class="fa-solid fa-ban"></i> <code>/getAllUsers</code></li>
+                <li><i class="fa-solid fa-ban"></i> <code>/createUser</code></li>
+                <li><i class="fa-solid fa-ban"></i> <code>/deleteUser?id=5</code></li>
+                <li><i class="fa-solid fa-ban"></i> <code>/users/update/5</code></li>
+            </ul>
+        </div>
+        <div class="compare-card good-practices">
+            <h4 style="display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-circle-check"></i> Standard Practices (REST)</h4>
+            <ul>
+                <li><i class="fa-solid fa-check"></i> <span class="method m-get">GET</span> <code>/api/users</code></li>
+                <li><i class="fa-solid fa-check"></i> <span class="method m-post">POST</span> <code>/api/users</code></li>
+                <li><i class="fa-solid fa-check"></i> <span class="method m-delete">DELETE</span> <code>/api/users/5</code></li>
+                <li><i class="fa-solid fa-check"></i> <span class="method m-put">PUT</span> <code>/api/users/5</code></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Section 2: Code Implementation -->
+<div class="content-block">
+    <h2><i class="fa-brands fa-node-js" style="color: #68a063;"></i> 2. Express.js Clean Architecture</h2>
+    <p style="color: #4B5563;">প্রফেশনাল ব্যাকএন্ডে <strong>Router</strong> এবং <strong>Controller</strong> কে আলাদা রাখা হয়। রাউটারের কাজ শুধু HTTP মেথড আর পাথ (Path) চেক করা, আর কন্ট্রোলারের কাজ হলো বিজনেস লজিক হ্যান্ডেল করা। নিচের কোডে দেখুন <code>router.route()</code> ব্যবহার করে আমরা কীভাবে ক্লিন কোড লিখতে পারি।</p>
+    
+    <div class="code-window">
+        <div class="code-header">
+            <div class="mac-dot" style="background:#ff5f56;"></div>
+            <div class="mac-dot" style="background:#ffbd2e;"></div>
+            <div class="mac-dot" style="background:#27c93f;"></div>
+            <span style="color: #888; font-size: 0.85rem; margin-left: auto;">routes/userRoutes.js</span>
+        </div>
+        <div class="code-body">
+<pre style="margin: 0;"><span style="color:#C586C0;">const</span> express = <span style="color:#DCDCAA;">require</span>(<span style="color:#CE9178;">'express'</span>);
+<span style="color:#C586C0;">const</span> { getUsers, createUser, getUserById, updateUser } = <span style="color:#DCDCAA;">require</span>(<span style="color:#CE9178;">'../controllers/userController'</span>);
+<span style="color:#C586C0;">const</span> { verifyAdmin } = <span style="color:#DCDCAA;">require</span>(<span style="color:#CE9178;">'../middlewares/auth'</span>);
+
+<span style="color:#C586C0;">const</span> router = express.<span style="color:#DCDCAA;">Router</span>();
+
+<span style="color:#6A9955;">// Base Route: /api/users</span>
+router.<span style="color:#DCDCAA;">route</span>(<span style="color:#CE9178;">'/'</span>)
+    .<span style="color:#DCDCAA;">get</span>(getUsers)             <span style="color:#6A9955;">// GET /api/users</span>
+    .<span style="color:#DCDCAA;">post</span>(verifyAdmin, createUser); <span style="color:#6A9955;">// POST /api/users (Protected)</span>
+
+<span style="color:#6A9955;">// Dynamic ID Route: /api/users/:id</span>
+router.<span style="color:#DCDCAA;">route</span>(<span style="color:#CE9178;">'/:id'</span>)
+    .<span style="color:#DCDCAA;">get</span>(getUserById)          <span style="color:#6A9955;">// GET /api/users/123</span>
+    .<span style="color:#DCDCAA;">patch</span>(updateUser)         <span style="color:#6A9955;">// PATCH /api/users/123</span>
+    .<span style="color:#DCDCAA;">delete</span>(verifyAdmin, deleteUser); 
+
+<span style="color:#C586C0;">module</span>.exports = router;</pre>
+        </div>
+    </div>
+</div>
+
+<!-- Section 3: Interactive Simulator -->
+<div class="content-block">
+    <h2><i class="fa-solid fa-code-pull-request" style="color: #6366F1;"></i> 3. REST Endpoint Visualizer</h2>
+    <p style="color: #4B5563;">নিচের ড্রপডাউন থেকে একটি সিনারিও সিলেক্ট করুন। দেখুন একজন সিনিয়র ডেভেলপার একটি নির্দিষ্ট অ্যাকশনের জন্য ঠিক কোন HTTP Method, URL এবং Status Code ব্যবহার করে।</p>
+
+    <div class="simulator-area">
+        <select class="sim-selector" id="scenario-selector" onchange="updateSimulator()">
+            <option value="get_all">Fetch a list of all articles</option>
+            <option value="get_single">Fetch a specific article by ID</option>
+            <option value="create">Create a new article</option>
+            <option value="update_partial">Update only the title of an article</option>
+            <option value="delete">Remove an article from the database</option>
+            <option value="error_notfound">Request an article that doesn't exist</option>
+            <option value="error_auth">Try to delete an article without logging in</option>
+        </select>
+
+        <div class="sim-result" id="sim-result">
+            <!-- Injected via JS -->
+        </div>
+    </div>
+</div>
+
+<script>
+    const scenarios = {
+        'get_all': {
+            method: '<span class="method m-get">GET</span>',
+            url: '/api/articles',
+            desc: 'Retrieves an array of all resources from the database.',
+            status: '<span class="status-code" style="background:#D1FAE5; color:#065F46;">200 OK</span>'
+        },
+        'get_single': {
+            method: '<span class="method m-get">GET</span>',
+            url: '/api/articles/94b2',
+            desc: 'Retrieves a single resource using its unique identifier parameter.',
+            status: '<span class="status-code" style="background:#D1FAE5; color:#065F46;">200 OK</span>'
+        },
+        'create': {
+            method: '<span class="method m-post">POST</span>',
+            url: '/api/articles',
+            desc: 'Creates a new resource. Payload goes in the request body.',
+            status: '<span class="status-code" style="background:#FEF08A; color:#854D0E;">201 Created</span>'
+        },
+        'update_partial': {
+            method: '<span class="method m-patch">PATCH</span>',
+            url: '/api/articles/94b2',
+            desc: 'Partially updates an existing resource (unlike PUT which replaces it entirely).',
+            status: '<span class="status-code" style="background:#D1FAE5; color:#065F46;">200 OK</span>'
+        },
+        'delete': {
+            method: '<span class="method m-delete">DELETE</span>',
+            url: '/api/articles/94b2',
+            desc: 'Deletes the specified resource from the database.',
+            status: '<span class="status-code" style="background:#E5E7EB; color:#374151;">204 No Content</span>'
+        },
+        'error_notfound': {
+            method: '<span class="method m-get">GET</span>',
+            url: '/api/articles/invalid-id',
+            desc: 'The requested resource could not be found.',
+            status: '<span class="status-code" style="background:#FEE2E2; color:#991B1B;">404 Not Found</span>'
+        },
+        'error_auth': {
+            method: '<span class="method m-delete">DELETE</span>',
+            url: '/api/articles/94b2',
+            desc: 'Client failed to provide a valid JWT/Session token.',
+            status: '<span class="status-code" style="background:#FEE2E2; color:#991B1B;">401 Unauthorized</span>'
+        }
+    };
+
+    function updateSimulator() {
+        const val = document.getElementById('scenario-selector').value;
+        const data = scenarios[val];
+
+        const html = `
+            <div class="result-row">
+                <span class="r-label">HTTP Method</span>
+                <span class="r-value">${data.method}</span>
+            </div>
+            <div class="result-row">
+                <span class="r-label">Endpoint URL</span>
+                <span class="r-value">${data.url}</span>
+            </div>
+            <div class="result-row">
+                <span class="r-label">Expected Status</span>
+                <span class="r-value">${data.status}</span>
+            </div>
+            <div class="result-row" style="border-bottom:none; padding-bottom:0;">
+                <span class="r-label">Architecture Note</span>
+                <span style="font-size: 0.95rem; color:#4B5563;">${data.desc}</span>
+            </div>
+        `;
+        document.getElementById('sim-result').innerHTML = html;
+    }
+
+    // Initialize on load
+    updateSimulator();
+</script>
