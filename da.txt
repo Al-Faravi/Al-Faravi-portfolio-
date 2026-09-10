@@ -1,0 +1,3 @@
+N5ozyOFY6zgsNEfo
+
+mongodb+srv://alfaravi17_db_user:N5ozyOFY6zgsNEfo@cluster0.e6lju1e.mongodb.net/faraviPortfolioDB?retryWrites=true&w=majority
