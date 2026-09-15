@@ -308,7 +308,7 @@ function createTextarea(label, name, value = '') {
 }
 
 // =========================================
-// 5. SUBMIT DATA (Create / Update) - DIRECT MONGODB UPLOAD
+// 5. SUBMIT DATA (Create / Update) WITH IMGBB UPLOAD
 // =========================================
 document.getElementById('admin-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -327,27 +327,46 @@ document.getElementById('admin-form').addEventListener('submit', async (e) => {
     }
 
     try {
-        // --- DIRECT MONGODB IMAGE UPLOAD LOGIC ---
+        // --- IMGBB IMAGE UPLOAD LOGIC (BASE64 METHOD) ---
         const imageFileInput = document.getElementById('image-upload');
         const imageFile = imageFileInput ? imageFileInput.files[0] : null;
         
         if (imageFile) {
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Reading Image...';
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Converting Image...';
             
-            // ১. ছবিটিকে Data URI (Base64) তে রূপান্তর করা হচ্ছে
-            const base64String = await new Promise((resolve, reject) => {
+            // ১. ছবিটিকে Base64 স্ট্রিং-এ কনভার্ট করা হচ্ছে (যাতে ImgBB রিজেক্ট না করে)
+            const base64Image = await new Promise((resolve, reject) => {
                 const reader = new FileReader();
-                reader.readAsDataURL(imageFile); // Data URI ফরম্যাটে নিচ্ছে
-                reader.onload = () => resolve(reader.result); // এই টেক্সটটাই সরাসরি img src তে কাজ করবে
+                reader.readAsDataURL(imageFile);
+                reader.onload = () => resolve(reader.result.split(',')[1]); // শুধু ডাটা অংশটুকু নিচ্ছি
                 reader.onerror = (error) => reject(error);
             });
+
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading to ImgBB...';
             
-            // ২. কোনো API ছাড়া সরাসরি আমাদের ডাটাবেসের image ফিল্ডে ডেটা দিয়ে দিচ্ছি
-            data.image = base64String;
+            const imgData = new FormData();
+            imgData.append('key', 'c461ef1db05737d37ba8012450d5e589'); // API Key
+            imgData.append('image', base64Image); // Base64 Image ডেটা
+            
+            const imgRes = await fetch(`https://api.imgbb.com/1/upload`, {
+                method: 'POST',
+                body: imgData
+            });
+            
+            const imgResult = await imgRes.json();
+            
+            // যদি আপলোড সাকসেসফুল হয়
+            if (imgRes.ok && imgResult.success) {
+                data.image = imgResult.data.display_url; 
+            } else {
+                console.error("ImgBB Error:", imgResult);
+                alert(`Image upload failed: ${imgResult.error?.message || 'Unknown Error'}`);
+                throw new Error("Image upload failed");
+            }
         }
 
         // --- SAVE TO MONGODB ---
-        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving to Database...';
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving Data...';
 
         const method = isEditing ? 'PUT' : 'POST';
         const url = isEditing ? `${API_URL}/${currentTab}/${editId}` : `${API_URL}/${currentTab}`;
@@ -355,18 +374,17 @@ document.getElementById('admin-form').addEventListener('submit', async (e) => {
         const res = await fetch(url, {
             method: method,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data) // ছবিসহ পুরো ডেটা ডাটাবেসে যাচ্ছে
+            body: JSON.stringify(data)
         });
 
         if (res.ok) {
             closeForm();
             fetchData(); // Reload list
         } else {
-            alert('Error! (নোট: ছবির সাইজ অনেক বড় হলে ডাটাবেস রিজেক্ট করতে পারে। ছোট সাইজের ছবি আপলোড করুন)');
+            alert('Error saving data to MongoDB');
         }
     } catch (error) {
         console.error("Submission Error:", error);
-        alert('Server Error. Check console.');
     } finally {
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
