@@ -217,7 +217,17 @@ function openForm(item = null) {
         html += createInput('Accuracy Stat (e.g. 96%)', 'accuracy', item?.accuracy);
         html += createInput('Dataset Stat', 'dataset', item?.dataset);
         html += createInput('Model Name', 'model', item?.model);
-        html += createInput('Image URL', 'image', item?.image);
+        
+        // Image Upload for Featured
+        html += `
+            <div class="input-group">
+                <label>Upload Featured Image</label>
+                <input type="file" id="image-upload" accept="image/*">
+                <small style="color:gray;">Leave empty to keep previous image.</small>
+                <input type="hidden" name="image" id="hidden-image-url" value="${item?.image || ''}">
+            </div>
+        `;
+        
         html += createInput('GitHub Link', 'githubLink', item?.githubLink);
     }
     else if (currentTab === 'blogs') {
@@ -234,7 +244,17 @@ function openForm(item = null) {
         html += createInput('Certification Title', 'title', item?.title);
         html += createInput('Issuer (e.g. Coursera)', 'issuer', item?.issuer);
         html += createInput('Date Issued', 'date', item?.date);
-        html += createInput('Image URL', 'image', item?.image);
+        
+        // Image Upload for Certifications
+        html += `
+            <div class="input-group">
+                <label>Upload Certificate Image</label>
+                <input type="file" id="image-upload" accept="image/*">
+                <small style="color:gray;">Leave empty to keep previous image.</small>
+                <input type="hidden" name="image" id="hidden-image-url" value="${item?.image || ''}">
+            </div>
+        `;
+        
         html += createInput('Credential Link', 'credentialLink', item?.credentialLink);
         html += createTextarea('Description', 'description', item?.description);
         html += createTextarea('Impact', 'impact', item?.impact);
@@ -288,14 +308,14 @@ function createTextarea(label, name, value = '') {
 }
 
 // =========================================
-// 5. SUBMIT DATA (Create / Update)
+// 5. SUBMIT DATA (Create / Update) WITH IMGBB UPLOAD
 // =========================================
 document.getElementById('admin-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const submitBtn = e.target.querySelector('.btn-submit');
     const originalText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
     submitBtn.disabled = true;
 
     const formData = new FormData(e.target);
@@ -306,10 +326,40 @@ document.getElementById('admin-form').addEventListener('submit', async (e) => {
         data.techStack = data.techStack.split(',').map(t => t.trim());
     }
 
-    const method = isEditing ? 'PUT' : 'POST';
-    const url = isEditing ? `${API_URL}/${currentTab}/${editId}` : `${API_URL}/${currentTab}`;
-
     try {
+        // --- IMGBB IMAGE UPLOAD LOGIC ---
+        const imageFileInput = document.getElementById('image-upload');
+        const imageFile = imageFileInput ? imageFileInput.files[0] : null;
+        
+        if (imageFile) {
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading Image...';
+            
+            const imgData = new FormData();
+            imgData.append('image', imageFile);
+            
+            // আপনার দেওয়া ImgBB API Key
+            const IMGBB_API_KEY = "c461ef1db05737d37ba8012450d5e589"; 
+            
+            const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                method: 'POST',
+                body: imgData
+            });
+            
+            const imgResult = await imgRes.json();
+            if (imgResult.success) {
+                data.image = imgResult.data.display_url; // Live ImgBB link replace
+            } else {
+                alert("Image upload failed! Please check your network.");
+                throw new Error("Image upload failed");
+            }
+        }
+
+        // --- SAVE TO MONGODB ---
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving Data...';
+
+        const method = isEditing ? 'PUT' : 'POST';
+        const url = isEditing ? `${API_URL}/${currentTab}/${editId}` : `${API_URL}/${currentTab}`;
+
         const res = await fetch(url, {
             method: method,
             headers: { 'Content-Type': 'application/json' },
@@ -324,7 +374,7 @@ document.getElementById('admin-form').addEventListener('submit', async (e) => {
         }
     } catch (error) {
         console.error(error);
-        alert('Server Error');
+        alert('Server Error. Check console.');
     } finally {
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
