@@ -327,42 +327,31 @@ document.getElementById('admin-form').addEventListener('submit', async (e) => {
     }
 
     try {
-        // --- IMGBB IMAGE UPLOAD LOGIC (BASE64 METHOD) ---
+        // --- IMGBB IMAGE UPLOAD LOGIC ---
         const imageFileInput = document.getElementById('image-upload');
         const imageFile = imageFileInput ? imageFileInput.files[0] : null;
         
         if (imageFile) {
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Converting Image...';
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading Image...';
             
-            // ১. ছবিটিকে Base64 স্ট্রিং-এ কনভার্ট করা
-            const base64Image = await new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(imageFile);
-                reader.onload = () => resolve(reader.result.split(',')[1]); // শুধু ডাটা পার্টটুকু নিচ্ছি
-                reader.onerror = (error) => reject(error);
-            });
-
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading to ImgBB...';
-            
-            // ২. ফর্ম ডেটাতে শুধু কনভার্ট করা টেক্সট পাঠানো
             const imgData = new FormData();
-            imgData.append('image', base64Image);
+            imgData.append('key', 'c461ef1db05737d37ba8012450d5e589'); // Key এখন ফর্মের ভেতরে
+            imgData.append('image', imageFile);
             
-            const IMGBB_API_KEY = "c461ef1db05737d37ba8012450d5e589"; 
-            
-            // ৩. API Call
-            const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+            const imgRes = await fetch(`https://api.imgbb.com/1/upload`, {
                 method: 'POST',
                 body: imgData
             });
             
             const imgResult = await imgRes.json();
             
+            // যদি আপলোড সাকসেসফুল হয়
             if (imgRes.ok && imgResult.success) {
-                data.image = imgResult.data.display_url; // Live link saved!
+                data.image = imgResult.data.display_url; 
             } else {
+                // যদি এরর হয়, তাহলে এররের আসল কারণ দেখাবে
                 console.error("ImgBB Error:", imgResult);
-                alert(`Upload failed! Reason: ${imgResult.error?.message || 'Bad Request'}`);
+                alert(`Image upload failed: ${imgResult.error?.message || 'Unknown Error'}`);
                 throw new Error("Image upload failed");
             }
         }
@@ -386,7 +375,8 @@ document.getElementById('admin-form').addEventListener('submit', async (e) => {
             alert('Error saving data to MongoDB');
         }
     } catch (error) {
-        console.error("Submission Error:", error);
+        console.error(error);
+        // alert('Server Error. Check console.'); // এটি হাইড করে দিলাম যেন বারবার অ্যালার্ট না দেয়
     } finally {
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
