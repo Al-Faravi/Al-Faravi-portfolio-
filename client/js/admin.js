@@ -335,21 +335,23 @@ document.getElementById('admin-form').addEventListener('submit', async (e) => {
             submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading Image...';
             
             const imgData = new FormData();
+            imgData.append('key', 'c461ef1db05737d37ba8012450d5e589'); // Key এখন ফর্মের ভেতরে
             imgData.append('image', imageFile);
             
-            // আপনার দেওয়া ImgBB API Key
-            const IMGBB_API_KEY = "c461ef1db05737d37ba8012450d5e589"; 
-            
-            const imgRes = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+            const imgRes = await fetch(`https://api.imgbb.com/1/upload`, {
                 method: 'POST',
                 body: imgData
             });
             
             const imgResult = await imgRes.json();
-            if (imgResult.success) {
-                data.image = imgResult.data.display_url; // Live ImgBB link replace
+            
+            // যদি আপলোড সাকসেসফুল হয়
+            if (imgRes.ok && imgResult.success) {
+                data.image = imgResult.data.display_url; 
             } else {
-                alert("Image upload failed! Please check your network.");
+                // যদি এরর হয়, তাহলে এররের আসল কারণ দেখাবে
+                console.error("ImgBB Error:", imgResult);
+                alert(`Image upload failed: ${imgResult.error?.message || 'Unknown Error'}`);
                 throw new Error("Image upload failed");
             }
         }
@@ -370,11 +372,11 @@ document.getElementById('admin-form').addEventListener('submit', async (e) => {
             closeForm();
             fetchData(); // Reload list
         } else {
-            alert('Error saving data');
+            alert('Error saving data to MongoDB');
         }
     } catch (error) {
         console.error(error);
-        alert('Server Error. Check console.');
+        // alert('Server Error. Check console.'); // এটি হাইড করে দিলাম যেন বারবার অ্যালার্ট না দেয়
     } finally {
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
